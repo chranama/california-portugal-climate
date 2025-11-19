@@ -2,21 +2,23 @@
 __pycache__/
 *.pyc
 
-# uv virtual environment
+# Virtual environments
 .venv/
 
-# DuckDB warehouse
+# DuckDB artifacts
 data/warehouse/*.duckdb
+data/warehouse/*.wal
+.duckdb/
+.duckdb*  
 
-# Raw data (huge API downloads)
+# Raw and intermediate data
 data/raw/
+data/external/
 
-# Logs
-logs/
+# Jupyter
+.ipynb_checkpoints/
 
-# dbt build artifacts
+# dbt generated
 dbt/target/
-dbt/dbt_modules/
-
-# OS files
-.DS_Store
+dbt/dbt_packages/
+dbt/logs/

@@ -1,0 +1,67 @@
+[0m23:35:58.601864 [debug] [MainThread]: Sending event: {'category': 'dbt', 'action': 'invocation', 'label': 'start', 'context': [<snowplow_tracker.self_describing_json.SelfDescribingJson object at 0x10cfa0590>, <snowplow_tracker.self_describing_json.SelfDescribingJson object at 0x10dddfb10>, <snowplow_tracker.self_describing_json.SelfDescribingJson object at 0x10dddfd90>]}
+
+
+============================== 23:35:58.603677 | 91f940c6-304e-4abd-a9dc-26beaf0cc7d2 ==============================
+[0m23:35:58.603677 [info ] [MainThread]: Running with dbt=1.10.15
+[0m23:35:58.603939 [debug] [MainThread]: running dbt with arguments {'no_print': 'None', 'quiet': 'False', 'invocation_command': 'dbt debug', 'cache_selected_only': 'False', 'empty': 'None', 'fail_fast': 'False', 'profiles_dir': './dbt', 'debug': 'False', 'target_path': 'None', 'log_cache_events': 'False', 'write_json': 'True', 'use_experimental_parser': 'False', 'static_parser': 'True', 'send_anonymous_usage_stats': 'True', 'warn_error_options': 'WarnErrorOptionsV2(error=[], warn=[], silence=[])', 'warn_error': 'None', 'use_colors': 'True', 'printer_width': '80', 'partial_parse': 'True', 'introspect': 'True', 'log_path': 'logs', 'version_check': 'True', 'indirect_selection': 'eager', 'log_format': 'default'}
+[0m23:35:58.611861 [info ] [MainThread]: dbt version: 1.10.15
+[0m23:35:58.612027 [info ] [MainThread]: python version: 3.13.5
+[0m23:35:58.612146 [info ] [MainThread]: python path: /Users/chranama/portfolio/california-portugal-climate/.venv/bin/python3
+[0m23:35:58.612258 [info ] [MainThread]: os info: macOS-26.1-arm64-arm-64bit-Mach-O
+[0m23:35:58.648705 [info ] [MainThread]: Using profiles dir at ./dbt
+[0m23:35:58.648923 [info ] [MainThread]: Using profiles.yml file at ./dbt/profiles.yml
+[0m23:35:58.649048 [info ] [MainThread]: Using dbt_project.yml file at /Users/chranama/portfolio/california-portugal-climate/dbt_project.yml
+[0m23:35:58.650466 [info ] [MainThread]: adapter type: duckdb
+[0m23:35:58.650632 [info ] [MainThread]: adapter version: 1.10.0
+[0m23:35:58.650777 [info ] [MainThread]: Configuration:
+[0m23:35:58.650897 [info ] [MainThread]:   profiles.yml file [[32mOK found and valid[0m]
+[0m23:35:58.651017 [info ] [MainThread]:   dbt_project.yml file [[31mERROR not found[0m]
+[0m23:35:58.651133 [info ] [MainThread]: Required dependencies:
+[0m23:35:58.651290 [debug] [MainThread]: Executing "git --help"
+[0m23:35:58.659347 [debug] [MainThread]: STDOUT: "b"uso: git [-v | --version] [-h | --help] [-C <path>] [-c <name>=<value>]\n           [--exec-path[=<path>]] [--html-path] [--man-path] [--info-path]\n           [-p | --paginate | -P | --no-pager] [--no-replace-objects] [--no-lazy-fetch]\n           [--no-optional-locks] [--no-advice] [--bare] [--git-dir=<path>]\n           [--work-tree=<path>] [--namespace=<name>] [--config-env=<name>=<envvar>]\n           <command> [<args>]\n\nEstes s\xc3\xa3o comandos do Git comuns usados em diversas situa\xc3\xa7\xc3\xb5es:\n\niniciar uma \xc3\xa1rea-trabalho (v\xc3\xaa tamb\xc3\xa9m: git help tutorial)\n   clone      Clonar um reposit\xc3\xb3rio numa nova pasta\n   init       Criar um reposit\xc3\xb3rio Git vazio ou reinicializar um existente\n\ntrabalhar na altera\xc3\xa7\xc3\xa3o atual (v\xc3\xaa tamb\xc3\xa9m: git help everyday)\n   add        Adicionar conte\xc3\xbados de ficheiro ao cen\xc3\xa1rio\n   mv         Mover ou renomear um ficheiro, pasta ou liga\xc3\xa7\xc3\xa3o simb\xc3\xb3lica\n   restore    Restaurar ficheiros de \xc3\xa1rvore-trabalho\n   rm         Remove files from the working tree and from the index\n\nexaminar o hist\xc3\xb3rico e estado (v\xc3\xaa tamb\xc3\xa9m: git help revisions)\n   bisect     Usar procura bin\xc3\xa1rio para encontrar a mem\xc3\xb3ria que introduziu um bug\n   diff       Mostrar altera\xc3\xa7\xc3\xb5es entre mem\xc3\xb3rias, mem\xc3\xb3ria e \xc3\xa1rvore-trabalho, etc\n   grep       Imprimir linhas que correspondam a um padr\xc3\xa3o\n   log        Mostrar registro de mem\xc3\xb3rias\n   show       Mostrar v\xc3\xa1rios tipos objetos\n   status     Mostrar status de \xc3\xa1rvore-trabalho\n\naumentar, marcar e ajustar teu hist\xc3\xb3rico comum\n   backfill   Download missing objects in a partial clone\n   branch     Listar, criar ou eliminar ramos\n   commit     Gravar altera\xc3\xa7\xc3\xb5es para o reposit\xc3\xb3rio\n   merge      Juntar duas ou mais hist\xc3\xb3rias de desenvolvimento numa s\xc3\xb3\n   rebase     Reaplicar mem\xc3\xb3rias no topo de outra ponta\n   reset      Restabelecer a HEAD atual para estado especificado\n   switch     Trocar ramos\n   tag        Criar, listar, apagar ou verificar um objeto-etiqueta assinado com GPG\n\ncolaborar (v\xc3\xaa tamb\xc3\xa9m: git help workflows)\n   fetch      Download objectos e refs de outro reposit\xc3\xb3rio\n   pull       Buscar de e integrar com outro reposit\xc3\xb3rio ou um ramo local\n   push       Atualizar refer\xc3\xaancias remotas juntamente com objetos associados\n\n'git help -a' e 'git help -g' listam subcomandos dispon\xc3\xadveis e alguns\nguias de conceitos. Consulta 'git help <comando>' ou 'git help <conceito>'\npara ler sobre um subcomando espec\xc3\xadfico ou conceito espec\xc3\xadfico.\nPara uma vis\xc3\xa3o geral do sistema, v\xc3\xaa 'git help git'.\n""
+[0m23:35:58.659664 [debug] [MainThread]: STDERR: "b''"
+[0m23:35:58.659782 [info ] [MainThread]:  - git [[32mOK found[0m]
+
+[0m23:35:58.659913 [info ] [MainThread]: Connection:
+[0m23:35:58.660044 [info ] [MainThread]:   database: climate
+[0m23:35:58.660149 [info ] [MainThread]:   schema: main
+[0m23:35:58.660250 [info ] [MainThread]:   path: ../data/warehouse/climate.duckdb
+[0m23:35:58.660350 [info ] [MainThread]:   config_options: None
+[0m23:35:58.660449 [info ] [MainThread]:   extensions: None
+[0m23:35:58.660547 [info ] [MainThread]:   settings: {}
+[0m23:35:58.660645 [info ] [MainThread]:   external_root: .
+[0m23:35:58.660744 [info ] [MainThread]:   use_credential_provider: None
+[0m23:35:58.660839 [info ] [MainThread]:   attach: None
+[0m23:35:58.660934 [info ] [MainThread]:   filesystems: None
+[0m23:35:58.661029 [info ] [MainThread]:   remote: None
+[0m23:35:58.661123 [info ] [MainThread]:   plugins: None
+[0m23:35:58.661216 [info ] [MainThread]:   disable_transactions: False
+[0m23:35:58.661447 [info ] [MainThread]: Registered adapter: duckdb=1.10.0
+[0m23:35:58.710028 [debug] [MainThread]: Acquiring new duckdb connection 'debug'
+[0m23:35:58.742361 [debug] [MainThread]: Using duckdb connection "debug"
+[0m23:35:58.742525 [debug] [MainThread]: On debug: select 1 as id
+[0m23:35:58.742644 [debug] [MainThread]: Opening a new connection, currently in state init
+[0m23:35:58.745969 [debug] [MainThread]: DuckDB adapter: Error running SQL: select 1 as id
+[0m23:35:58.746093 [debug] [MainThread]: DuckDB adapter: Rolling back transaction.
+[0m23:35:58.746248 [info ] [MainThread]:   Connection test: [[31mERROR[0m]
+
+[0m23:35:58.746407 [info ] [MainThread]: [31m2 checks failed:[0m
+[0m23:35:58.746519 [info ] [MainThread]: Project loading failed for the following reason:
+ project path </Users/chranama/portfolio/california-portugal-climate/dbt_project.yml> not found
+
+[0m23:35:58.746635 [info ] [MainThread]: dbt was unable to connect to the specified database.
+The database returned the following error:
+
+  >Runtime Error
+  IO Error: Cannot open file "/Users/chranama/portfolio/california-portugal-climate/../data/warehouse/climate.duckdb": No such file or directory
+
+Check your database credentials and try again. For more information, visit:
+https://docs.getdbt.com/docs/configure-your-profile
+
+
+[0m23:35:58.747783 [debug] [MainThread]: Resource report: {"command_name": "debug", "command_success": false, "command_wall_clock_time": 0.17146917, "process_in_blocks": "0", "process_kernel_time": 0.117056, "process_mem_max_rss": "136085504", "process_out_blocks": "0", "process_user_time": 0.58281}
+[0m23:35:58.747964 [debug] [MainThread]: Command `dbt debug` failed at 23:35:58.747926 after 0.17 seconds
+[0m23:35:58.748088 [debug] [MainThread]: Connection 'debug' was properly closed.
+[0m23:35:58.748231 [debug] [MainThread]: Sending event: {'category': 'dbt', 'action': 'invocation', 'label': 'end', 'context': [<snowplow_tracker.self_describing_json.SelfDescribingJson object at 0x10e3510f0>, <snowplow_tracker.self_describing_json.SelfDescribingJson object at 0x10dff2570>, <snowplow_tracker.self_describing_json.SelfDescribingJson object at 0x10e418270>]}
+[0m23:35:58.748392 [debug] [MainThread]: Flushing usage events
+[0m23:35:59.074098 [debug] [MainThread]: An error was encountered while trying to flush usage events
