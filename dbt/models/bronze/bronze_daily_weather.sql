@@ -18,7 +18,7 @@ WITH raw_json AS (
         daily.precipitation_sum       AS precip_list,
         daily.wind_speed_10m_max      AS wind_list,
         daily.shortwave_radiation_sum AS sw_list
-    FROM read_json_auto('../data/raw/open_meteo_daily/*/*.json')
+    FROM read_json_auto('/Users/chranama/portfolio/california-portugal-climate/data/raw/open_meteo_daily/*/*.json')
 
 ),
 
@@ -28,7 +28,7 @@ exploded AS (
     SELECT
         r.filename,
         r.city_slug,
-        CAST(r.year_str AS INT)                   AS year,
+        EXTRACT(year FROM r.time_list[i]::DATE)   AS year,
         r.time_list[i]::DATE                      AS date,
         r.tmax_list[i]                            AS temperature_2m_max,
         r.tmin_list[i]                            AS temperature_2m_min,
@@ -41,9 +41,10 @@ exploded AS (
         SELECT
             filename,
 
-            -- derive city_slug and year from path: ../data/raw/open_meteo_daily/<city_slug>/<year>.json
-            regexp_extract(filename, '.*/([^/]+)/([0-9]{4})\\.json', 1) AS city_slug,
-            regexp_extract(filename, '.*/([^/]+)/([0-9]{4})\\.json', 2) AS year_str,
+            -- last directory name before the file → city slug (los_angeles, lisbon, ...)
+            str_split(filename, '/')[-2] AS city_slug,
+            -- last path component (e.g. "1980.json")
+            str_split(filename, '/')[-1] AS filename_leaf,
 
             time_list,
             tmax_list,
@@ -55,8 +56,6 @@ exploded AS (
             sw_list,
             array_length(time_list) AS n_days
         FROM raw_json
-        WHERE regexp_extract(filename, '.*/([^/]+)/([0-9]{4})\\.json', 2) IS NOT NULL
-          AND regexp_extract(filename, '.*/([^/]+)/([0-9]{4})\\.json', 2) <> ''
     ) r,
     UNNEST(range(1, r.n_days + 1)) AS t(i)
 ),

@@ -1,0 +1,38 @@
+version: 2
+
+models:
+  - name: silver_daily_weather_features
+    columns:
+      - name: city_id
+        tests:
+          - not_null
+
+      - name: date
+        tests:
+          - not_null
+
+      - name: tmax_c
+        tests:
+          - not_null
+          - dbt_utils.accepted_range:
+              arguments:
+                min_value: -40
+                max_value: 60
+                
+  - name: silver_monthly_climate
+    columns:
+      - name: city_id
+        tests:
+          - not_null
+
+      - name: year
+        tests:
+          - not_null
+
+      - name: month
+        tests:
+          - not_null
+          - dbt_utils.accepted_range:
+              arguments:
+                min_value: 1
+                max_value: 12
