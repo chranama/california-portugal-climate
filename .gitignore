@@ -1,0 +1,22 @@
+# Python
+__pycache__/
+*.pyc
+
+# uv virtual environment
+.venv/
+
+# DuckDB warehouse
+data/warehouse/*.duckdb
+
+# Raw data (huge API downloads)
+data/raw/
+
+# Logs
+logs/
+
+# dbt build artifacts
+dbt/target/
+dbt/dbt_modules/
+
+# OS files
+.DS_Store

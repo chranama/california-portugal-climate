@@ -1,0 +1,13 @@
+cities:
+  - city_id: 1
+    name: "Los Angeles"
+    country_code: "US"
+  - city_id: 2
+    name: "San Francisco"
+    country_code: "US"
+  - city_id: 3
+    name: "Lisbon"
+    country_code: "PT"
+  - city_id: 4
+    name: "Porto"
+    country_code: "PT"

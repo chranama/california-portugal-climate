@@ -1,0 +1,32 @@
+[project]
+name = "california-portugal-climate"
+version = "0.1.0"
+description = "A data engineering and machine learning pipeline for comparing the climates of California and Portugal using Open-Meteo APIs."
+authors = [
+    { name="Chris Anaya" }
+]
+readme = "README.md"
+requires-python = ">=3.10"
+
+# Dependencies required at Stage 1
+dependencies = [
+    "requests>=2.32.3",
+    "pyyaml>=6.0.1",
+    "dbt-duckdb>=1.0.0"
+]
+
+# Optional, but good practice
+[project.urls]
+homepage = "https://github.com/chranama/california-portugal-climate"
+repository = "https://github.com/chranama/california-portugal-climate"
+
+[project.scripts]
+geocode-cities = "climate_pipeline.ingestion.geocoding:main"
+fetch-daily-weather = "climate_pipeline.ingestion.fetch_daily_weather:main"
+
+[build-system]
+requires = ["hatchling>=1.0.0"]
+build-backend = "hatchling.build"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/climate_pipeline"]

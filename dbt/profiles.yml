@@ -1,0 +1,8 @@
+climate_pipeline:
+  target: dev
+  outputs:
+    dev:
+      type: duckdb
+      path: "../data/warehouse/climate.duckdb"
+      schema: main
+      threads: 4

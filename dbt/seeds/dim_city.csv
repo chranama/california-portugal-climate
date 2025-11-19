@@ -1,0 +1,5 @@
+city_id,city_name,country_code,latitude,longitude,timezone,admin1,admin2,population,raw_geocoding_file
+1,Los Angeles,US,34.05223,-118.24368,America/Los_Angeles,California,Los Angeles,3820914,data/raw/geocoding/1_los_angeles.json
+2,San Francisco,US,37.77493,-122.41942,America/Los_Angeles,California,San Francisco County,864816,data/raw/geocoding/2_san_francisco.json
+3,Lisbon,PT,38.71667,-9.13333,Europe/Lisbon,Lisbon,Lisbon,517802,data/raw/geocoding/3_lisbon.json
+4,Porto,PT,41.14961,-8.61099,Europe/Lisbon,Porto,Porto,249633,data/raw/geocoding/4_porto.json

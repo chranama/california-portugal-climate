@@ -1,0 +1,23 @@
+name: "climate_pipeline"
+version: "1.0.0"
+config-version: 2
+
+profile: "climate_pipeline"
+
+# Tell dbt where to find your project components
+model-paths: ["models"]
+analysis-paths: ["analyses"]
+test-paths: ["tests"]
+seed-paths: ["seeds"]
+macro-paths: ["macros"]
+snapshot-paths: ["snapshots"]
+
+# Where dbt will put compiled artifacts
+clean-targets:
+  - "target"
+  - "dbt_modules"
+
+# Default model configs
+models:
+  climate_pipeline:
+    +materialized: view
