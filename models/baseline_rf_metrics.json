@@ -1,0 +1,23 @@
+{
+  "roc_auc": 0.63,
+  "n_test": 537,
+  "class_distribution_test": {
+    "0": 512,
+    "1": 25
+  },
+  "n_train": 1611,
+  "feature_columns": [
+    "anomaly_tmean_c",
+    "roll_mean_3",
+    "roll_mean_6",
+    "roll_std_3",
+    "roll_std_6",
+    "delta_1m",
+    "delta_3m",
+    "max_lagged_corr",
+    "lead_lag_months",
+    "sin_month",
+    "cos_month"
+  ],
+  "target_column": "is_event_next_month"
+}

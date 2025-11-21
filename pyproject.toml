@@ -1,37 +1,42 @@
 [project]
 name = "california-portugal-climate"
 version = "0.1.0"
-description = "Climate comparison pipeline between California and Portugal using Open-Meteo data, DuckDB, dbt, and Jupyter notebooks."
+description = "Climate comparison pipeline between California and Portugal using Open-Meteo, DuckDB, dbt, and notebooks."
 readme = "README.md"
 requires-python = ">=3.9"
 
-# Core runtime dependencies (needed for ingestion + utils)
+# Core runtime + analysis deps
 dependencies = [
     "requests",
     "pyyaml",
     "duckdb",
-]
-
-[project.optional-dependencies]
-# Apps used only for local analysis/visualization
-notebooks = [
     "pandas",
     "matplotlib",
     "jupyter",
-]
-
-[tool.uv]
-# Required for editable installs
-package = true
-
-# Tell uv where your source code lives
-sources = [{ path = "src" }]
-
-[tool.uv.dependency-groups]
-dev = [
-    "pytest",
+    "dbt-core",
+    "dbt-duckdb",
+    "numpy",
+    "scikit-learn",
+    "joblib",
+    "streamlit",
+    "plotly",
+    "pyarrow",
 ]
 
 [project.scripts]
 fetch-geocodes = "climate_pipeline.ingestion.fetch_geocodes:main"
 fetch-daily-weather = "climate_pipeline.ingestion.fetch_daily_weather:main"
+climate-train-baseline = "climate_pipeline.ml.train:main"
+climate-predict-baseline = "climate_pipeline.ml.predict:main"
+climate-run-all = "climate_pipeline.orchestration.pipeline:main"
+
+[tool.uv]
+package = true
+
+[tool.uv.sources]
+local = { path = "src" }
+
+[dependency-groups]
+dev = [
+    "pytest>=8.4.2",
+]

@@ -1,0 +1,211 @@
+version: 2
+
+models:
+  - name: climatology_city_month
+    description: >
+      Long-term monthly climatology (1981–2010) for each city.
+      This is the baseline used for anomaly calculations.
+
+    columns:
+      - name: city_id
+        tests:
+          - not_null
+
+      - name: city_name
+        tests:
+          - not_null
+
+      - name: month
+        tests:
+          - not_null
+          - accepted_values:
+              arguments:
+                values: [1,2,3,4,5,6,7,8,9,10,11,12]
+
+      - name: climatology_tmean_c
+        description: "Baseline mean monthly temperature (°C)"
+
+      - name: climatology_tmean_std_c
+        description: "Std deviation of mean temperature during baseline"
+
+
+  - name: gold_city_month_anomalies
+    description: >
+      Final Gold table of monthly climate anomalies for each city.
+      Includes anomaly values, z-scores, and anomaly flags.
+
+    columns:
+      - name: city_id
+        tests:
+          - not_null
+
+      - name: city_name
+        tests:
+          - not_null
+
+      - name: year
+        tests:
+          - not_null
+
+      - name: month
+        tests:
+          - not_null
+          - accepted_values:
+              arguments:
+                values: [1,2,3,4,5,6,7,8,9,10,11,12]
+
+      - name: anomaly_tmean_c
+        description: "Mean temperature anomaly (°C, relative to climatology)"
+
+      - name: zscore_tmean
+        description: "Standardized anomaly (z-score)"
+
+      - name: anomaly_total_precip_mm
+        description: "Monthly precipitation anomaly (mm)"
+
+      - name: zscore_total_precip
+        description: "Standardized precipitation anomaly (z-score)"
+
+      - name: is_positive_temp_anomaly
+        description: "True if anomaly ≥ +1°C"
+
+      - name: is_negative_temp_anomaly
+        description: "True if anomaly ≤ -1°C"
+
+      - name: is_strong_positive_temp_anomaly
+        description: "True if z-score ≥ +2"
+
+      - name: is_strong_negative_temp_anomaly
+        description: "True if z-score ≤ -2"
+
+  - name: gold_city_anomaly_correlations
+    description: >
+      Pairwise correlation of monthly mean temperature anomalies between
+      all city combinations. Built from gold_city_month_anomalies by joining
+      cities on year/month and calculating Pearson correlation.
+
+    columns:
+
+      - name: city_id_1
+        description: "Primary city ID used in correlation pair"
+        tests:
+          - not_null
+
+      - name: city_name_1
+        description: "Primary city name used in correlation pair"
+        tests:
+          - not_null
+
+      - name: city_id_2
+        description: "Secondary city ID used in correlation pair"
+        tests:
+          - not_null
+
+      - name: city_name_2
+        description: "Secondary city name used in correlation pair"
+        tests:
+          - not_null
+
+      - name: n_observations
+        description: "Number of overlapping monthly observations used to compute correlation"
+        tests:
+          - not_null
+          - dbt_utils.accepted_range:
+              arguments:
+                min_value: 12
+
+      - name: anomaly_correlation
+        description: >
+          Pearson correlation coefficient of monthly temperature anomalies
+          between the two cities. Range: -1 to +1.
+
+        tests:
+          - not_null
+          - dbt_utils.accepted_range:
+              arguments:
+                min_value: -1
+                max_value: 1
+
+  - name: gold_city_anomaly_lags
+    description: >
+      Correlation of temperature anomalies between each city pair at multiple lag offsets
+      (from -6 to +6 months) to measure temporal dependence between regions.
+
+    columns:
+      - name: city_id
+        tests: [not_null]
+      - name: other_city_id
+        tests: [not_null]
+      - name: lag_months
+        tests:
+          - not_null
+          - dbt_utils.accepted_range:
+              arguments:
+                min_value: -6
+                max_value: 6
+      - name: anomaly_correlation
+        tests:
+          - not_null
+          - dbt_utils.accepted_range:
+              arguments:
+                min_value: -1
+                max_value: 1
+      - name: n_observations
+        tests:
+          - not_null
+
+  - name: gold_city_anomaly_events
+    description: >
+      Monthly anomaly events flagged using z-score thresholds.
+      Events include hot, cold, and extreme classifications.
+
+    columns:
+      - name: city_id
+        tests: [not_null]
+      - name: year
+        tests: [not_null]
+      - name: month
+        tests:
+          - not_null
+          - dbt_utils.accepted_range:
+              arguments:
+                min_value: 1
+                max_value: 12
+      - name: temperature_anomaly
+        description: "Monthly mean temperature anomaly (°C)"
+      - name: z_score
+        tests: [not_null]
+      - name: is_hot_event
+        tests: [not_null]
+      - name: is_cold_event
+        tests: [not_null]
+      - name: is_extreme_event
+        tests: [not_null]
+
+  - name: gold_ml_features
+    description: >
+      Machine learning ready dataset containing engineered climate features,
+      rolling statistics, momentum, teleconnection signals, and next-month
+      anomaly event labels.
+
+    columns:
+      - name: city_id
+        tests: [not_null]
+
+      - name: year
+        tests: [not_null]
+
+      - name: month
+        tests:
+          - not_null
+          - dbt_utils.accepted_range:
+              arguments:
+                min_value: 1
+                max_value: 12
+
+      - name: anomaly_tmean_c
+        description: "Monthly mean temperature anomaly"
+
+      - name: is_event_next_month
+        description: "Target variable (1 = extreme hot/cold anomaly next month)"
+        tests: [not_null]

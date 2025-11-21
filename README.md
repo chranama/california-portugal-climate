@@ -1,78 +1,75 @@
-# California–Portugal Climate Pipeline
-### A Data Engineering & Machine Learning Project Using Open-Meteo APIs
+# California–Portugal Climate Pipeline  
+### A Full-Stack Data Engineering, Analytics & Machine Learning System
 
-This project builds a full data engineering, analytics, and machine learning pipeline to compare the climates of four coastal Mediterranean-like cities:
+This project implements an end-to-end climate data platform comparing four coastal Mediterranean-like cities:
 
-- Los Angeles (US)
-- San Francisco (US)
-- Lisbon (Portugal)
+- Los Angeles (US)  
+- San Francisco (US)  
+- Lisbon (Portugal)  
 - Porto (Portugal)
 
-Using daily historical weather data from 1980-01-01 to 2024-12-31, the pipeline analyzes temperature cycles, dew-point trends, precipitation patterns, solar radiation, coastal climate similarities, and long-term climate variability. It also prepares ML-ready features for forecasting tasks such as next-day maximum temperature.
+Using daily historical weather data from 1980–2024, the system ingests, transforms, models, and analyzes long-term climate patterns and anomalies, and produces:
 
-The project integrates:
+- A production-ready DuckDB warehouse  
+- A multi-layer dbt pipeline (bronze → silver → gold)  
+- An anomaly detection framework  
+- An ML-ready feature store  
+- A baseline climate anomaly model  
+- A Streamlit analytics dashboard  
+- An orchestration CLI  
+- Automated test coverage  
 
-- Open-Meteo Geocoding API  
-- Open-Meteo Historical Weather API  
+This architecture is inspired by **modern data engineering standards (medallion architecture)** used in production systems.
+
+---
+
+## Architecture Overview
+
+Open-Meteo APIs → Raw JSON → DuckDB  
+                      ↓  
+                   dbt (Bronze → Silver → Gold)  
+                      ↓  
+  Anomaly / ML Features / Correlations  
+                      ↓  
+    ML Models + Streamlit Dashboard  
+                      ↓  
+  Single-Command Orchestration + Tests  
+
+---
+
+## Tech Stack
+
+- Open-Meteo APIs (Geocoding + Historical Weather)  
 - DuckDB (analytical warehouse)  
-- dbt + dbt-duckdb (Bronze → Silver → Gold transformations)  
-- uv (Python environment and project management)  
-- YAML-based configuration system  
-
-The project follows a modern medallion architecture (bronze/silver/gold) used in contemporary data engineering workflows.
-
----
-
-## 0. Requirements
-
-- Python 3.10+  
-- uv (for environment and dependency management)  
-- Internet access (for Open-Meteo API calls)
-
-Install dependencies and build the local package:
-
-    uv sync
+- dbt + dbt-duckdb (ELT / transformation)  
+- uv (Python env + package runner)  
+- scikit-learn (baseline ML modeling)  
+- Streamlit + Plotly (dashboard)  
+- pytest (testing)  
+- YAML-based config system  
+- CLI orchestration layer  
 
 ---
 
-## 1. Pipeline Overview
+## Data Overview
 
-High-level flow:
+### Cities
 
-    Geocoding API → dim_city seed (CSV)
-    Historical Weather API → raw JSON → Bronze (dbt) → Silver/Gold (future)
-    Bronze → analytics, ML features, and visualizations (future)
+| city_id | city_name | country_code |
+|--------:|----------|--------------|
+| 1 | Los Angeles | US |
+| 2 | San Francisco | US |
+| 3 | Lisbon | PT |
+| 4 | Porto | PT |
 
-The Bronze layer is currently implemented as a DuckDB table:
+Coordinates, timezones, and metadata are obtained via the Open-Meteo Geocoding API and stored in:
 
-- main.dim_city (dbt seed)
-- main.bronze_daily_weather (dbt model)
+- data/raw/geocoding/  
+- dbt/seeds/dim_city.csv  
 
----
+### Daily Variables
 
-## 2. Data Specification
-
-### 2.1 Cities
-
-The pipeline includes four target cities:
-
-| city_id | city_name     | country_code |
-|--------:|---------------|--------------|
-| 1       | Los Angeles   | US           |
-| 2       | San Francisco | US           |
-| 3       | Lisbon        | PT           |
-| 4       | Porto         | PT           |
-
-City coordinates and metadata (latitude, longitude, timezone, region) are retrieved dynamically from the Open-Meteo Geocoding API and stored in:
-
-- data/raw/geocoding/*.json (raw API responses)
-- dbt/seeds/dim_city.csv (seed table for dbt)
-
----
-
-### 2.2 Daily Variables (Historical Weather API)
-
-The following daily variables are ingested for each city:
+From Open-Meteo Historical API:
 
 - temperature_2m_max  
 - temperature_2m_min  
@@ -82,267 +79,229 @@ The following daily variables are ingested for each city:
 - wind_speed_10m_max  
 - shortwave_radiation_sum  
 
-These variables support climate comparison, humidity/comfort analysis, precipitation regimes, solar radiation patterns, and ML feature engineering.
-
----
-
-### 2.3 Time Window
-
-The ingestion window is:
+Time window:
 
     1980-01-01 → 2024-12-31
 
-This period provides enough temporal depth to analyze both weather variability and long-term climate tendencies.
+All raw data is stored as JSON and preserved unchanged.
 
 ---
 
-### 2.4 Batching Strategy
+## Warehouse Models (dbt)
 
-API requests are executed in city–year batches to remain polite to the API and allow checkpointing.
+### Bronze Layer – `main.bronze_daily_weather`
 
-Raw responses are stored as:
+One row per:
 
-    data/raw/open_meteo_daily/<city_slug>/<year>.json
-
-Examples:
-
-- data/raw/open_meteo_daily/los_angeles/1980.json  
-- data/raw/open_meteo_daily/san_francisco/1995.json  
-
----
-
-### 2.5 Raw Data Format
-
-All raw historical responses are stored as JSON, exactly as returned by the API.
-
-No renaming or transformation occurs in the ingestion scripts. dbt handles flattening and normalization in the Bronze layer.
-
----
-
-## 3. Warehouse Schema & Transformation Strategy
-
-### 3.1 Bronze Layer: `bronze_daily_weather`
-
-The Bronze layer stores flattened daily weather records, one row per:
-
-- city_id  
+- city  
 - date  
 
-Columns (DuckDB table main.bronze_daily_weather):
+Flattened from raw JSON using:
 
-- city_id (INTEGER)  
-- city_name (TEXT)  
-- country_code (TEXT)  
-- city_slug (TEXT)  
-- year (INTEGER)  
-- date (DATE)  
-- temperature_2m_max (DOUBLE)  
-- temperature_2m_min (DOUBLE)  
-- temperature_2m_mean (DOUBLE)  
-- dew_point_2m_mean (DOUBLE)  
-- precipitation_sum (DOUBLE)  
-- wind_speed_10m_max (DOUBLE)  
-- shortwave_radiation_sum (DOUBLE)  
-
-Implementation notes:
-
-- dbt model: dbt/models/bronze/bronze_daily_weather.sql  
-- Uses DuckDB’s read_json_auto to read all JSON files  
-- Extracts city_slug and year from the filename  
-- Uses array indexing to explode daily arrays into one row per date  
-- Joins to dim_city via a slugified city_name to attach metadata  
+- read_json_auto  
+- Array unnesting  
+- Join to dim_city  
 
 ---
 
-### 3.2 Transformation Strategy
+### Silver Layer
 
-- Python ingestion scripts only download JSON and write to disk.  
-- dbt + DuckDB handle:
-  - Flattening the JSON into rows  
-  - Joining to dim_city  
-  - Building Bronze tables suitable for downstream analytics  
+**main.silver_daily_weather_features**
 
-Future work (Silver/Gold):
+Adds:
 
-- Silver: cleaned daily tables with flags (heat days, tropical nights, etc.)  
-- Gold: monthly/seasonal climatologies for California vs Portugal storytelling, plus ML-ready feature tables.
+- heat day flags  
+- tropical night flags  
+- heavy precipitation day flags  
+- seasonal indicators  
 
----
+**main.silver_monthly_climate**
 
-## 4. Configuration & Tooling
+Monthly aggregation:
 
-### 4.1 Environment (uv)
-
-The Python environment is managed via uv, which provides:
-
-- Reproducible environments  
-- Fast installs  
-- Project-local .venv
-
-To install dependencies:
-
-    uv sync
-
-To run a CLI entrypoint:
-
-    uv run <command_name>
+- avg temperature  
+- total precipitation  
+- heat/tropical night counts  
+- radiation + wind summaries  
 
 ---
 
-### 4.2 YAML Configuration
+### Gold Layer
 
-Project settings and metadata live in:
+**main.climatology_city_month**  
+Canonical monthly climate baseline per city.
 
-- src/config/settings.yaml  
-- src/config/cities.yaml  
+**main.gold_city_month_anomalies**
 
-They specify:
+Includes:
 
-- API base URLs and daily variable list  
-- Data directories  
-- Time window (start_date, end_date)  
-- City IDs, names, and country codes  
+- anomaly_tmean_c  
+- zscore_tmean_c  
+- is_positive_temp_anomaly  
+- is_negative_temp_anomaly  
+- is_strong_positive_temp_anomaly  
+- is_strong_negative_temp_anomaly  
+
+**main.gold_city_anomaly_lags**
+
+- 1–3 month deltas  
+- Rolling means  
+
+**main.gold_city_anomaly_correlations**
+
+- Cross-city correlation values  
+
+**main.gold_city_anomaly_events**
+
+- Binary anomaly classification  
+
+**main.gold_ml_features**
+
+- anomaly values  
+- lag values  
+- rolling metrics  
+- classification flags  
+
+Used for ML training.
 
 ---
 
-### 4.3 Logging
+## Machine Learning Layer
 
-Ingestion scripts log to:
+Baseline model:
 
-- logs/ingestion.log  
+- RandomForestClassifier  
+- Target: is_positive_temp_anomaly  
+- Time-based split  
+- Imbalanced realistic climatology
 
-Logs include:
+Outputs:
 
-- Geocoding requests and results  
-- Historical weather API calls  
-- File write locations  
-- Retry/backoff messages if rate-limited
+- models/baseline_rf.pkl  
+- models/baseline_rf_metrics.json  
+
+Run:
+
+    uv run climate-train-baseline
 
 ---
 
-## 5. Directory Structure
+## Streamlit Dashboard
 
-Top-level structure (simplified):
+Location:
+
+    dashboards/streamlit/app.py
+
+Run:
+
+    uv run streamlit run dashboards/streamlit/app.py
+
+Includes:
+
+- City selector  
+- Metric selector  
+- Monthly trends  
+- Climate comparison  
+- Anomaly visualization  
+
+Uses DuckDB as backend.
+
+---
+
+## Orchestration
+
+Run everything:
+
+    uv run climate-run-all
+
+Run with tests:
+
+    uv run climate-run-all --with-tests
+
+This performs:
+
+1. DuckDB lock check  
+2. dbt models (all layers)  
+3. ML training  
+4. pytest (optional)  
+
+This is a **production-style orchestration pipeline**.
+
+---
+
+## Testing
+
+Run:
+
+    uv run pytest
+
+Checks:
+
+- Gold schema correctness  
+- ML feature completeness  
+- No NaN leakage  
+- Table integrity  
+
+Located in:
+
+    tests/
+
+---
+
+## Project Structure (Simplified)
 
     california-portugal-climate/
-    ├── README.md
-    ├── pyproject.toml
-    ├── uv.lock
-    ├── .gitignore
-    ├── data/
-    │   ├── raw/
-    │   │   ├── geocoding/
-    │   │   └── open_meteo_daily/
-    │   └── warehouse/
-    │       └── climate.duckdb
-    ├── dbt/
-    │   ├── dbt_project.yml
-    │   ├── profiles.yml
-    │   ├── models/
-    │   │   └── bronze/
-    │   │       └── bronze_daily_weather.sql
-    │   ├── seeds/
-    │   │   └── dim_city.csv
-    │   ├── macros/
-    │   ├── analyses/
-    │   ├── snapshots/
-    │   └── tests/
-    ├── src/
-    │   ├── climate_pipeline/
-    │   │   ├── ingestion/
-    │   │   │   ├── geocoding.py
-    │   │   │   └── fetch_daily_weather.py
-    │   │   ├── utils/
-    │   │   │   └── open_meteo_client.py
-    │   │   ├── pipelines/
-    │   │   ├── features/
-    │   │   └── ml/
-    │   └── config/
-    │       ├── settings.yaml
-    │       └── cities.yaml
-    ├── dashboards/
-    ├── orchestration/
-    ├── logs/
-    └── tests/
+        README.md
+        pyproject.toml
+        uv.lock
+        data/
+            raw/
+            warehouse/
+                climate.duckdb
+        dbt/
+            models/
+            seeds/
+            macros/
+        src/
+            climate_pipeline/
+                ingestion/
+                ml/
+                orchestration/
+            config/
+        dashboards/
+        tests/
+        logs/
 
 ---
 
-## 6. Running the Pipeline
+## Quick Start
 
-### 6.1 Step 1 — Geocode cities
-
-From the project root:
-
-    uv run geocode-cities
-
-This:
-
-- Calls the Open-Meteo Geocoding API for each city in src/config/cities.yaml  
-- Writes raw geocoding JSON to data/raw/geocoding/  
-- Writes dbt/seeds/dim_city.csv  
+    uv sync
+    uv run climate-run-all --with-tests
+    uv run streamlit run dashboards/streamlit/app.py
 
 ---
 
-### 6.2 Step 2 — Fetch daily historical weather
+## What This Project Demonstrates
 
-From the project root:
+- Modern data stack usage  
+- End-to-end pipelines  
+- Feature engineering for climate  
+- Anomaly detection  
+- Cross-region climate analysis  
+- Model training & monitoring  
+- Dashboard delivery  
+- Orchestration and CI readiness  
 
-    uv run fetch-daily-weather
-
-This:
-
-- Reads dim_city.csv and src/config/settings.yaml  
-- Loops over all configured years (1980–2024) for each city  
-- Obtains daily historical weather via the Open-Meteo Archive API  
-- Writes JSON to data/raw/open_meteo_daily/<city_slug>/<year>.json  
-- Is idempotent: existing files are skipped  
-
-The OpenMeteoClient includes a simple retry with exponential backoff for HTTP 429 (Too Many Requests).
+This is a **complete, production-minded data system** — far beyond a simple weather dashboard.
 
 ---
 
-### 6.3 Step 3 — Build the warehouse (dbt + DuckDB)
+## Planned Enhancements
 
-From the project root, first ensure the DuckDB directory exists:
-
-    mkdir -p data/warehouse
-
-Then from the dbt/ directory:
-
-    cd dbt
-    export DBT_PROFILES_DIR=.
-    uv run dbt seed
-    uv run dbt run --select bronze_daily_weather
-
-This:
-
-- Seeds dim_city into the DuckDB database at data/warehouse/climate.duckdb  
-- Builds main.bronze_daily_weather from the raw JSON files  
-
-You can inspect the database with any DuckDB client, or via DuckDB’s CLI.
-
----
-
-## 7. Future Work
-
-Planned extensions:
-
-- Silver-layer models:
-  - Daily tables with additional flags (heat days, tropical nights, etc.)
-  - Monthly and seasonal climatologies per city  
-- Gold-layer models:
-  - Long-term climate profiles comparing California vs Portugal  
-  - Feature tables for ML models (e.g., temperature forecasting)  
-- Streamlit dashboards and visualizations  
-- Optional sea surface temperature (SST) integration from public NOAA/NASA APIs.  
-
----
-
-## 8. Attribution
-
-This project uses:
-
-- Open-Meteo Geocoding API  
-- Open-Meteo Historical Weather API  
-
-Data © Open-Meteo (CC-BY-4.0).
+- Transformer / LSTM temporal models  
+- Extreme event classifiers  
+- Correlation heatmaps  
+- SST (sea surface temperature) integration  
+- Docker + cloud deployment  
+- Public dashboard hosting 

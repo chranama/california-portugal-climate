@@ -1,0 +1,34 @@
+version: 2
+
+models:
+  - name: bronze_daily_weather
+    description: >
+      Raw daily weather observations flattened from the Open-Meteo JSON API.
+      Each row represents one city on one day.
+
+    columns:
+      - name: city_id
+        tests:
+          - not_null
+
+      - name: date
+        tests:
+          - not_null
+
+      - name: temperature_2m_max
+        description: "Maximum daily temperature in °C"
+
+      - name: temperature_2m_min
+        description: "Minimum daily temperature in °C"
+
+      - name: temperature_2m_mean
+        description: "Mean daily temperature in °C"
+
+      - name: precipitation_sum
+        description: "Total daily precipitation in mm"
+
+      - name: wind_speed_10m_max
+        description: "Maximum daily wind speed at 10m (m/s)"
+
+      - name: shortwave_radiation_sum
+        description: "Total daily shortwave solar radiation (MJ/m²)"
