@@ -1,0 +1,8 @@
+version: 2
+
+sources:
+  - name: main              # this is your DuckDB schema name
+    description: "Primary DuckDB schema for climate pipeline"
+    tables:
+      - name: pipeline_runs
+        description: "Orchestration run-level metadata logged from Prefect/DuckDB"

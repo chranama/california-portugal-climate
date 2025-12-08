@@ -1,6 +1,15 @@
 {{ config(
-    materialized = 'table'
+    materialized = 'incremental',
+    unique_key   = ['city_id', 'date']
 ) }}
+
+{# ---------------------------------------------
+  Path to raw JSON files
+  --------------------------------------------- #}
+
+{# Use CLIMATE_DATA_ROOT from env, defaulting to "data" if unset #}
+{% set data_root = env_var('CLIMATE_DATA_ROOT', 'data') %}
+{% set raw_weather_dir = data_root ~ '/raw/open_meteo_daily' %}
 
 -- Bronze layer: Flatten Open-Meteo daily JSON into one row per city/date.
 
@@ -18,7 +27,7 @@ WITH raw_json AS (
         daily.precipitation_sum       AS precip_list,
         daily.wind_speed_10m_max      AS wind_list,
         daily.shortwave_radiation_sum AS sw_list
-    FROM read_json_auto('/Users/chranama/portfolio/california-portugal-climate/data/raw/open_meteo_daily/*/*.json')
+    FROM read_json_auto('{{ raw_weather_dir }}/*/*.json')
 
 ),
 
@@ -84,3 +93,6 @@ joined AS (
 
 SELECT *
 FROM joined
+{% if is_incremental() %}
+WHERE date > (SELECT max(date) FROM {{ this }})
+{% endif %}

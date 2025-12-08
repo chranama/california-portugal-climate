@@ -21,6 +21,7 @@ dependencies = [
     "streamlit",
     "plotly",
     "pyarrow",
+    "prefect",
 ]
 
 [project.scripts]
@@ -29,6 +30,10 @@ fetch-daily-weather = "climate_pipeline.ingestion.fetch_daily_weather:main"
 climate-train-baseline = "climate_pipeline.ml.train:main"
 climate-predict-baseline = "climate_pipeline.ml.predict:main"
 climate-run-all = "climate_pipeline.orchestration.pipeline:main"
+climate-prefect-daily = "climate_pipeline.orchestration.prefect_flow:daily_climate_flow"
+climate-prefect-backfill = "climate_pipeline.orchestration.prefect_flow:backfill_climate_flow"
+climate-dbt-build = "climate_pipeline.dbt_cli:build"
+climate-dbt-docs = "climate_pipeline.dbt_cli:docs"
 
 [tool.uv]
 package = true

@@ -1,0 +1,26 @@
+version: 2
+
+models:
+  - name: pipeline_runs
+    description: "Model exposing pipeline run metadata for analysis and docs"
+    columns:
+      - name: id
+        description: "Run identifier (DuckDB sequence-backed)"
+        tests:
+          - not_null
+      - name: flow_name
+        description: "Prefect flow name"
+      - name: run_mode
+        description: "daily or backfill"
+      - name: status
+        description: "high-level outcome of the run"
+      - name: started_at
+        description: "UTC timestamp when the flow started"
+        tests:
+          - not_null
+      - name: finished_at
+        description: "UTC timestamp when the flow finished"
+      - name: rows_bronze
+        description: "Row count in bronze_daily_weather during this run"
+      - name: rows_gold_ml
+        description: "Row count in gold_ml_features during this run"

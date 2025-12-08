@@ -616,3 +616,497 @@
 2025-11-18 23:20:30,669 [INFO] fetch_daily_weather - Requesting daily history for Porto year=2024 (2024-01-01 → 2024-12-31)
 2025-11-18 23:20:30,670 [INFO] climate_pipeline.utils.open_meteo_client - Fetching daily history lat=41.1496 lon=-8.6110 2024-01-01 → 2024-12-31 (attempt 1)
 2025-11-18 23:20:31,365 [INFO] fetch_daily_weather - Wrote data/raw/open_meteo_daily/porto/2024.json
+2025-12-08 14:03:56,669 [INFO] fetch_daily_weather - Loaded 4 cities from dim_city.csv
+2025-12-08 14:03:56,670 [INFO] fetch_daily_weather - Backfill mode: fetching daily data for years: [1980, 1981, 1982, 1983, 1984, 1985, 1986, 1987, 1988, 1989, 1990, 1991, 1992, 1993, 1994, 1995, 1996, 1997, 1998, 1999, 2000, 2001, 2002, 2003, 2004, 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2013, 2014, 2015, 2016, 2017, 2018, 2019, 2020, 2021, 2022, 2023, 2024]
+2025-12-08 14:03:56,670 [INFO] fetch_daily_weather - Starting downloads for city_id=1 name=Los Angeles
+2025-12-08 14:03:56,670 [INFO] fetch_daily_weather - Skipping existing file for Los Angeles 1980: data/raw/open_meteo_daily/los_angeles/1980.json
+2025-12-08 14:03:56,670 [INFO] fetch_daily_weather - Skipping existing file for Los Angeles 1981: data/raw/open_meteo_daily/los_angeles/1981.json
+2025-12-08 14:03:56,670 [INFO] fetch_daily_weather - Skipping existing file for Los Angeles 1982: data/raw/open_meteo_daily/los_angeles/1982.json
+2025-12-08 14:03:56,670 [INFO] fetch_daily_weather - Skipping existing file for Los Angeles 1983: data/raw/open_meteo_daily/los_angeles/1983.json
+2025-12-08 14:03:56,670 [INFO] fetch_daily_weather - Skipping existing file for Los Angeles 1984: data/raw/open_meteo_daily/los_angeles/1984.json
+2025-12-08 14:03:56,670 [INFO] fetch_daily_weather - Skipping existing file for Los Angeles 1985: data/raw/open_meteo_daily/los_angeles/1985.json
+2025-12-08 14:03:56,670 [INFO] fetch_daily_weather - Skipping existing file for Los Angeles 1986: data/raw/open_meteo_daily/los_angeles/1986.json
+2025-12-08 14:03:56,671 [INFO] fetch_daily_weather - Skipping existing file for Los Angeles 1987: data/raw/open_meteo_daily/los_angeles/1987.json
+2025-12-08 14:03:56,671 [INFO] fetch_daily_weather - Skipping existing file for Los Angeles 1988: data/raw/open_meteo_daily/los_angeles/1988.json
+2025-12-08 14:03:56,671 [INFO] fetch_daily_weather - Skipping existing file for Los Angeles 1989: data/raw/open_meteo_daily/los_angeles/1989.json
+2025-12-08 14:03:56,671 [INFO] fetch_daily_weather - Skipping existing file for Los Angeles 1990: data/raw/open_meteo_daily/los_angeles/1990.json
+2025-12-08 14:03:56,671 [INFO] fetch_daily_weather - Skipping existing file for Los Angeles 1991: data/raw/open_meteo_daily/los_angeles/1991.json
+2025-12-08 14:03:56,671 [INFO] fetch_daily_weather - Skipping existing file for Los Angeles 1992: data/raw/open_meteo_daily/los_angeles/1992.json
+2025-12-08 14:03:56,671 [INFO] fetch_daily_weather - Skipping existing file for Los Angeles 1993: data/raw/open_meteo_daily/los_angeles/1993.json
+2025-12-08 14:03:56,671 [INFO] fetch_daily_weather - Skipping existing file for Los Angeles 1994: data/raw/open_meteo_daily/los_angeles/1994.json
+2025-12-08 14:03:56,671 [INFO] fetch_daily_weather - Skipping existing file for Los Angeles 1995: data/raw/open_meteo_daily/los_angeles/1995.json
+2025-12-08 14:03:56,671 [INFO] fetch_daily_weather - Skipping existing file for Los Angeles 1996: data/raw/open_meteo_daily/los_angeles/1996.json
+2025-12-08 14:03:56,671 [INFO] fetch_daily_weather - Skipping existing file for Los Angeles 1997: data/raw/open_meteo_daily/los_angeles/1997.json
+2025-12-08 14:03:56,671 [INFO] fetch_daily_weather - Skipping existing file for Los Angeles 1998: data/raw/open_meteo_daily/los_angeles/1998.json
+2025-12-08 14:03:56,671 [INFO] fetch_daily_weather - Skipping existing file for Los Angeles 1999: data/raw/open_meteo_daily/los_angeles/1999.json
+2025-12-08 14:03:56,671 [INFO] fetch_daily_weather - Skipping existing file for Los Angeles 2000: data/raw/open_meteo_daily/los_angeles/2000.json
+2025-12-08 14:03:56,671 [INFO] fetch_daily_weather - Skipping existing file for Los Angeles 2001: data/raw/open_meteo_daily/los_angeles/2001.json
+2025-12-08 14:03:56,671 [INFO] fetch_daily_weather - Skipping existing file for Los Angeles 2002: data/raw/open_meteo_daily/los_angeles/2002.json
+2025-12-08 14:03:56,671 [INFO] fetch_daily_weather - Skipping existing file for Los Angeles 2003: data/raw/open_meteo_daily/los_angeles/2003.json
+2025-12-08 14:03:56,671 [INFO] fetch_daily_weather - Skipping existing file for Los Angeles 2004: data/raw/open_meteo_daily/los_angeles/2004.json
+2025-12-08 14:03:56,671 [INFO] fetch_daily_weather - Skipping existing file for Los Angeles 2005: data/raw/open_meteo_daily/los_angeles/2005.json
+2025-12-08 14:03:56,671 [INFO] fetch_daily_weather - Skipping existing file for Los Angeles 2006: data/raw/open_meteo_daily/los_angeles/2006.json
+2025-12-08 14:03:56,671 [INFO] fetch_daily_weather - Skipping existing file for Los Angeles 2007: data/raw/open_meteo_daily/los_angeles/2007.json
+2025-12-08 14:03:56,672 [INFO] fetch_daily_weather - Skipping existing file for Los Angeles 2008: data/raw/open_meteo_daily/los_angeles/2008.json
+2025-12-08 14:03:56,672 [INFO] fetch_daily_weather - Skipping existing file for Los Angeles 2009: data/raw/open_meteo_daily/los_angeles/2009.json
+2025-12-08 14:03:56,672 [INFO] fetch_daily_weather - Skipping existing file for Los Angeles 2010: data/raw/open_meteo_daily/los_angeles/2010.json
+2025-12-08 14:03:56,672 [INFO] fetch_daily_weather - Skipping existing file for Los Angeles 2011: data/raw/open_meteo_daily/los_angeles/2011.json
+2025-12-08 14:03:56,672 [INFO] fetch_daily_weather - Skipping existing file for Los Angeles 2012: data/raw/open_meteo_daily/los_angeles/2012.json
+2025-12-08 14:03:56,672 [INFO] fetch_daily_weather - Skipping existing file for Los Angeles 2013: data/raw/open_meteo_daily/los_angeles/2013.json
+2025-12-08 14:03:56,672 [INFO] fetch_daily_weather - Skipping existing file for Los Angeles 2014: data/raw/open_meteo_daily/los_angeles/2014.json
+2025-12-08 14:03:56,672 [INFO] fetch_daily_weather - Skipping existing file for Los Angeles 2015: data/raw/open_meteo_daily/los_angeles/2015.json
+2025-12-08 14:03:56,672 [INFO] fetch_daily_weather - Skipping existing file for Los Angeles 2016: data/raw/open_meteo_daily/los_angeles/2016.json
+2025-12-08 14:03:56,672 [INFO] fetch_daily_weather - Skipping existing file for Los Angeles 2017: data/raw/open_meteo_daily/los_angeles/2017.json
+2025-12-08 14:03:56,672 [INFO] fetch_daily_weather - Skipping existing file for Los Angeles 2018: data/raw/open_meteo_daily/los_angeles/2018.json
+2025-12-08 14:03:56,672 [INFO] fetch_daily_weather - Skipping existing file for Los Angeles 2019: data/raw/open_meteo_daily/los_angeles/2019.json
+2025-12-08 14:03:56,672 [INFO] fetch_daily_weather - Skipping existing file for Los Angeles 2020: data/raw/open_meteo_daily/los_angeles/2020.json
+2025-12-08 14:03:56,672 [INFO] fetch_daily_weather - Skipping existing file for Los Angeles 2021: data/raw/open_meteo_daily/los_angeles/2021.json
+2025-12-08 14:03:56,672 [INFO] fetch_daily_weather - Skipping existing file for Los Angeles 2022: data/raw/open_meteo_daily/los_angeles/2022.json
+2025-12-08 14:03:56,672 [INFO] fetch_daily_weather - Skipping existing file for Los Angeles 2023: data/raw/open_meteo_daily/los_angeles/2023.json
+2025-12-08 14:03:56,672 [INFO] fetch_daily_weather - Skipping existing file for Los Angeles 2024: data/raw/open_meteo_daily/los_angeles/2024.json
+2025-12-08 14:03:56,672 [INFO] fetch_daily_weather - Starting downloads for city_id=2 name=San Francisco
+2025-12-08 14:03:56,672 [INFO] fetch_daily_weather - Skipping existing file for San Francisco 1980: data/raw/open_meteo_daily/san_francisco/1980.json
+2025-12-08 14:03:56,672 [INFO] fetch_daily_weather - Skipping existing file for San Francisco 1981: data/raw/open_meteo_daily/san_francisco/1981.json
+2025-12-08 14:03:56,672 [INFO] fetch_daily_weather - Skipping existing file for San Francisco 1982: data/raw/open_meteo_daily/san_francisco/1982.json
+2025-12-08 14:03:56,672 [INFO] fetch_daily_weather - Skipping existing file for San Francisco 1983: data/raw/open_meteo_daily/san_francisco/1983.json
+2025-12-08 14:03:56,672 [INFO] fetch_daily_weather - Skipping existing file for San Francisco 1984: data/raw/open_meteo_daily/san_francisco/1984.json
+2025-12-08 14:03:56,672 [INFO] fetch_daily_weather - Skipping existing file for San Francisco 1985: data/raw/open_meteo_daily/san_francisco/1985.json
+2025-12-08 14:03:56,673 [INFO] fetch_daily_weather - Skipping existing file for San Francisco 1986: data/raw/open_meteo_daily/san_francisco/1986.json
+2025-12-08 14:03:56,673 [INFO] fetch_daily_weather - Skipping existing file for San Francisco 1987: data/raw/open_meteo_daily/san_francisco/1987.json
+2025-12-08 14:03:56,673 [INFO] fetch_daily_weather - Skipping existing file for San Francisco 1988: data/raw/open_meteo_daily/san_francisco/1988.json
+2025-12-08 14:03:56,673 [INFO] fetch_daily_weather - Skipping existing file for San Francisco 1989: data/raw/open_meteo_daily/san_francisco/1989.json
+2025-12-08 14:03:56,673 [INFO] fetch_daily_weather - Skipping existing file for San Francisco 1990: data/raw/open_meteo_daily/san_francisco/1990.json
+2025-12-08 14:03:56,673 [INFO] fetch_daily_weather - Skipping existing file for San Francisco 1991: data/raw/open_meteo_daily/san_francisco/1991.json
+2025-12-08 14:03:56,673 [INFO] fetch_daily_weather - Skipping existing file for San Francisco 1992: data/raw/open_meteo_daily/san_francisco/1992.json
+2025-12-08 14:03:56,673 [INFO] fetch_daily_weather - Skipping existing file for San Francisco 1993: data/raw/open_meteo_daily/san_francisco/1993.json
+2025-12-08 14:03:56,673 [INFO] fetch_daily_weather - Skipping existing file for San Francisco 1994: data/raw/open_meteo_daily/san_francisco/1994.json
+2025-12-08 14:03:56,673 [INFO] fetch_daily_weather - Skipping existing file for San Francisco 1995: data/raw/open_meteo_daily/san_francisco/1995.json
+2025-12-08 14:03:56,673 [INFO] fetch_daily_weather - Skipping existing file for San Francisco 1996: data/raw/open_meteo_daily/san_francisco/1996.json
+2025-12-08 14:03:56,673 [INFO] fetch_daily_weather - Skipping existing file for San Francisco 1997: data/raw/open_meteo_daily/san_francisco/1997.json
+2025-12-08 14:03:56,673 [INFO] fetch_daily_weather - Skipping existing file for San Francisco 1998: data/raw/open_meteo_daily/san_francisco/1998.json
+2025-12-08 14:03:56,673 [INFO] fetch_daily_weather - Skipping existing file for San Francisco 1999: data/raw/open_meteo_daily/san_francisco/1999.json
+2025-12-08 14:03:56,673 [INFO] fetch_daily_weather - Skipping existing file for San Francisco 2000: data/raw/open_meteo_daily/san_francisco/2000.json
+2025-12-08 14:03:56,673 [INFO] fetch_daily_weather - Skipping existing file for San Francisco 2001: data/raw/open_meteo_daily/san_francisco/2001.json
+2025-12-08 14:03:56,673 [INFO] fetch_daily_weather - Skipping existing file for San Francisco 2002: data/raw/open_meteo_daily/san_francisco/2002.json
+2025-12-08 14:03:56,673 [INFO] fetch_daily_weather - Skipping existing file for San Francisco 2003: data/raw/open_meteo_daily/san_francisco/2003.json
+2025-12-08 14:03:56,673 [INFO] fetch_daily_weather - Skipping existing file for San Francisco 2004: data/raw/open_meteo_daily/san_francisco/2004.json
+2025-12-08 14:03:56,673 [INFO] fetch_daily_weather - Skipping existing file for San Francisco 2005: data/raw/open_meteo_daily/san_francisco/2005.json
+2025-12-08 14:03:56,673 [INFO] fetch_daily_weather - Skipping existing file for San Francisco 2006: data/raw/open_meteo_daily/san_francisco/2006.json
+2025-12-08 14:03:56,673 [INFO] fetch_daily_weather - Skipping existing file for San Francisco 2007: data/raw/open_meteo_daily/san_francisco/2007.json
+2025-12-08 14:03:56,673 [INFO] fetch_daily_weather - Skipping existing file for San Francisco 2008: data/raw/open_meteo_daily/san_francisco/2008.json
+2025-12-08 14:03:56,673 [INFO] fetch_daily_weather - Skipping existing file for San Francisco 2009: data/raw/open_meteo_daily/san_francisco/2009.json
+2025-12-08 14:03:56,673 [INFO] fetch_daily_weather - Skipping existing file for San Francisco 2010: data/raw/open_meteo_daily/san_francisco/2010.json
+2025-12-08 14:03:56,673 [INFO] fetch_daily_weather - Skipping existing file for San Francisco 2011: data/raw/open_meteo_daily/san_francisco/2011.json
+2025-12-08 14:03:56,673 [INFO] fetch_daily_weather - Skipping existing file for San Francisco 2012: data/raw/open_meteo_daily/san_francisco/2012.json
+2025-12-08 14:03:56,673 [INFO] fetch_daily_weather - Skipping existing file for San Francisco 2013: data/raw/open_meteo_daily/san_francisco/2013.json
+2025-12-08 14:03:56,673 [INFO] fetch_daily_weather - Skipping existing file for San Francisco 2014: data/raw/open_meteo_daily/san_francisco/2014.json
+2025-12-08 14:03:56,673 [INFO] fetch_daily_weather - Skipping existing file for San Francisco 2015: data/raw/open_meteo_daily/san_francisco/2015.json
+2025-12-08 14:03:56,673 [INFO] fetch_daily_weather - Skipping existing file for San Francisco 2016: data/raw/open_meteo_daily/san_francisco/2016.json
+2025-12-08 14:03:56,673 [INFO] fetch_daily_weather - Skipping existing file for San Francisco 2017: data/raw/open_meteo_daily/san_francisco/2017.json
+2025-12-08 14:03:56,674 [INFO] fetch_daily_weather - Skipping existing file for San Francisco 2018: data/raw/open_meteo_daily/san_francisco/2018.json
+2025-12-08 14:03:56,674 [INFO] fetch_daily_weather - Skipping existing file for San Francisco 2019: data/raw/open_meteo_daily/san_francisco/2019.json
+2025-12-08 14:03:56,674 [INFO] fetch_daily_weather - Skipping existing file for San Francisco 2020: data/raw/open_meteo_daily/san_francisco/2020.json
+2025-12-08 14:03:56,674 [INFO] fetch_daily_weather - Skipping existing file for San Francisco 2021: data/raw/open_meteo_daily/san_francisco/2021.json
+2025-12-08 14:03:56,674 [INFO] fetch_daily_weather - Skipping existing file for San Francisco 2022: data/raw/open_meteo_daily/san_francisco/2022.json
+2025-12-08 14:03:56,674 [INFO] fetch_daily_weather - Skipping existing file for San Francisco 2023: data/raw/open_meteo_daily/san_francisco/2023.json
+2025-12-08 14:03:56,674 [INFO] fetch_daily_weather - Skipping existing file for San Francisco 2024: data/raw/open_meteo_daily/san_francisco/2024.json
+2025-12-08 14:03:56,674 [INFO] fetch_daily_weather - Starting downloads for city_id=3 name=Lisbon
+2025-12-08 14:03:56,674 [INFO] fetch_daily_weather - Skipping existing file for Lisbon 1980: data/raw/open_meteo_daily/lisbon/1980.json
+2025-12-08 14:03:56,674 [INFO] fetch_daily_weather - Skipping existing file for Lisbon 1981: data/raw/open_meteo_daily/lisbon/1981.json
+2025-12-08 14:03:56,674 [INFO] fetch_daily_weather - Skipping existing file for Lisbon 1982: data/raw/open_meteo_daily/lisbon/1982.json
+2025-12-08 14:03:56,674 [INFO] fetch_daily_weather - Skipping existing file for Lisbon 1983: data/raw/open_meteo_daily/lisbon/1983.json
+2025-12-08 14:03:56,674 [INFO] fetch_daily_weather - Skipping existing file for Lisbon 1984: data/raw/open_meteo_daily/lisbon/1984.json
+2025-12-08 14:03:56,674 [INFO] fetch_daily_weather - Skipping existing file for Lisbon 1985: data/raw/open_meteo_daily/lisbon/1985.json
+2025-12-08 14:03:56,674 [INFO] fetch_daily_weather - Skipping existing file for Lisbon 1986: data/raw/open_meteo_daily/lisbon/1986.json
+2025-12-08 14:03:56,674 [INFO] fetch_daily_weather - Skipping existing file for Lisbon 1987: data/raw/open_meteo_daily/lisbon/1987.json
+2025-12-08 14:03:56,674 [INFO] fetch_daily_weather - Skipping existing file for Lisbon 1988: data/raw/open_meteo_daily/lisbon/1988.json
+2025-12-08 14:03:56,674 [INFO] fetch_daily_weather - Skipping existing file for Lisbon 1989: data/raw/open_meteo_daily/lisbon/1989.json
+2025-12-08 14:03:56,674 [INFO] fetch_daily_weather - Skipping existing file for Lisbon 1990: data/raw/open_meteo_daily/lisbon/1990.json
+2025-12-08 14:03:56,674 [INFO] fetch_daily_weather - Skipping existing file for Lisbon 1991: data/raw/open_meteo_daily/lisbon/1991.json
+2025-12-08 14:03:56,674 [INFO] fetch_daily_weather - Skipping existing file for Lisbon 1992: data/raw/open_meteo_daily/lisbon/1992.json
+2025-12-08 14:03:56,674 [INFO] fetch_daily_weather - Skipping existing file for Lisbon 1993: data/raw/open_meteo_daily/lisbon/1993.json
+2025-12-08 14:03:56,675 [INFO] fetch_daily_weather - Skipping existing file for Lisbon 1994: data/raw/open_meteo_daily/lisbon/1994.json
+2025-12-08 14:03:56,675 [INFO] fetch_daily_weather - Skipping existing file for Lisbon 1995: data/raw/open_meteo_daily/lisbon/1995.json
+2025-12-08 14:03:56,675 [INFO] fetch_daily_weather - Skipping existing file for Lisbon 1996: data/raw/open_meteo_daily/lisbon/1996.json
+2025-12-08 14:03:56,675 [INFO] fetch_daily_weather - Skipping existing file for Lisbon 1997: data/raw/open_meteo_daily/lisbon/1997.json
+2025-12-08 14:03:56,675 [INFO] fetch_daily_weather - Skipping existing file for Lisbon 1998: data/raw/open_meteo_daily/lisbon/1998.json
+2025-12-08 14:03:56,675 [INFO] fetch_daily_weather - Skipping existing file for Lisbon 1999: data/raw/open_meteo_daily/lisbon/1999.json
+2025-12-08 14:03:56,675 [INFO] fetch_daily_weather - Skipping existing file for Lisbon 2000: data/raw/open_meteo_daily/lisbon/2000.json
+2025-12-08 14:03:56,675 [INFO] fetch_daily_weather - Skipping existing file for Lisbon 2001: data/raw/open_meteo_daily/lisbon/2001.json
+2025-12-08 14:03:56,675 [INFO] fetch_daily_weather - Skipping existing file for Lisbon 2002: data/raw/open_meteo_daily/lisbon/2002.json
+2025-12-08 14:03:56,675 [INFO] fetch_daily_weather - Skipping existing file for Lisbon 2003: data/raw/open_meteo_daily/lisbon/2003.json
+2025-12-08 14:03:56,675 [INFO] fetch_daily_weather - Skipping existing file for Lisbon 2004: data/raw/open_meteo_daily/lisbon/2004.json
+2025-12-08 14:03:56,675 [INFO] fetch_daily_weather - Skipping existing file for Lisbon 2005: data/raw/open_meteo_daily/lisbon/2005.json
+2025-12-08 14:03:56,675 [INFO] fetch_daily_weather - Skipping existing file for Lisbon 2006: data/raw/open_meteo_daily/lisbon/2006.json
+2025-12-08 14:03:56,675 [INFO] fetch_daily_weather - Skipping existing file for Lisbon 2007: data/raw/open_meteo_daily/lisbon/2007.json
+2025-12-08 14:03:56,675 [INFO] fetch_daily_weather - Skipping existing file for Lisbon 2008: data/raw/open_meteo_daily/lisbon/2008.json
+2025-12-08 14:03:56,675 [INFO] fetch_daily_weather - Skipping existing file for Lisbon 2009: data/raw/open_meteo_daily/lisbon/2009.json
+2025-12-08 14:03:56,675 [INFO] fetch_daily_weather - Skipping existing file for Lisbon 2010: data/raw/open_meteo_daily/lisbon/2010.json
+2025-12-08 14:03:56,675 [INFO] fetch_daily_weather - Skipping existing file for Lisbon 2011: data/raw/open_meteo_daily/lisbon/2011.json
+2025-12-08 14:03:56,675 [INFO] fetch_daily_weather - Skipping existing file for Lisbon 2012: data/raw/open_meteo_daily/lisbon/2012.json
+2025-12-08 14:03:56,675 [INFO] fetch_daily_weather - Skipping existing file for Lisbon 2013: data/raw/open_meteo_daily/lisbon/2013.json
+2025-12-08 14:03:56,675 [INFO] fetch_daily_weather - Skipping existing file for Lisbon 2014: data/raw/open_meteo_daily/lisbon/2014.json
+2025-12-08 14:03:56,675 [INFO] fetch_daily_weather - Skipping existing file for Lisbon 2015: data/raw/open_meteo_daily/lisbon/2015.json
+2025-12-08 14:03:56,675 [INFO] fetch_daily_weather - Skipping existing file for Lisbon 2016: data/raw/open_meteo_daily/lisbon/2016.json
+2025-12-08 14:03:56,675 [INFO] fetch_daily_weather - Skipping existing file for Lisbon 2017: data/raw/open_meteo_daily/lisbon/2017.json
+2025-12-08 14:03:56,675 [INFO] fetch_daily_weather - Skipping existing file for Lisbon 2018: data/raw/open_meteo_daily/lisbon/2018.json
+2025-12-08 14:03:56,675 [INFO] fetch_daily_weather - Skipping existing file for Lisbon 2019: data/raw/open_meteo_daily/lisbon/2019.json
+2025-12-08 14:03:56,675 [INFO] fetch_daily_weather - Skipping existing file for Lisbon 2020: data/raw/open_meteo_daily/lisbon/2020.json
+2025-12-08 14:03:56,675 [INFO] fetch_daily_weather - Skipping existing file for Lisbon 2021: data/raw/open_meteo_daily/lisbon/2021.json
+2025-12-08 14:03:56,675 [INFO] fetch_daily_weather - Skipping existing file for Lisbon 2022: data/raw/open_meteo_daily/lisbon/2022.json
+2025-12-08 14:03:56,676 [INFO] fetch_daily_weather - Skipping existing file for Lisbon 2023: data/raw/open_meteo_daily/lisbon/2023.json
+2025-12-08 14:03:56,676 [INFO] fetch_daily_weather - Skipping existing file for Lisbon 2024: data/raw/open_meteo_daily/lisbon/2024.json
+2025-12-08 14:03:56,676 [INFO] fetch_daily_weather - Starting downloads for city_id=4 name=Porto
+2025-12-08 14:03:56,676 [INFO] fetch_daily_weather - Skipping existing file for Porto 1980: data/raw/open_meteo_daily/porto/1980.json
+2025-12-08 14:03:56,676 [INFO] fetch_daily_weather - Skipping existing file for Porto 1981: data/raw/open_meteo_daily/porto/1981.json
+2025-12-08 14:03:56,676 [INFO] fetch_daily_weather - Skipping existing file for Porto 1982: data/raw/open_meteo_daily/porto/1982.json
+2025-12-08 14:03:56,676 [INFO] fetch_daily_weather - Skipping existing file for Porto 1983: data/raw/open_meteo_daily/porto/1983.json
+2025-12-08 14:03:56,676 [INFO] fetch_daily_weather - Skipping existing file for Porto 1984: data/raw/open_meteo_daily/porto/1984.json
+2025-12-08 14:03:56,676 [INFO] fetch_daily_weather - Skipping existing file for Porto 1985: data/raw/open_meteo_daily/porto/1985.json
+2025-12-08 14:03:56,676 [INFO] fetch_daily_weather - Skipping existing file for Porto 1986: data/raw/open_meteo_daily/porto/1986.json
+2025-12-08 14:03:56,676 [INFO] fetch_daily_weather - Skipping existing file for Porto 1987: data/raw/open_meteo_daily/porto/1987.json
+2025-12-08 14:03:56,676 [INFO] fetch_daily_weather - Skipping existing file for Porto 1988: data/raw/open_meteo_daily/porto/1988.json
+2025-12-08 14:03:56,676 [INFO] fetch_daily_weather - Skipping existing file for Porto 1989: data/raw/open_meteo_daily/porto/1989.json
+2025-12-08 14:03:56,676 [INFO] fetch_daily_weather - Skipping existing file for Porto 1990: data/raw/open_meteo_daily/porto/1990.json
+2025-12-08 14:03:56,676 [INFO] fetch_daily_weather - Skipping existing file for Porto 1991: data/raw/open_meteo_daily/porto/1991.json
+2025-12-08 14:03:56,676 [INFO] fetch_daily_weather - Skipping existing file for Porto 1992: data/raw/open_meteo_daily/porto/1992.json
+2025-12-08 14:03:56,676 [INFO] fetch_daily_weather - Skipping existing file for Porto 1993: data/raw/open_meteo_daily/porto/1993.json
+2025-12-08 14:03:56,676 [INFO] fetch_daily_weather - Skipping existing file for Porto 1994: data/raw/open_meteo_daily/porto/1994.json
+2025-12-08 14:03:56,676 [INFO] fetch_daily_weather - Skipping existing file for Porto 1995: data/raw/open_meteo_daily/porto/1995.json
+2025-12-08 14:03:56,676 [INFO] fetch_daily_weather - Skipping existing file for Porto 1996: data/raw/open_meteo_daily/porto/1996.json
+2025-12-08 14:03:56,676 [INFO] fetch_daily_weather - Skipping existing file for Porto 1997: data/raw/open_meteo_daily/porto/1997.json
+2025-12-08 14:03:56,676 [INFO] fetch_daily_weather - Skipping existing file for Porto 1998: data/raw/open_meteo_daily/porto/1998.json
+2025-12-08 14:03:56,676 [INFO] fetch_daily_weather - Skipping existing file for Porto 1999: data/raw/open_meteo_daily/porto/1999.json
+2025-12-08 14:03:56,676 [INFO] fetch_daily_weather - Skipping existing file for Porto 2000: data/raw/open_meteo_daily/porto/2000.json
+2025-12-08 14:03:56,676 [INFO] fetch_daily_weather - Skipping existing file for Porto 2001: data/raw/open_meteo_daily/porto/2001.json
+2025-12-08 14:03:56,676 [INFO] fetch_daily_weather - Skipping existing file for Porto 2002: data/raw/open_meteo_daily/porto/2002.json
+2025-12-08 14:03:56,676 [INFO] fetch_daily_weather - Skipping existing file for Porto 2003: data/raw/open_meteo_daily/porto/2003.json
+2025-12-08 14:03:56,677 [INFO] fetch_daily_weather - Skipping existing file for Porto 2004: data/raw/open_meteo_daily/porto/2004.json
+2025-12-08 14:03:56,677 [INFO] fetch_daily_weather - Skipping existing file for Porto 2005: data/raw/open_meteo_daily/porto/2005.json
+2025-12-08 14:03:56,677 [INFO] fetch_daily_weather - Skipping existing file for Porto 2006: data/raw/open_meteo_daily/porto/2006.json
+2025-12-08 14:03:56,677 [INFO] fetch_daily_weather - Skipping existing file for Porto 2007: data/raw/open_meteo_daily/porto/2007.json
+2025-12-08 14:03:56,677 [INFO] fetch_daily_weather - Skipping existing file for Porto 2008: data/raw/open_meteo_daily/porto/2008.json
+2025-12-08 14:03:56,677 [INFO] fetch_daily_weather - Skipping existing file for Porto 2009: data/raw/open_meteo_daily/porto/2009.json
+2025-12-08 14:03:56,677 [INFO] fetch_daily_weather - Skipping existing file for Porto 2010: data/raw/open_meteo_daily/porto/2010.json
+2025-12-08 14:03:56,677 [INFO] fetch_daily_weather - Skipping existing file for Porto 2011: data/raw/open_meteo_daily/porto/2011.json
+2025-12-08 14:03:56,677 [INFO] fetch_daily_weather - Skipping existing file for Porto 2012: data/raw/open_meteo_daily/porto/2012.json
+2025-12-08 14:03:56,677 [INFO] fetch_daily_weather - Skipping existing file for Porto 2013: data/raw/open_meteo_daily/porto/2013.json
+2025-12-08 14:03:56,677 [INFO] fetch_daily_weather - Skipping existing file for Porto 2014: data/raw/open_meteo_daily/porto/2014.json
+2025-12-08 14:03:56,677 [INFO] fetch_daily_weather - Skipping existing file for Porto 2015: data/raw/open_meteo_daily/porto/2015.json
+2025-12-08 14:03:56,677 [INFO] fetch_daily_weather - Skipping existing file for Porto 2016: data/raw/open_meteo_daily/porto/2016.json
+2025-12-08 14:03:56,677 [INFO] fetch_daily_weather - Skipping existing file for Porto 2017: data/raw/open_meteo_daily/porto/2017.json
+2025-12-08 14:03:56,677 [INFO] fetch_daily_weather - Skipping existing file for Porto 2018: data/raw/open_meteo_daily/porto/2018.json
+2025-12-08 14:03:56,677 [INFO] fetch_daily_weather - Skipping existing file for Porto 2019: data/raw/open_meteo_daily/porto/2019.json
+2025-12-08 14:03:56,677 [INFO] fetch_daily_weather - Skipping existing file for Porto 2020: data/raw/open_meteo_daily/porto/2020.json
+2025-12-08 14:03:56,677 [INFO] fetch_daily_weather - Skipping existing file for Porto 2021: data/raw/open_meteo_daily/porto/2021.json
+2025-12-08 14:03:56,677 [INFO] fetch_daily_weather - Skipping existing file for Porto 2022: data/raw/open_meteo_daily/porto/2022.json
+2025-12-08 14:03:56,677 [INFO] fetch_daily_weather - Skipping existing file for Porto 2023: data/raw/open_meteo_daily/porto/2023.json
+2025-12-08 14:03:56,677 [INFO] fetch_daily_weather - Skipping existing file for Porto 2024: data/raw/open_meteo_daily/porto/2024.json
+2025-12-08 14:04:34,159 [INFO] fetch_daily_weather - Loaded 4 cities from dim_city.csv
+2025-12-08 14:04:34,159 [INFO] fetch_daily_weather - Backfill mode: fetching daily data for years: [2020]
+2025-12-08 14:04:34,159 [INFO] fetch_daily_weather - Starting downloads for city_id=1 name=Los Angeles
+2025-12-08 14:04:34,159 [INFO] fetch_daily_weather - Skipping existing file for Los Angeles 2020: data/raw/open_meteo_daily/los_angeles/2020.json
+2025-12-08 14:04:34,159 [INFO] fetch_daily_weather - Starting downloads for city_id=2 name=San Francisco
+2025-12-08 14:04:34,159 [INFO] fetch_daily_weather - Skipping existing file for San Francisco 2020: data/raw/open_meteo_daily/san_francisco/2020.json
+2025-12-08 14:04:34,159 [INFO] fetch_daily_weather - Starting downloads for city_id=3 name=Lisbon
+2025-12-08 14:04:34,159 [INFO] fetch_daily_weather - Skipping existing file for Lisbon 2020: data/raw/open_meteo_daily/lisbon/2020.json
+2025-12-08 14:04:34,159 [INFO] fetch_daily_weather - Starting downloads for city_id=4 name=Porto
+2025-12-08 14:04:34,159 [INFO] fetch_daily_weather - Skipping existing file for Porto 2020: data/raw/open_meteo_daily/porto/2020.json
+2025-12-08 14:05:14,443 [INFO] fetch_daily_weather - Loaded 4 cities from dim_city.csv
+2025-12-08 14:05:14,443 [INFO] fetch_daily_weather - Recent mode: fetching year-to-date data for current year 2025 (2025-01-01 → 2025-12-07)
+2025-12-08 14:05:14,443 [INFO] fetch_daily_weather - Recent mode: requesting daily history for city_id=1 name=Los Angeles year=2025 (2025-01-01 → 2025-12-07)
+2025-12-08 14:05:14,443 [INFO] climate_pipeline.utils.open_meteo_client - Fetching daily history lat=34.0522 lon=-118.2437 2025-01-01 → 2025-12-07 (attempt 1)
+2025-12-08 14:05:15,124 [INFO] fetch_daily_weather - Recent mode: wrote data/raw/open_meteo_daily/los_angeles/2025.json
+2025-12-08 14:05:15,626 [INFO] fetch_daily_weather - Recent mode: requesting daily history for city_id=2 name=San Francisco year=2025 (2025-01-01 → 2025-12-07)
+2025-12-08 14:05:15,626 [INFO] climate_pipeline.utils.open_meteo_client - Fetching daily history lat=37.7749 lon=-122.4194 2025-01-01 → 2025-12-07 (attempt 1)
+2025-12-08 14:05:16,256 [INFO] fetch_daily_weather - Recent mode: wrote data/raw/open_meteo_daily/san_francisco/2025.json
+2025-12-08 14:05:16,762 [INFO] fetch_daily_weather - Recent mode: requesting daily history for city_id=3 name=Lisbon year=2025 (2025-01-01 → 2025-12-07)
+2025-12-08 14:05:16,762 [INFO] climate_pipeline.utils.open_meteo_client - Fetching daily history lat=38.7167 lon=-9.1333 2025-01-01 → 2025-12-07 (attempt 1)
+2025-12-08 14:05:17,438 [INFO] fetch_daily_weather - Recent mode: wrote data/raw/open_meteo_daily/lisbon/2025.json
+2025-12-08 14:05:17,941 [INFO] fetch_daily_weather - Recent mode: requesting daily history for city_id=4 name=Porto year=2025 (2025-01-01 → 2025-12-07)
+2025-12-08 14:05:17,942 [INFO] climate_pipeline.utils.open_meteo_client - Fetching daily history lat=41.1496 lon=-8.6110 2025-01-01 → 2025-12-07 (attempt 1)
+2025-12-08 14:05:18,534 [INFO] fetch_daily_weather - Recent mode: wrote data/raw/open_meteo_daily/porto/2025.json
+2025-12-08 15:33:21,432 [INFO] fetch_daily_weather - Loaded 4 cities from dim_city.csv
+2025-12-08 15:33:21,432 [INFO] fetch_daily_weather - Recent mode: fetching year-to-date data for current year 2025 (2025-01-01 → 2025-12-07)
+2025-12-08 15:33:21,432 [INFO] fetch_daily_weather - Recent mode: requesting daily history for city_id=1 name=Los Angeles year=2025 (2025-01-01 → 2025-12-07)
+2025-12-08 15:33:21,432 [INFO] climate_pipeline.utils.open_meteo_client - Fetching daily history lat=34.0522 lon=-118.2437 2025-01-01 → 2025-12-07 (attempt 1)
+2025-12-08 15:33:22,174 [INFO] fetch_daily_weather - Recent mode: wrote /Users/chranama/portfolio/california-portugal-climate/data/raw/open_meteo_daily/los_angeles/2025.json
+2025-12-08 15:33:22,675 [INFO] fetch_daily_weather - Recent mode: requesting daily history for city_id=2 name=San Francisco year=2025 (2025-01-01 → 2025-12-07)
+2025-12-08 15:33:22,676 [INFO] climate_pipeline.utils.open_meteo_client - Fetching daily history lat=37.7749 lon=-122.4194 2025-01-01 → 2025-12-07 (attempt 1)
+2025-12-08 15:33:23,361 [INFO] fetch_daily_weather - Recent mode: wrote /Users/chranama/portfolio/california-portugal-climate/data/raw/open_meteo_daily/san_francisco/2025.json
+2025-12-08 15:33:23,867 [INFO] fetch_daily_weather - Recent mode: requesting daily history for city_id=3 name=Lisbon year=2025 (2025-01-01 → 2025-12-07)
+2025-12-08 15:33:23,867 [INFO] climate_pipeline.utils.open_meteo_client - Fetching daily history lat=38.7167 lon=-9.1333 2025-01-01 → 2025-12-07 (attempt 1)
+2025-12-08 15:33:24,522 [INFO] fetch_daily_weather - Recent mode: wrote /Users/chranama/portfolio/california-portugal-climate/data/raw/open_meteo_daily/lisbon/2025.json
+2025-12-08 15:33:25,028 [INFO] fetch_daily_weather - Recent mode: requesting daily history for city_id=4 name=Porto year=2025 (2025-01-01 → 2025-12-07)
+2025-12-08 15:33:25,029 [INFO] climate_pipeline.utils.open_meteo_client - Fetching daily history lat=41.1496 lon=-8.6110 2025-01-01 → 2025-12-07 (attempt 1)
+2025-12-08 15:33:25,671 [INFO] fetch_daily_weather - Recent mode: wrote /Users/chranama/portfolio/california-portugal-climate/data/raw/open_meteo_daily/porto/2025.json
+2025-12-08 15:38:52,071 [INFO] fetch_daily_weather - Loaded 4 cities from dim_city.csv
+2025-12-08 15:38:52,071 [INFO] fetch_daily_weather - Backfill mode: fetching daily data for years: [1980, 1981, 1982, 1983, 1984, 1985, 1986, 1987, 1988, 1989, 1990, 1991, 1992, 1993, 1994, 1995, 1996, 1997, 1998, 1999, 2000, 2001, 2002, 2003, 2004, 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2013, 2014, 2015, 2016, 2017, 2018, 2019, 2020, 2021, 2022, 2023, 2024]
+2025-12-08 15:38:52,071 [INFO] fetch_daily_weather - Starting downloads for city_id=1 name=Los Angeles
+2025-12-08 15:38:52,071 [INFO] fetch_daily_weather - Skipping existing file for Los Angeles 1980: /Users/chranama/portfolio/california-portugal-climate/data/raw/open_meteo_daily/los_angeles/1980.json
+2025-12-08 15:38:52,071 [INFO] fetch_daily_weather - Skipping existing file for Los Angeles 1981: /Users/chranama/portfolio/california-portugal-climate/data/raw/open_meteo_daily/los_angeles/1981.json
+2025-12-08 15:38:52,071 [INFO] fetch_daily_weather - Skipping existing file for Los Angeles 1982: /Users/chranama/portfolio/california-portugal-climate/data/raw/open_meteo_daily/los_angeles/1982.json
+2025-12-08 15:38:52,071 [INFO] fetch_daily_weather - Skipping existing file for Los Angeles 1983: /Users/chranama/portfolio/california-portugal-climate/data/raw/open_meteo_daily/los_angeles/1983.json
+2025-12-08 15:38:52,071 [INFO] fetch_daily_weather - Skipping existing file for Los Angeles 1984: /Users/chranama/portfolio/california-portugal-climate/data/raw/open_meteo_daily/los_angeles/1984.json
+2025-12-08 15:38:52,071 [INFO] fetch_daily_weather - Skipping existing file for Los Angeles 1985: /Users/chranama/portfolio/california-portugal-climate/data/raw/open_meteo_daily/los_angeles/1985.json
+2025-12-08 15:38:52,072 [INFO] fetch_daily_weather - Skipping existing file for Los Angeles 1986: /Users/chranama/portfolio/california-portugal-climate/data/raw/open_meteo_daily/los_angeles/1986.json
+2025-12-08 15:38:52,072 [INFO] fetch_daily_weather - Skipping existing file for Los Angeles 1987: /Users/chranama/portfolio/california-portugal-climate/data/raw/open_meteo_daily/los_angeles/1987.json
+2025-12-08 15:38:52,072 [INFO] fetch_daily_weather - Skipping existing file for Los Angeles 1988: /Users/chranama/portfolio/california-portugal-climate/data/raw/open_meteo_daily/los_angeles/1988.json
+2025-12-08 15:38:52,072 [INFO] fetch_daily_weather - Skipping existing file for Los Angeles 1989: /Users/chranama/portfolio/california-portugal-climate/data/raw/open_meteo_daily/los_angeles/1989.json
+2025-12-08 15:38:52,072 [INFO] fetch_daily_weather - Skipping existing file for Los Angeles 1990: /Users/chranama/portfolio/california-portugal-climate/data/raw/open_meteo_daily/los_angeles/1990.json
+2025-12-08 15:38:52,072 [INFO] fetch_daily_weather - Skipping existing file for Los Angeles 1991: /Users/chranama/portfolio/california-portugal-climate/data/raw/open_meteo_daily/los_angeles/1991.json
+2025-12-08 15:38:52,072 [INFO] fetch_daily_weather - Skipping existing file for Los Angeles 1992: /Users/chranama/portfolio/california-portugal-climate/data/raw/open_meteo_daily/los_angeles/1992.json
+2025-12-08 15:38:52,072 [INFO] fetch_daily_weather - Skipping existing file for Los Angeles 1993: /Users/chranama/portfolio/california-portugal-climate/data/raw/open_meteo_daily/los_angeles/1993.json
+2025-12-08 15:38:52,072 [INFO] fetch_daily_weather - Skipping existing file for Los Angeles 1994: /Users/chranama/portfolio/california-portugal-climate/data/raw/open_meteo_daily/los_angeles/1994.json
+2025-12-08 15:38:52,072 [INFO] fetch_daily_weather - Skipping existing file for Los Angeles 1995: /Users/chranama/portfolio/california-portugal-climate/data/raw/open_meteo_daily/los_angeles/1995.json
+2025-12-08 15:38:52,072 [INFO] fetch_daily_weather - Skipping existing file for Los Angeles 1996: /Users/chranama/portfolio/california-portugal-climate/data/raw/open_meteo_daily/los_angeles/1996.json
+2025-12-08 15:38:52,072 [INFO] fetch_daily_weather - Skipping existing file for Los Angeles 1997: /Users/chranama/portfolio/california-portugal-climate/data/raw/open_meteo_daily/los_angeles/1997.json
+2025-12-08 15:38:52,072 [INFO] fetch_daily_weather - Skipping existing file for Los Angeles 1998: /Users/chranama/portfolio/california-portugal-climate/data/raw/open_meteo_daily/los_angeles/1998.json
+2025-12-08 15:38:52,072 [INFO] fetch_daily_weather - Skipping existing file for Los Angeles 1999: /Users/chranama/portfolio/california-portugal-climate/data/raw/open_meteo_daily/los_angeles/1999.json
+2025-12-08 15:38:52,072 [INFO] fetch_daily_weather - Skipping existing file for Los Angeles 2000: /Users/chranama/portfolio/california-portugal-climate/data/raw/open_meteo_daily/los_angeles/2000.json
+2025-12-08 15:38:52,072 [INFO] fetch_daily_weather - Skipping existing file for Los Angeles 2001: /Users/chranama/portfolio/california-portugal-climate/data/raw/open_meteo_daily/los_angeles/2001.json
+2025-12-08 15:38:52,072 [INFO] fetch_daily_weather - Skipping existing file for Los Angeles 2002: /Users/chranama/portfolio/california-portugal-climate/data/raw/open_meteo_daily/los_angeles/2002.json
+2025-12-08 15:38:52,072 [INFO] fetch_daily_weather - Skipping existing file for Los Angeles 2003: /Users/chranama/portfolio/california-portugal-climate/data/raw/open_meteo_daily/los_angeles/2003.json
+2025-12-08 15:38:52,072 [INFO] fetch_daily_weather - Skipping existing file for Los Angeles 2004: /Users/chranama/portfolio/california-portugal-climate/data/raw/open_meteo_daily/los_angeles/2004.json
+2025-12-08 15:38:52,072 [INFO] fetch_daily_weather - Skipping existing file for Los Angeles 2005: /Users/chranama/portfolio/california-portugal-climate/data/raw/open_meteo_daily/los_angeles/2005.json
+2025-12-08 15:38:52,072 [INFO] fetch_daily_weather - Skipping existing file for Los Angeles 2006: /Users/chranama/portfolio/california-portugal-climate/data/raw/open_meteo_daily/los_angeles/2006.json
+2025-12-08 15:38:52,072 [INFO] fetch_daily_weather - Skipping existing file for Los Angeles 2007: /Users/chranama/portfolio/california-portugal-climate/data/raw/open_meteo_daily/los_angeles/2007.json
+2025-12-08 15:38:52,072 [INFO] fetch_daily_weather - Skipping existing file for Los Angeles 2008: /Users/chranama/portfolio/california-portugal-climate/data/raw/open_meteo_daily/los_angeles/2008.json
+2025-12-08 15:38:52,072 [INFO] fetch_daily_weather - Skipping existing file for Los Angeles 2009: /Users/chranama/portfolio/california-portugal-climate/data/raw/open_meteo_daily/los_angeles/2009.json
+2025-12-08 15:38:52,072 [INFO] fetch_daily_weather - Skipping existing file for Los Angeles 2010: /Users/chranama/portfolio/california-portugal-climate/data/raw/open_meteo_daily/los_angeles/2010.json
+2025-12-08 15:38:52,072 [INFO] fetch_daily_weather - Skipping existing file for Los Angeles 2011: /Users/chranama/portfolio/california-portugal-climate/data/raw/open_meteo_daily/los_angeles/2011.json
+2025-12-08 15:38:52,072 [INFO] fetch_daily_weather - Skipping existing file for Los Angeles 2012: /Users/chranama/portfolio/california-portugal-climate/data/raw/open_meteo_daily/los_angeles/2012.json
+2025-12-08 15:38:52,072 [INFO] fetch_daily_weather - Skipping existing file for Los Angeles 2013: /Users/chranama/portfolio/california-portugal-climate/data/raw/open_meteo_daily/los_angeles/2013.json
+2025-12-08 15:38:52,072 [INFO] fetch_daily_weather - Skipping existing file for Los Angeles 2014: /Users/chranama/portfolio/california-portugal-climate/data/raw/open_meteo_daily/los_angeles/2014.json
+2025-12-08 15:38:52,072 [INFO] fetch_daily_weather - Skipping existing file for Los Angeles 2015: /Users/chranama/portfolio/california-portugal-climate/data/raw/open_meteo_daily/los_angeles/2015.json
+2025-12-08 15:38:52,072 [INFO] fetch_daily_weather - Skipping existing file for Los Angeles 2016: /Users/chranama/portfolio/california-portugal-climate/data/raw/open_meteo_daily/los_angeles/2016.json
+2025-12-08 15:38:52,072 [INFO] fetch_daily_weather - Skipping existing file for Los Angeles 2017: /Users/chranama/portfolio/california-portugal-climate/data/raw/open_meteo_daily/los_angeles/2017.json
+2025-12-08 15:38:52,072 [INFO] fetch_daily_weather - Skipping existing file for Los Angeles 2018: /Users/chranama/portfolio/california-portugal-climate/data/raw/open_meteo_daily/los_angeles/2018.json
+2025-12-08 15:38:52,072 [INFO] fetch_daily_weather - Skipping existing file for Los Angeles 2019: /Users/chranama/portfolio/california-portugal-climate/data/raw/open_meteo_daily/los_angeles/2019.json
+2025-12-08 15:38:52,072 [INFO] fetch_daily_weather - Skipping existing file for Los Angeles 2020: /Users/chranama/portfolio/california-portugal-climate/data/raw/open_meteo_daily/los_angeles/2020.json
+2025-12-08 15:38:52,072 [INFO] fetch_daily_weather - Skipping existing file for Los Angeles 2021: /Users/chranama/portfolio/california-portugal-climate/data/raw/open_meteo_daily/los_angeles/2021.json
+2025-12-08 15:38:52,072 [INFO] fetch_daily_weather - Skipping existing file for Los Angeles 2022: /Users/chranama/portfolio/california-portugal-climate/data/raw/open_meteo_daily/los_angeles/2022.json
+2025-12-08 15:38:52,072 [INFO] fetch_daily_weather - Skipping existing file for Los Angeles 2023: /Users/chranama/portfolio/california-portugal-climate/data/raw/open_meteo_daily/los_angeles/2023.json
+2025-12-08 15:38:52,072 [INFO] fetch_daily_weather - Skipping existing file for Los Angeles 2024: /Users/chranama/portfolio/california-portugal-climate/data/raw/open_meteo_daily/los_angeles/2024.json
+2025-12-08 15:38:52,072 [INFO] fetch_daily_weather - Starting downloads for city_id=2 name=San Francisco
+2025-12-08 15:38:52,073 [INFO] fetch_daily_weather - Skipping existing file for San Francisco 1980: /Users/chranama/portfolio/california-portugal-climate/data/raw/open_meteo_daily/san_francisco/1980.json
+2025-12-08 15:38:52,073 [INFO] fetch_daily_weather - Skipping existing file for San Francisco 1981: /Users/chranama/portfolio/california-portugal-climate/data/raw/open_meteo_daily/san_francisco/1981.json
+2025-12-08 15:38:52,073 [INFO] fetch_daily_weather - Skipping existing file for San Francisco 1982: /Users/chranama/portfolio/california-portugal-climate/data/raw/open_meteo_daily/san_francisco/1982.json
+2025-12-08 15:38:52,073 [INFO] fetch_daily_weather - Skipping existing file for San Francisco 1983: /Users/chranama/portfolio/california-portugal-climate/data/raw/open_meteo_daily/san_francisco/1983.json
+2025-12-08 15:38:52,073 [INFO] fetch_daily_weather - Skipping existing file for San Francisco 1984: /Users/chranama/portfolio/california-portugal-climate/data/raw/open_meteo_daily/san_francisco/1984.json
+2025-12-08 15:38:52,073 [INFO] fetch_daily_weather - Skipping existing file for San Francisco 1985: /Users/chranama/portfolio/california-portugal-climate/data/raw/open_meteo_daily/san_francisco/1985.json
+2025-12-08 15:38:52,073 [INFO] fetch_daily_weather - Skipping existing file for San Francisco 1986: /Users/chranama/portfolio/california-portugal-climate/data/raw/open_meteo_daily/san_francisco/1986.json
+2025-12-08 15:38:52,073 [INFO] fetch_daily_weather - Skipping existing file for San Francisco 1987: /Users/chranama/portfolio/california-portugal-climate/data/raw/open_meteo_daily/san_francisco/1987.json
+2025-12-08 15:38:52,073 [INFO] fetch_daily_weather - Skipping existing file for San Francisco 1988: /Users/chranama/portfolio/california-portugal-climate/data/raw/open_meteo_daily/san_francisco/1988.json
+2025-12-08 15:38:52,073 [INFO] fetch_daily_weather - Skipping existing file for San Francisco 1989: /Users/chranama/portfolio/california-portugal-climate/data/raw/open_meteo_daily/san_francisco/1989.json
+2025-12-08 15:38:52,073 [INFO] fetch_daily_weather - Skipping existing file for San Francisco 1990: /Users/chranama/portfolio/california-portugal-climate/data/raw/open_meteo_daily/san_francisco/1990.json
+2025-12-08 15:38:52,073 [INFO] fetch_daily_weather - Skipping existing file for San Francisco 1991: /Users/chranama/portfolio/california-portugal-climate/data/raw/open_meteo_daily/san_francisco/1991.json
+2025-12-08 15:38:52,073 [INFO] fetch_daily_weather - Skipping existing file for San Francisco 1992: /Users/chranama/portfolio/california-portugal-climate/data/raw/open_meteo_daily/san_francisco/1992.json
+2025-12-08 15:38:52,073 [INFO] fetch_daily_weather - Skipping existing file for San Francisco 1993: /Users/chranama/portfolio/california-portugal-climate/data/raw/open_meteo_daily/san_francisco/1993.json
+2025-12-08 15:38:52,073 [INFO] fetch_daily_weather - Skipping existing file for San Francisco 1994: /Users/chranama/portfolio/california-portugal-climate/data/raw/open_meteo_daily/san_francisco/1994.json
+2025-12-08 15:38:52,073 [INFO] fetch_daily_weather - Skipping existing file for San Francisco 1995: /Users/chranama/portfolio/california-portugal-climate/data/raw/open_meteo_daily/san_francisco/1995.json
+2025-12-08 15:38:52,073 [INFO] fetch_daily_weather - Skipping existing file for San Francisco 1996: /Users/chranama/portfolio/california-portugal-climate/data/raw/open_meteo_daily/san_francisco/1996.json
+2025-12-08 15:38:52,073 [INFO] fetch_daily_weather - Skipping existing file for San Francisco 1997: /Users/chranama/portfolio/california-portugal-climate/data/raw/open_meteo_daily/san_francisco/1997.json
+2025-12-08 15:38:52,073 [INFO] fetch_daily_weather - Skipping existing file for San Francisco 1998: /Users/chranama/portfolio/california-portugal-climate/data/raw/open_meteo_daily/san_francisco/1998.json
+2025-12-08 15:38:52,073 [INFO] fetch_daily_weather - Skipping existing file for San Francisco 1999: /Users/chranama/portfolio/california-portugal-climate/data/raw/open_meteo_daily/san_francisco/1999.json
+2025-12-08 15:38:52,073 [INFO] fetch_daily_weather - Skipping existing file for San Francisco 2000: /Users/chranama/portfolio/california-portugal-climate/data/raw/open_meteo_daily/san_francisco/2000.json
+2025-12-08 15:38:52,073 [INFO] fetch_daily_weather - Skipping existing file for San Francisco 2001: /Users/chranama/portfolio/california-portugal-climate/data/raw/open_meteo_daily/san_francisco/2001.json
+2025-12-08 15:38:52,073 [INFO] fetch_daily_weather - Skipping existing file for San Francisco 2002: /Users/chranama/portfolio/california-portugal-climate/data/raw/open_meteo_daily/san_francisco/2002.json
+2025-12-08 15:38:52,073 [INFO] fetch_daily_weather - Skipping existing file for San Francisco 2003: /Users/chranama/portfolio/california-portugal-climate/data/raw/open_meteo_daily/san_francisco/2003.json
+2025-12-08 15:38:52,073 [INFO] fetch_daily_weather - Skipping existing file for San Francisco 2004: /Users/chranama/portfolio/california-portugal-climate/data/raw/open_meteo_daily/san_francisco/2004.json
+2025-12-08 15:38:52,073 [INFO] fetch_daily_weather - Skipping existing file for San Francisco 2005: /Users/chranama/portfolio/california-portugal-climate/data/raw/open_meteo_daily/san_francisco/2005.json
+2025-12-08 15:38:52,073 [INFO] fetch_daily_weather - Skipping existing file for San Francisco 2006: /Users/chranama/portfolio/california-portugal-climate/data/raw/open_meteo_daily/san_francisco/2006.json
+2025-12-08 15:38:52,073 [INFO] fetch_daily_weather - Skipping existing file for San Francisco 2007: /Users/chranama/portfolio/california-portugal-climate/data/raw/open_meteo_daily/san_francisco/2007.json
+2025-12-08 15:38:52,073 [INFO] fetch_daily_weather - Skipping existing file for San Francisco 2008: /Users/chranama/portfolio/california-portugal-climate/data/raw/open_meteo_daily/san_francisco/2008.json
+2025-12-08 15:38:52,073 [INFO] fetch_daily_weather - Skipping existing file for San Francisco 2009: /Users/chranama/portfolio/california-portugal-climate/data/raw/open_meteo_daily/san_francisco/2009.json
+2025-12-08 15:38:52,073 [INFO] fetch_daily_weather - Skipping existing file for San Francisco 2010: /Users/chranama/portfolio/california-portugal-climate/data/raw/open_meteo_daily/san_francisco/2010.json
+2025-12-08 15:38:52,073 [INFO] fetch_daily_weather - Skipping existing file for San Francisco 2011: /Users/chranama/portfolio/california-portugal-climate/data/raw/open_meteo_daily/san_francisco/2011.json
+2025-12-08 15:38:52,073 [INFO] fetch_daily_weather - Skipping existing file for San Francisco 2012: /Users/chranama/portfolio/california-portugal-climate/data/raw/open_meteo_daily/san_francisco/2012.json
+2025-12-08 15:38:52,073 [INFO] fetch_daily_weather - Skipping existing file for San Francisco 2013: /Users/chranama/portfolio/california-portugal-climate/data/raw/open_meteo_daily/san_francisco/2013.json
+2025-12-08 15:38:52,073 [INFO] fetch_daily_weather - Skipping existing file for San Francisco 2014: /Users/chranama/portfolio/california-portugal-climate/data/raw/open_meteo_daily/san_francisco/2014.json
+2025-12-08 15:38:52,073 [INFO] fetch_daily_weather - Skipping existing file for San Francisco 2015: /Users/chranama/portfolio/california-portugal-climate/data/raw/open_meteo_daily/san_francisco/2015.json
+2025-12-08 15:38:52,073 [INFO] fetch_daily_weather - Skipping existing file for San Francisco 2016: /Users/chranama/portfolio/california-portugal-climate/data/raw/open_meteo_daily/san_francisco/2016.json
+2025-12-08 15:38:52,073 [INFO] fetch_daily_weather - Skipping existing file for San Francisco 2017: /Users/chranama/portfolio/california-portugal-climate/data/raw/open_meteo_daily/san_francisco/2017.json
+2025-12-08 15:38:52,073 [INFO] fetch_daily_weather - Skipping existing file for San Francisco 2018: /Users/chranama/portfolio/california-portugal-climate/data/raw/open_meteo_daily/san_francisco/2018.json
+2025-12-08 15:38:52,074 [INFO] fetch_daily_weather - Skipping existing file for San Francisco 2019: /Users/chranama/portfolio/california-portugal-climate/data/raw/open_meteo_daily/san_francisco/2019.json
+2025-12-08 15:38:52,074 [INFO] fetch_daily_weather - Skipping existing file for San Francisco 2020: /Users/chranama/portfolio/california-portugal-climate/data/raw/open_meteo_daily/san_francisco/2020.json
+2025-12-08 15:38:52,074 [INFO] fetch_daily_weather - Skipping existing file for San Francisco 2021: /Users/chranama/portfolio/california-portugal-climate/data/raw/open_meteo_daily/san_francisco/2021.json
+2025-12-08 15:38:52,074 [INFO] fetch_daily_weather - Skipping existing file for San Francisco 2022: /Users/chranama/portfolio/california-portugal-climate/data/raw/open_meteo_daily/san_francisco/2022.json
+2025-12-08 15:38:52,074 [INFO] fetch_daily_weather - Skipping existing file for San Francisco 2023: /Users/chranama/portfolio/california-portugal-climate/data/raw/open_meteo_daily/san_francisco/2023.json
+2025-12-08 15:38:52,074 [INFO] fetch_daily_weather - Skipping existing file for San Francisco 2024: /Users/chranama/portfolio/california-portugal-climate/data/raw/open_meteo_daily/san_francisco/2024.json
+2025-12-08 15:38:52,074 [INFO] fetch_daily_weather - Starting downloads for city_id=3 name=Lisbon
+2025-12-08 15:38:52,074 [INFO] fetch_daily_weather - Skipping existing file for Lisbon 1980: /Users/chranama/portfolio/california-portugal-climate/data/raw/open_meteo_daily/lisbon/1980.json
+2025-12-08 15:38:52,074 [INFO] fetch_daily_weather - Skipping existing file for Lisbon 1981: /Users/chranama/portfolio/california-portugal-climate/data/raw/open_meteo_daily/lisbon/1981.json
+2025-12-08 15:38:52,074 [INFO] fetch_daily_weather - Skipping existing file for Lisbon 1982: /Users/chranama/portfolio/california-portugal-climate/data/raw/open_meteo_daily/lisbon/1982.json
+2025-12-08 15:38:52,074 [INFO] fetch_daily_weather - Skipping existing file for Lisbon 1983: /Users/chranama/portfolio/california-portugal-climate/data/raw/open_meteo_daily/lisbon/1983.json
+2025-12-08 15:38:52,074 [INFO] fetch_daily_weather - Skipping existing file for Lisbon 1984: /Users/chranama/portfolio/california-portugal-climate/data/raw/open_meteo_daily/lisbon/1984.json
+2025-12-08 15:38:52,074 [INFO] fetch_daily_weather - Skipping existing file for Lisbon 1985: /Users/chranama/portfolio/california-portugal-climate/data/raw/open_meteo_daily/lisbon/1985.json
+2025-12-08 15:38:52,074 [INFO] fetch_daily_weather - Skipping existing file for Lisbon 1986: /Users/chranama/portfolio/california-portugal-climate/data/raw/open_meteo_daily/lisbon/1986.json
+2025-12-08 15:38:52,074 [INFO] fetch_daily_weather - Skipping existing file for Lisbon 1987: /Users/chranama/portfolio/california-portugal-climate/data/raw/open_meteo_daily/lisbon/1987.json
+2025-12-08 15:38:52,074 [INFO] fetch_daily_weather - Skipping existing file for Lisbon 1988: /Users/chranama/portfolio/california-portugal-climate/data/raw/open_meteo_daily/lisbon/1988.json
+2025-12-08 15:38:52,074 [INFO] fetch_daily_weather - Skipping existing file for Lisbon 1989: /Users/chranama/portfolio/california-portugal-climate/data/raw/open_meteo_daily/lisbon/1989.json
+2025-12-08 15:38:52,074 [INFO] fetch_daily_weather - Skipping existing file for Lisbon 1990: /Users/chranama/portfolio/california-portugal-climate/data/raw/open_meteo_daily/lisbon/1990.json
+2025-12-08 15:38:52,074 [INFO] fetch_daily_weather - Skipping existing file for Lisbon 1991: /Users/chranama/portfolio/california-portugal-climate/data/raw/open_meteo_daily/lisbon/1991.json
+2025-12-08 15:38:52,074 [INFO] fetch_daily_weather - Skipping existing file for Lisbon 1992: /Users/chranama/portfolio/california-portugal-climate/data/raw/open_meteo_daily/lisbon/1992.json
+2025-12-08 15:38:52,074 [INFO] fetch_daily_weather - Skipping existing file for Lisbon 1993: /Users/chranama/portfolio/california-portugal-climate/data/raw/open_meteo_daily/lisbon/1993.json
+2025-12-08 15:38:52,074 [INFO] fetch_daily_weather - Skipping existing file for Lisbon 1994: /Users/chranama/portfolio/california-portugal-climate/data/raw/open_meteo_daily/lisbon/1994.json
+2025-12-08 15:38:52,074 [INFO] fetch_daily_weather - Skipping existing file for Lisbon 1995: /Users/chranama/portfolio/california-portugal-climate/data/raw/open_meteo_daily/lisbon/1995.json
+2025-12-08 15:38:52,074 [INFO] fetch_daily_weather - Skipping existing file for Lisbon 1996: /Users/chranama/portfolio/california-portugal-climate/data/raw/open_meteo_daily/lisbon/1996.json
+2025-12-08 15:38:52,074 [INFO] fetch_daily_weather - Skipping existing file for Lisbon 1997: /Users/chranama/portfolio/california-portugal-climate/data/raw/open_meteo_daily/lisbon/1997.json
+2025-12-08 15:38:52,074 [INFO] fetch_daily_weather - Skipping existing file for Lisbon 1998: /Users/chranama/portfolio/california-portugal-climate/data/raw/open_meteo_daily/lisbon/1998.json
+2025-12-08 15:38:52,074 [INFO] fetch_daily_weather - Skipping existing file for Lisbon 1999: /Users/chranama/portfolio/california-portugal-climate/data/raw/open_meteo_daily/lisbon/1999.json
+2025-12-08 15:38:52,074 [INFO] fetch_daily_weather - Skipping existing file for Lisbon 2000: /Users/chranama/portfolio/california-portugal-climate/data/raw/open_meteo_daily/lisbon/2000.json
+2025-12-08 15:38:52,074 [INFO] fetch_daily_weather - Skipping existing file for Lisbon 2001: /Users/chranama/portfolio/california-portugal-climate/data/raw/open_meteo_daily/lisbon/2001.json
+2025-12-08 15:38:52,074 [INFO] fetch_daily_weather - Skipping existing file for Lisbon 2002: /Users/chranama/portfolio/california-portugal-climate/data/raw/open_meteo_daily/lisbon/2002.json
+2025-12-08 15:38:52,074 [INFO] fetch_daily_weather - Skipping existing file for Lisbon 2003: /Users/chranama/portfolio/california-portugal-climate/data/raw/open_meteo_daily/lisbon/2003.json
+2025-12-08 15:38:52,074 [INFO] fetch_daily_weather - Skipping existing file for Lisbon 2004: /Users/chranama/portfolio/california-portugal-climate/data/raw/open_meteo_daily/lisbon/2004.json
+2025-12-08 15:38:52,074 [INFO] fetch_daily_weather - Skipping existing file for Lisbon 2005: /Users/chranama/portfolio/california-portugal-climate/data/raw/open_meteo_daily/lisbon/2005.json
+2025-12-08 15:38:52,074 [INFO] fetch_daily_weather - Skipping existing file for Lisbon 2006: /Users/chranama/portfolio/california-portugal-climate/data/raw/open_meteo_daily/lisbon/2006.json
+2025-12-08 15:38:52,074 [INFO] fetch_daily_weather - Skipping existing file for Lisbon 2007: /Users/chranama/portfolio/california-portugal-climate/data/raw/open_meteo_daily/lisbon/2007.json
+2025-12-08 15:38:52,074 [INFO] fetch_daily_weather - Skipping existing file for Lisbon 2008: /Users/chranama/portfolio/california-portugal-climate/data/raw/open_meteo_daily/lisbon/2008.json
+2025-12-08 15:38:52,074 [INFO] fetch_daily_weather - Skipping existing file for Lisbon 2009: /Users/chranama/portfolio/california-portugal-climate/data/raw/open_meteo_daily/lisbon/2009.json
+2025-12-08 15:38:52,074 [INFO] fetch_daily_weather - Skipping existing file for Lisbon 2010: /Users/chranama/portfolio/california-portugal-climate/data/raw/open_meteo_daily/lisbon/2010.json
+2025-12-08 15:38:52,074 [INFO] fetch_daily_weather - Skipping existing file for Lisbon 2011: /Users/chranama/portfolio/california-portugal-climate/data/raw/open_meteo_daily/lisbon/2011.json
+2025-12-08 15:38:52,074 [INFO] fetch_daily_weather - Skipping existing file for Lisbon 2012: /Users/chranama/portfolio/california-portugal-climate/data/raw/open_meteo_daily/lisbon/2012.json
+2025-12-08 15:38:52,074 [INFO] fetch_daily_weather - Skipping existing file for Lisbon 2013: /Users/chranama/portfolio/california-portugal-climate/data/raw/open_meteo_daily/lisbon/2013.json
+2025-12-08 15:38:52,074 [INFO] fetch_daily_weather - Skipping existing file for Lisbon 2014: /Users/chranama/portfolio/california-portugal-climate/data/raw/open_meteo_daily/lisbon/2014.json
+2025-12-08 15:38:52,075 [INFO] fetch_daily_weather - Skipping existing file for Lisbon 2015: /Users/chranama/portfolio/california-portugal-climate/data/raw/open_meteo_daily/lisbon/2015.json
+2025-12-08 15:38:52,075 [INFO] fetch_daily_weather - Skipping existing file for Lisbon 2016: /Users/chranama/portfolio/california-portugal-climate/data/raw/open_meteo_daily/lisbon/2016.json
+2025-12-08 15:38:52,075 [INFO] fetch_daily_weather - Skipping existing file for Lisbon 2017: /Users/chranama/portfolio/california-portugal-climate/data/raw/open_meteo_daily/lisbon/2017.json
+2025-12-08 15:38:52,075 [INFO] fetch_daily_weather - Skipping existing file for Lisbon 2018: /Users/chranama/portfolio/california-portugal-climate/data/raw/open_meteo_daily/lisbon/2018.json
+2025-12-08 15:38:52,075 [INFO] fetch_daily_weather - Skipping existing file for Lisbon 2019: /Users/chranama/portfolio/california-portugal-climate/data/raw/open_meteo_daily/lisbon/2019.json
+2025-12-08 15:38:52,075 [INFO] fetch_daily_weather - Skipping existing file for Lisbon 2020: /Users/chranama/portfolio/california-portugal-climate/data/raw/open_meteo_daily/lisbon/2020.json
+2025-12-08 15:38:52,075 [INFO] fetch_daily_weather - Skipping existing file for Lisbon 2021: /Users/chranama/portfolio/california-portugal-climate/data/raw/open_meteo_daily/lisbon/2021.json
+2025-12-08 15:38:52,075 [INFO] fetch_daily_weather - Skipping existing file for Lisbon 2022: /Users/chranama/portfolio/california-portugal-climate/data/raw/open_meteo_daily/lisbon/2022.json
+2025-12-08 15:38:52,075 [INFO] fetch_daily_weather - Skipping existing file for Lisbon 2023: /Users/chranama/portfolio/california-portugal-climate/data/raw/open_meteo_daily/lisbon/2023.json
+2025-12-08 15:38:52,075 [INFO] fetch_daily_weather - Skipping existing file for Lisbon 2024: /Users/chranama/portfolio/california-portugal-climate/data/raw/open_meteo_daily/lisbon/2024.json
+2025-12-08 15:38:52,075 [INFO] fetch_daily_weather - Starting downloads for city_id=4 name=Porto
+2025-12-08 15:38:52,075 [INFO] fetch_daily_weather - Skipping existing file for Porto 1980: /Users/chranama/portfolio/california-portugal-climate/data/raw/open_meteo_daily/porto/1980.json
+2025-12-08 15:38:52,075 [INFO] fetch_daily_weather - Skipping existing file for Porto 1981: /Users/chranama/portfolio/california-portugal-climate/data/raw/open_meteo_daily/porto/1981.json
+2025-12-08 15:38:52,075 [INFO] fetch_daily_weather - Skipping existing file for Porto 1982: /Users/chranama/portfolio/california-portugal-climate/data/raw/open_meteo_daily/porto/1982.json
+2025-12-08 15:38:52,075 [INFO] fetch_daily_weather - Skipping existing file for Porto 1983: /Users/chranama/portfolio/california-portugal-climate/data/raw/open_meteo_daily/porto/1983.json
+2025-12-08 15:38:52,075 [INFO] fetch_daily_weather - Skipping existing file for Porto 1984: /Users/chranama/portfolio/california-portugal-climate/data/raw/open_meteo_daily/porto/1984.json
+2025-12-08 15:38:52,075 [INFO] fetch_daily_weather - Skipping existing file for Porto 1985: /Users/chranama/portfolio/california-portugal-climate/data/raw/open_meteo_daily/porto/1985.json
+2025-12-08 15:38:52,075 [INFO] fetch_daily_weather - Skipping existing file for Porto 1986: /Users/chranama/portfolio/california-portugal-climate/data/raw/open_meteo_daily/porto/1986.json
+2025-12-08 15:38:52,075 [INFO] fetch_daily_weather - Skipping existing file for Porto 1987: /Users/chranama/portfolio/california-portugal-climate/data/raw/open_meteo_daily/porto/1987.json
+2025-12-08 15:38:52,075 [INFO] fetch_daily_weather - Skipping existing file for Porto 1988: /Users/chranama/portfolio/california-portugal-climate/data/raw/open_meteo_daily/porto/1988.json
+2025-12-08 15:38:52,075 [INFO] fetch_daily_weather - Skipping existing file for Porto 1989: /Users/chranama/portfolio/california-portugal-climate/data/raw/open_meteo_daily/porto/1989.json
+2025-12-08 15:38:52,075 [INFO] fetch_daily_weather - Skipping existing file for Porto 1990: /Users/chranama/portfolio/california-portugal-climate/data/raw/open_meteo_daily/porto/1990.json
+2025-12-08 15:38:52,075 [INFO] fetch_daily_weather - Skipping existing file for Porto 1991: /Users/chranama/portfolio/california-portugal-climate/data/raw/open_meteo_daily/porto/1991.json
+2025-12-08 15:38:52,075 [INFO] fetch_daily_weather - Skipping existing file for Porto 1992: /Users/chranama/portfolio/california-portugal-climate/data/raw/open_meteo_daily/porto/1992.json
+2025-12-08 15:38:52,075 [INFO] fetch_daily_weather - Skipping existing file for Porto 1993: /Users/chranama/portfolio/california-portugal-climate/data/raw/open_meteo_daily/porto/1993.json
+2025-12-08 15:38:52,075 [INFO] fetch_daily_weather - Skipping existing file for Porto 1994: /Users/chranama/portfolio/california-portugal-climate/data/raw/open_meteo_daily/porto/1994.json
+2025-12-08 15:38:52,075 [INFO] fetch_daily_weather - Skipping existing file for Porto 1995: /Users/chranama/portfolio/california-portugal-climate/data/raw/open_meteo_daily/porto/1995.json
+2025-12-08 15:38:52,075 [INFO] fetch_daily_weather - Skipping existing file for Porto 1996: /Users/chranama/portfolio/california-portugal-climate/data/raw/open_meteo_daily/porto/1996.json
+2025-12-08 15:38:52,075 [INFO] fetch_daily_weather - Skipping existing file for Porto 1997: /Users/chranama/portfolio/california-portugal-climate/data/raw/open_meteo_daily/porto/1997.json
+2025-12-08 15:38:52,075 [INFO] fetch_daily_weather - Skipping existing file for Porto 1998: /Users/chranama/portfolio/california-portugal-climate/data/raw/open_meteo_daily/porto/1998.json
+2025-12-08 15:38:52,075 [INFO] fetch_daily_weather - Skipping existing file for Porto 1999: /Users/chranama/portfolio/california-portugal-climate/data/raw/open_meteo_daily/porto/1999.json
+2025-12-08 15:38:52,075 [INFO] fetch_daily_weather - Skipping existing file for Porto 2000: /Users/chranama/portfolio/california-portugal-climate/data/raw/open_meteo_daily/porto/2000.json
+2025-12-08 15:38:52,075 [INFO] fetch_daily_weather - Skipping existing file for Porto 2001: /Users/chranama/portfolio/california-portugal-climate/data/raw/open_meteo_daily/porto/2001.json
+2025-12-08 15:38:52,075 [INFO] fetch_daily_weather - Skipping existing file for Porto 2002: /Users/chranama/portfolio/california-portugal-climate/data/raw/open_meteo_daily/porto/2002.json
+2025-12-08 15:38:52,075 [INFO] fetch_daily_weather - Skipping existing file for Porto 2003: /Users/chranama/portfolio/california-portugal-climate/data/raw/open_meteo_daily/porto/2003.json
+2025-12-08 15:38:52,075 [INFO] fetch_daily_weather - Skipping existing file for Porto 2004: /Users/chranama/portfolio/california-portugal-climate/data/raw/open_meteo_daily/porto/2004.json
+2025-12-08 15:38:52,075 [INFO] fetch_daily_weather - Skipping existing file for Porto 2005: /Users/chranama/portfolio/california-portugal-climate/data/raw/open_meteo_daily/porto/2005.json
+2025-12-08 15:38:52,075 [INFO] fetch_daily_weather - Skipping existing file for Porto 2006: /Users/chranama/portfolio/california-portugal-climate/data/raw/open_meteo_daily/porto/2006.json
+2025-12-08 15:38:52,075 [INFO] fetch_daily_weather - Skipping existing file for Porto 2007: /Users/chranama/portfolio/california-portugal-climate/data/raw/open_meteo_daily/porto/2007.json
+2025-12-08 15:38:52,075 [INFO] fetch_daily_weather - Skipping existing file for Porto 2008: /Users/chranama/portfolio/california-portugal-climate/data/raw/open_meteo_daily/porto/2008.json
+2025-12-08 15:38:52,075 [INFO] fetch_daily_weather - Skipping existing file for Porto 2009: /Users/chranama/portfolio/california-portugal-climate/data/raw/open_meteo_daily/porto/2009.json
+2025-12-08 15:38:52,076 [INFO] fetch_daily_weather - Skipping existing file for Porto 2010: /Users/chranama/portfolio/california-portugal-climate/data/raw/open_meteo_daily/porto/2010.json
+2025-12-08 15:38:52,076 [INFO] fetch_daily_weather - Skipping existing file for Porto 2011: /Users/chranama/portfolio/california-portugal-climate/data/raw/open_meteo_daily/porto/2011.json
+2025-12-08 15:38:52,076 [INFO] fetch_daily_weather - Skipping existing file for Porto 2012: /Users/chranama/portfolio/california-portugal-climate/data/raw/open_meteo_daily/porto/2012.json
+2025-12-08 15:38:52,076 [INFO] fetch_daily_weather - Skipping existing file for Porto 2013: /Users/chranama/portfolio/california-portugal-climate/data/raw/open_meteo_daily/porto/2013.json
+2025-12-08 15:38:52,076 [INFO] fetch_daily_weather - Skipping existing file for Porto 2014: /Users/chranama/portfolio/california-portugal-climate/data/raw/open_meteo_daily/porto/2014.json
+2025-12-08 15:38:52,076 [INFO] fetch_daily_weather - Skipping existing file for Porto 2015: /Users/chranama/portfolio/california-portugal-climate/data/raw/open_meteo_daily/porto/2015.json
+2025-12-08 15:38:52,076 [INFO] fetch_daily_weather - Skipping existing file for Porto 2016: /Users/chranama/portfolio/california-portugal-climate/data/raw/open_meteo_daily/porto/2016.json
+2025-12-08 15:38:52,076 [INFO] fetch_daily_weather - Skipping existing file for Porto 2017: /Users/chranama/portfolio/california-portugal-climate/data/raw/open_meteo_daily/porto/2017.json
+2025-12-08 15:38:52,076 [INFO] fetch_daily_weather - Skipping existing file for Porto 2018: /Users/chranama/portfolio/california-portugal-climate/data/raw/open_meteo_daily/porto/2018.json
+2025-12-08 15:38:52,076 [INFO] fetch_daily_weather - Skipping existing file for Porto 2019: /Users/chranama/portfolio/california-portugal-climate/data/raw/open_meteo_daily/porto/2019.json
+2025-12-08 15:38:52,076 [INFO] fetch_daily_weather - Skipping existing file for Porto 2020: /Users/chranama/portfolio/california-portugal-climate/data/raw/open_meteo_daily/porto/2020.json
+2025-12-08 15:38:52,076 [INFO] fetch_daily_weather - Skipping existing file for Porto 2021: /Users/chranama/portfolio/california-portugal-climate/data/raw/open_meteo_daily/porto/2021.json
+2025-12-08 15:38:52,076 [INFO] fetch_daily_weather - Skipping existing file for Porto 2022: /Users/chranama/portfolio/california-portugal-climate/data/raw/open_meteo_daily/porto/2022.json
+2025-12-08 15:38:52,076 [INFO] fetch_daily_weather - Skipping existing file for Porto 2023: /Users/chranama/portfolio/california-portugal-climate/data/raw/open_meteo_daily/porto/2023.json
+2025-12-08 15:38:52,076 [INFO] fetch_daily_weather - Skipping existing file for Porto 2024: /Users/chranama/portfolio/california-portugal-climate/data/raw/open_meteo_daily/porto/2024.json
+2025-12-08 21:43:46,959 [INFO] fetch_daily_weather - Loaded 4 cities from dim_city.csv
+2025-12-08 21:43:46,959 [INFO] fetch_daily_weather - Recent mode: fetching year-to-date data for current year 2025 (2025-01-01 → 2025-12-07)
+2025-12-08 21:43:46,960 [INFO] fetch_daily_weather - Recent mode: requesting daily history for city_id=1 name=Los Angeles year=2025 (2025-01-01 → 2025-12-07)
+2025-12-08 21:43:46,960 [INFO] climate_pipeline.utils.open_meteo_client - Fetching daily history lat=34.0522 lon=-118.2437 2025-01-01 → 2025-12-07 (attempt 1)
+2025-12-08 21:43:47,588 [INFO] fetch_daily_weather - Recent mode: wrote /app/data/raw/open_meteo_daily/los_angeles/2025.json
+2025-12-08 21:43:48,091 [INFO] fetch_daily_weather - Recent mode: requesting daily history for city_id=2 name=San Francisco year=2025 (2025-01-01 → 2025-12-07)
+2025-12-08 21:43:48,092 [INFO] climate_pipeline.utils.open_meteo_client - Fetching daily history lat=37.7749 lon=-122.4194 2025-01-01 → 2025-12-07 (attempt 1)
+2025-12-08 21:43:48,697 [INFO] fetch_daily_weather - Recent mode: wrote /app/data/raw/open_meteo_daily/san_francisco/2025.json
+2025-12-08 21:43:49,202 [INFO] fetch_daily_weather - Recent mode: requesting daily history for city_id=3 name=Lisbon year=2025 (2025-01-01 → 2025-12-07)
+2025-12-08 21:43:49,203 [INFO] climate_pipeline.utils.open_meteo_client - Fetching daily history lat=38.7167 lon=-9.1333 2025-01-01 → 2025-12-07 (attempt 1)
+2025-12-08 21:43:49,852 [INFO] fetch_daily_weather - Recent mode: wrote /app/data/raw/open_meteo_daily/lisbon/2025.json
+2025-12-08 21:43:50,356 [INFO] fetch_daily_weather - Recent mode: requesting daily history for city_id=4 name=Porto year=2025 (2025-01-01 → 2025-12-07)
+2025-12-08 21:43:50,357 [INFO] climate_pipeline.utils.open_meteo_client - Fetching daily history lat=41.1496 lon=-8.6110 2025-01-01 → 2025-12-07 (attempt 1)
+2025-12-08 21:43:51,022 [INFO] fetch_daily_weather - Recent mode: wrote /app/data/raw/open_meteo_daily/porto/2025.json
+2025-12-08 15:53:34,280 [INFO] fetch_daily_weather - Loaded 4 cities from dim_city.csv
+2025-12-08 15:53:34,280 [INFO] fetch_daily_weather - Recent mode: fetching year-to-date data for current year 2025 (2025-01-01 → 2025-12-07)
+2025-12-08 15:53:34,280 [INFO] fetch_daily_weather - Recent mode: requesting daily history for city_id=1 name=Los Angeles year=2025 (2025-01-01 → 2025-12-07)
+2025-12-08 15:53:34,280 [INFO] climate_pipeline.utils.open_meteo_client - Fetching daily history lat=34.0522 lon=-118.2437 2025-01-01 → 2025-12-07 (attempt 1)
+2025-12-08 15:53:34,915 [INFO] fetch_daily_weather - Recent mode: wrote /Users/chranama/portfolio/california-portugal-climate/data/raw/open_meteo_daily/los_angeles/2025.json
+2025-12-08 15:53:35,417 [INFO] fetch_daily_weather - Recent mode: requesting daily history for city_id=2 name=San Francisco year=2025 (2025-01-01 → 2025-12-07)
+2025-12-08 15:53:35,418 [INFO] climate_pipeline.utils.open_meteo_client - Fetching daily history lat=37.7749 lon=-122.4194 2025-01-01 → 2025-12-07 (attempt 1)
+2025-12-08 15:53:36,022 [INFO] fetch_daily_weather - Recent mode: wrote /Users/chranama/portfolio/california-portugal-climate/data/raw/open_meteo_daily/san_francisco/2025.json
+2025-12-08 15:53:36,525 [INFO] fetch_daily_weather - Recent mode: requesting daily history for city_id=3 name=Lisbon year=2025 (2025-01-01 → 2025-12-07)
+2025-12-08 15:53:36,526 [INFO] climate_pipeline.utils.open_meteo_client - Fetching daily history lat=38.7167 lon=-9.1333 2025-01-01 → 2025-12-07 (attempt 1)
+2025-12-08 15:53:37,133 [INFO] fetch_daily_weather - Recent mode: wrote /Users/chranama/portfolio/california-portugal-climate/data/raw/open_meteo_daily/lisbon/2025.json
+2025-12-08 15:53:37,638 [INFO] fetch_daily_weather - Recent mode: requesting daily history for city_id=4 name=Porto year=2025 (2025-01-01 → 2025-12-07)
+2025-12-08 15:53:37,638 [INFO] climate_pipeline.utils.open_meteo_client - Fetching daily history lat=41.1496 lon=-8.6110 2025-01-01 → 2025-12-07 (attempt 1)
+2025-12-08 15:53:38,225 [INFO] fetch_daily_weather - Recent mode: wrote /Users/chranama/portfolio/california-portugal-climate/data/raw/open_meteo_daily/porto/2025.json
+2025-12-08 15:56:13,630 [INFO] fetch_daily_weather - Loaded 4 cities from dim_city.csv
+2025-12-08 15:56:13,630 [INFO] fetch_daily_weather - Recent mode: fetching year-to-date data for current year 2025 (2025-01-01 → 2025-12-07)
+2025-12-08 15:56:13,630 [INFO] fetch_daily_weather - Recent mode: requesting daily history for city_id=1 name=Los Angeles year=2025 (2025-01-01 → 2025-12-07)
+2025-12-08 15:56:13,630 [INFO] climate_pipeline.utils.open_meteo_client - Fetching daily history lat=34.0522 lon=-118.2437 2025-01-01 → 2025-12-07 (attempt 1)
+2025-12-08 15:56:14,207 [INFO] fetch_daily_weather - Recent mode: wrote /Users/chranama/portfolio/california-portugal-climate/data/raw/open_meteo_daily/los_angeles/2025.json
+2025-12-08 15:56:14,713 [INFO] fetch_daily_weather - Recent mode: requesting daily history for city_id=2 name=San Francisco year=2025 (2025-01-01 → 2025-12-07)
+2025-12-08 15:56:14,713 [INFO] climate_pipeline.utils.open_meteo_client - Fetching daily history lat=37.7749 lon=-122.4194 2025-01-01 → 2025-12-07 (attempt 1)
+2025-12-08 15:56:15,289 [INFO] fetch_daily_weather - Recent mode: wrote /Users/chranama/portfolio/california-portugal-climate/data/raw/open_meteo_daily/san_francisco/2025.json
+2025-12-08 15:56:15,794 [INFO] fetch_daily_weather - Recent mode: requesting daily history for city_id=3 name=Lisbon year=2025 (2025-01-01 → 2025-12-07)
+2025-12-08 15:56:15,795 [INFO] climate_pipeline.utils.open_meteo_client - Fetching daily history lat=38.7167 lon=-9.1333 2025-01-01 → 2025-12-07 (attempt 1)
+2025-12-08 15:56:16,395 [INFO] fetch_daily_weather - Recent mode: wrote /Users/chranama/portfolio/california-portugal-climate/data/raw/open_meteo_daily/lisbon/2025.json
+2025-12-08 15:56:16,900 [INFO] fetch_daily_weather - Recent mode: requesting daily history for city_id=4 name=Porto year=2025 (2025-01-01 → 2025-12-07)
+2025-12-08 15:56:16,901 [INFO] climate_pipeline.utils.open_meteo_client - Fetching daily history lat=41.1496 lon=-8.6110 2025-01-01 → 2025-12-07 (attempt 1)
+2025-12-08 15:56:17,504 [INFO] fetch_daily_weather - Recent mode: wrote /Users/chranama/portfolio/california-portugal-climate/data/raw/open_meteo_daily/porto/2025.json
+2025-12-08 15:58:45,848 [INFO] fetch_daily_weather - Loaded 4 cities from dim_city.csv
+2025-12-08 15:58:45,848 [INFO] fetch_daily_weather - Recent mode: fetching year-to-date data for current year 2025 (2025-01-01 → 2025-12-07)
+2025-12-08 15:58:45,848 [INFO] fetch_daily_weather - Recent mode: requesting daily history for city_id=1 name=Los Angeles year=2025 (2025-01-01 → 2025-12-07)
+2025-12-08 15:58:45,848 [INFO] climate_pipeline.utils.open_meteo_client - Fetching daily history lat=34.0522 lon=-118.2437 2025-01-01 → 2025-12-07 (attempt 1)
+2025-12-08 15:58:46,423 [INFO] fetch_daily_weather - Recent mode: wrote /Users/chranama/portfolio/california-portugal-climate/data/raw/open_meteo_daily/los_angeles/2025.json
+2025-12-08 15:58:46,926 [INFO] fetch_daily_weather - Recent mode: requesting daily history for city_id=2 name=San Francisco year=2025 (2025-01-01 → 2025-12-07)
+2025-12-08 15:58:46,927 [INFO] climate_pipeline.utils.open_meteo_client - Fetching daily history lat=37.7749 lon=-122.4194 2025-01-01 → 2025-12-07 (attempt 1)
+2025-12-08 15:58:47,563 [INFO] fetch_daily_weather - Recent mode: wrote /Users/chranama/portfolio/california-portugal-climate/data/raw/open_meteo_daily/san_francisco/2025.json
+2025-12-08 15:58:48,068 [INFO] fetch_daily_weather - Recent mode: requesting daily history for city_id=3 name=Lisbon year=2025 (2025-01-01 → 2025-12-07)
+2025-12-08 15:58:48,068 [INFO] climate_pipeline.utils.open_meteo_client - Fetching daily history lat=38.7167 lon=-9.1333 2025-01-01 → 2025-12-07 (attempt 1)
+2025-12-08 15:58:48,696 [INFO] fetch_daily_weather - Recent mode: wrote /Users/chranama/portfolio/california-portugal-climate/data/raw/open_meteo_daily/lisbon/2025.json
+2025-12-08 15:58:49,201 [INFO] fetch_daily_weather - Recent mode: requesting daily history for city_id=4 name=Porto year=2025 (2025-01-01 → 2025-12-07)
+2025-12-08 15:58:49,202 [INFO] climate_pipeline.utils.open_meteo_client - Fetching daily history lat=41.1496 lon=-8.6110 2025-01-01 → 2025-12-07 (attempt 1)
+2025-12-08 15:58:49,803 [INFO] fetch_daily_weather - Recent mode: wrote /Users/chranama/portfolio/california-portugal-climate/data/raw/open_meteo_daily/porto/2025.json
+2025-12-08 16:12:12,706 [INFO] fetch_daily_weather - Loaded 4 cities from dim_city.csv
+2025-12-08 16:12:12,706 [INFO] fetch_daily_weather - Recent mode: fetching year-to-date data for current year 2025 (2025-01-01 → 2025-12-07)
+2025-12-08 16:12:12,706 [INFO] fetch_daily_weather - Recent mode: requesting daily history for city_id=1 name=Los Angeles year=2025 (2025-01-01 → 2025-12-07)
+2025-12-08 16:12:12,706 [INFO] climate_pipeline.utils.open_meteo_client - Fetching daily history lat=34.0522 lon=-118.2437 2025-01-01 → 2025-12-07 (attempt 1)
+2025-12-08 16:12:13,344 [INFO] fetch_daily_weather - Recent mode: wrote /Users/chranama/portfolio/california-portugal-climate/data/raw/open_meteo_daily/los_angeles/2025.json
+2025-12-08 16:12:13,850 [INFO] fetch_daily_weather - Recent mode: requesting daily history for city_id=2 name=San Francisco year=2025 (2025-01-01 → 2025-12-07)
+2025-12-08 16:12:13,850 [INFO] climate_pipeline.utils.open_meteo_client - Fetching daily history lat=37.7749 lon=-122.4194 2025-01-01 → 2025-12-07 (attempt 1)
+2025-12-08 16:12:14,442 [INFO] fetch_daily_weather - Recent mode: wrote /Users/chranama/portfolio/california-portugal-climate/data/raw/open_meteo_daily/san_francisco/2025.json
+2025-12-08 16:12:14,948 [INFO] fetch_daily_weather - Recent mode: requesting daily history for city_id=3 name=Lisbon year=2025 (2025-01-01 → 2025-12-07)
+2025-12-08 16:12:14,948 [INFO] climate_pipeline.utils.open_meteo_client - Fetching daily history lat=38.7167 lon=-9.1333 2025-01-01 → 2025-12-07 (attempt 1)
+2025-12-08 16:12:15,563 [INFO] fetch_daily_weather - Recent mode: wrote /Users/chranama/portfolio/california-portugal-climate/data/raw/open_meteo_daily/lisbon/2025.json
+2025-12-08 16:12:16,065 [INFO] fetch_daily_weather - Recent mode: requesting daily history for city_id=4 name=Porto year=2025 (2025-01-01 → 2025-12-07)
+2025-12-08 16:12:16,065 [INFO] climate_pipeline.utils.open_meteo_client - Fetching daily history lat=41.1496 lon=-8.6110 2025-01-01 → 2025-12-07 (attempt 1)
+2025-12-08 16:12:16,645 [INFO] fetch_daily_weather - Recent mode: wrote /Users/chranama/portfolio/california-portugal-climate/data/raw/open_meteo_daily/porto/2025.json
+2025-12-08 16:18:49,943 [INFO] fetch_daily_weather - Loaded 4 cities from dim_city.csv
+2025-12-08 16:18:49,943 [INFO] fetch_daily_weather - Recent mode: fetching year-to-date data for current year 2025 (2025-01-01 → 2025-12-07)
+2025-12-08 16:18:49,943 [INFO] fetch_daily_weather - Recent mode: requesting daily history for city_id=1 name=Los Angeles year=2025 (2025-01-01 → 2025-12-07)
+2025-12-08 16:18:49,943 [INFO] climate_pipeline.utils.open_meteo_client - Fetching daily history lat=34.0522 lon=-118.2437 2025-01-01 → 2025-12-07 (attempt 1)
+2025-12-08 16:18:50,533 [INFO] fetch_daily_weather - Recent mode: wrote /Users/chranama/portfolio/california-portugal-climate/data/raw/open_meteo_daily/los_angeles/2025.json
+2025-12-08 16:18:51,036 [INFO] fetch_daily_weather - Recent mode: requesting daily history for city_id=2 name=San Francisco year=2025 (2025-01-01 → 2025-12-07)
+2025-12-08 16:18:51,036 [INFO] climate_pipeline.utils.open_meteo_client - Fetching daily history lat=37.7749 lon=-122.4194 2025-01-01 → 2025-12-07 (attempt 1)
+2025-12-08 16:18:51,644 [INFO] fetch_daily_weather - Recent mode: wrote /Users/chranama/portfolio/california-portugal-climate/data/raw/open_meteo_daily/san_francisco/2025.json
+2025-12-08 16:18:52,147 [INFO] fetch_daily_weather - Recent mode: requesting daily history for city_id=3 name=Lisbon year=2025 (2025-01-01 → 2025-12-07)
+2025-12-08 16:18:52,147 [INFO] climate_pipeline.utils.open_meteo_client - Fetching daily history lat=38.7167 lon=-9.1333 2025-01-01 → 2025-12-07 (attempt 1)
+2025-12-08 16:18:52,739 [INFO] fetch_daily_weather - Recent mode: wrote /Users/chranama/portfolio/california-portugal-climate/data/raw/open_meteo_daily/lisbon/2025.json
+2025-12-08 16:18:53,244 [INFO] fetch_daily_weather - Recent mode: requesting daily history for city_id=4 name=Porto year=2025 (2025-01-01 → 2025-12-07)
+2025-12-08 16:18:53,245 [INFO] climate_pipeline.utils.open_meteo_client - Fetching daily history lat=41.1496 lon=-8.6110 2025-01-01 → 2025-12-07 (attempt 1)
+2025-12-08 16:18:53,820 [INFO] fetch_daily_weather - Recent mode: wrote /Users/chranama/portfolio/california-portugal-climate/data/raw/open_meteo_daily/porto/2025.json

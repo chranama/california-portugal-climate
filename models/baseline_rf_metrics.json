@@ -1,11 +1,11 @@
 {
-  "roc_auc": 0.63,
-  "n_test": 537,
+  "roc_auc": 0.6018532137078982,
+  "n_test": 549,
   "class_distribution_test": {
-    "0": 512,
-    "1": 25
+    "0": 523,
+    "1": 26
   },
-  "n_train": 1611,
+  "n_train": 1647,
   "feature_columns": [
     "anomaly_tmean_c",
     "roll_mean_3",

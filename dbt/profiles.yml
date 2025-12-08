@@ -3,6 +3,7 @@ climate_pipeline:
   outputs:
     dev:
       type: duckdb
-      path: "../data/warehouse/climate.duckdb"
+      # Use DUCKDB_PATH env var, default to ../data/warehouse/climate.duckdb
+      path: "{{ env_var('DUCKDB_PATH', '../data/warehouse/climate.duckdb') }}"
       schema: main
       threads: 4

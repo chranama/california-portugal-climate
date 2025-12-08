@@ -3,19 +3,41 @@ project:
   description: >
     California vs Portugal climate comparison using Open-Meteo daily historical data.
 
+# ============================================================
+# All data paths now come from environment variables.
+# CLIMATE_DATA_ROOT is provided by:
+#   - .env (local) → CLIMATE_DATA_ROOT=data
+#   - docker-compose (container) → CLIMATE_DATA_ROOT=/app/data
+# ============================================================
+
 data:
-  base_dir: "data"
-  raw_geocoding_dir: "data/raw/geocoding"
-  raw_weather_dir: "data/raw/open_meteo_daily"
-  warehouse_path: "data/warehouse/climate.duckdb"
+  # Root folder for all data storage
+  base_dir: "${CLIMATE_DATA_ROOT}"
 
+  # Raw geocoding results (CSV from fetch-geocodes)
+  raw_geocoding_dir: "${CLIMATE_DATA_ROOT}/raw/geocoding"
+
+  # Raw daily Open-Meteo JSON files (written by fetch-daily-weather)
+  raw_weather_dir: "${CLIMATE_DATA_ROOT}/raw/open_meteo_daily"
+
+  # DuckDB warehouse
+  warehouse_path: "${CLIMATE_DATA_ROOT}/warehouse/climate.duckdb"
+
+# ============================================================
+# Logging
+# ============================================================
 logging:
-  ingestion_log: "logs/ingestion.log"
+  ingestion_log: "${CLIMATE_LOG_ROOT}/ingestion.log"
 
+# ============================================================
+# Open-Meteo API endpoints
+# These must be provided in ENV (.env or Docker overrides)
+# ============================================================
 open_meteo:
-  geocoding_base_url: "https://geocoding-api.open-meteo.com/v1/search"
-  historical_base_url: "https://archive-api.open-meteo.com/v1/archive"
-  # Daily variables to request from the historical API
+  geocoding_base_url: "${OPEN_METEO_GEOCODING_BASE_URL}"
+  historical_base_url: "${OPEN_METEO_HISTORICAL_BASE_URL}"
+
+  # Variables to request from the historical API
   daily_variables:
     - "temperature_2m_max"
     - "temperature_2m_min"
@@ -25,6 +47,9 @@ open_meteo:
     - "wind_speed_10m_max"
     - "shortwave_radiation_sum"
 
+# ============================================================
+# Historical Backfill Window (used for --mode backfill)
+# ============================================================
 time_window:
   start_date: "1980-01-01"
   end_date: "2024-12-31"

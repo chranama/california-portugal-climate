@@ -8,32 +8,31 @@ This project implements an end-to-end climate data platform comparing four coast
 - Lisbon (Portugal)  
 - Porto (Portugal)
 
-Using daily historical weather data from 1980–2024, the system ingests, transforms, models, and analyzes long-term climate patterns and anomalies, and produces:
+Using daily historical weather data from **1980–2024**, the system ingests, transforms, models, and analyzes long-term climate patterns and anomalies, producing:
 
 - A production-ready DuckDB warehouse  
 - A multi-layer dbt pipeline (bronze → silver → gold)  
-- An anomaly detection framework  
-- An ML-ready feature store  
-- A baseline climate anomaly model  
+- An anomaly detection and ML-ready feature store  
+- A baseline RandomForest anomaly model  
 - A Streamlit analytics dashboard  
-- An orchestration CLI  
-- Automated test coverage  
+- Prefect orchestration (daily + backfill workflows)  
+- Automated data quality tests  
 
-This architecture is inspired by **modern data engineering standards (medallion architecture)** used in production systems.
+This architecture follows **modern medallion design patterns** used in production data systems.
 
 ---
 
 ## Architecture Overview
 
-Open-Meteo APIs → Raw JSON → DuckDB  
-                      ↓  
-                   dbt (Bronze → Silver → Gold)  
-                      ↓  
-  Anomaly / ML Features / Correlations  
-                      ↓  
-    ML Models + Streamlit Dashboard  
-                      ↓  
-  Single-Command Orchestration + Tests  
+    Open-Meteo APIs → Raw JSON → DuckDB
+                          ↓
+                   dbt (Bronze → Silver → Gold)
+                          ↓
+            Feature Engineering + Anomaly Detection
+                          ↓
+            ML Models + Streamlit Analytics Dashboard
+                          ↓
+               Prefect Orchestration + Logging
 
 ---
 
@@ -41,13 +40,14 @@ Open-Meteo APIs → Raw JSON → DuckDB
 
 - Open-Meteo APIs (Geocoding + Historical Weather)  
 - DuckDB (analytical warehouse)  
-- dbt + dbt-duckdb (ELT / transformation)  
-- uv (Python env + package runner)  
-- scikit-learn (baseline ML modeling)  
-- Streamlit + Plotly (dashboard)  
+- dbt + dbt-duckdb (ELT transformations)  
+- uv (Python environment + fast package runner)  
+- Prefect 3 (workflow orchestration)  
+- scikit-learn (baseline ML model)  
+- Streamlit + Plotly (interactive analytics)  
 - pytest (testing)  
-- YAML-based config system  
-- CLI orchestration layer  
+- YAML configuration system  
+- Custom CLI entrypoints  
 
 ---
 
@@ -55,21 +55,19 @@ Open-Meteo APIs → Raw JSON → DuckDB
 
 ### Cities
 
-| city_id | city_name | country_code |
-|--------:|----------|--------------|
-| 1 | Los Angeles | US |
-| 2 | San Francisco | US |
-| 3 | Lisbon | PT |
-| 4 | Porto | PT |
+| city_id | city_name     | country_code |
+|--------:|---------------|--------------|
+| 1       | Los Angeles   | US |
+| 2       | San Francisco | US |
+| 3       | Lisbon        | PT |
+| 4       | Porto         | PT |
 
-Coordinates, timezones, and metadata are obtained via the Open-Meteo Geocoding API and stored in:
+Metadata is sourced via the Open-Meteo Geocoding API and stored in:
 
 - data/raw/geocoding/  
-- dbt/seeds/dim_city.csv  
+- dbt/seeds/dim_city.csv
 
 ### Daily Variables
-
-From Open-Meteo Historical API:
 
 - temperature_2m_max  
 - temperature_2m_min  
@@ -79,28 +77,23 @@ From Open-Meteo Historical API:
 - wind_speed_10m_max  
 - shortwave_radiation_sum  
 
-Time window:
-
+**Time window:**  
     1980-01-01 → 2024-12-31
 
-All raw data is stored as JSON and preserved unchanged.
+All raw data is preserved unchanged.
 
 ---
 
 ## Warehouse Models (dbt)
 
-### Bronze Layer – `main.bronze_daily_weather`
+### Bronze – `main.bronze_daily_weather`
 
-One row per:
+One row per city and date.
 
-- city  
-- date  
-
-Flattened from raw JSON using:
-
+Flattened from JSON using:
 - read_json_auto  
-- Array unnesting  
-- Join to dim_city  
+- array unnesting  
+- join to dim_city  
 
 ---
 
@@ -109,74 +102,47 @@ Flattened from raw JSON using:
 **main.silver_daily_weather_features**
 
 Adds:
-
 - heat day flags  
 - tropical night flags  
-- heavy precipitation day flags  
+- heavy precipitation flags  
 - seasonal indicators  
 
 **main.silver_monthly_climate**
 
 Monthly aggregation:
-
 - avg temperature  
-- total precipitation  
+- precipitation  
 - heat/tropical night counts  
-- radiation + wind summaries  
+- wind/radiation summaries  
 
 ---
 
-### Gold Layer
+## Gold Layer
 
-**main.climatology_city_month**  
-Canonical monthly climate baseline per city.
+**main.climatology_city_month** – baseline climatology.  
 
-**main.gold_city_month_anomalies**
+**main.gold_city_month_anomalies** – anomaly scores & z-scores.  
 
-Includes:
+**main.gold_city_anomaly_lags** – lagged deltas (1–3 months).  
 
-- anomaly_tmean_c  
-- zscore_tmean_c  
-- is_positive_temp_anomaly  
-- is_negative_temp_anomaly  
-- is_strong_positive_temp_anomaly  
-- is_strong_negative_temp_anomaly  
+**main.gold_city_anomaly_correlations** – cross-city correlations.  
 
-**main.gold_city_anomaly_lags**
+**main.gold_city_anomaly_events** – binary climate events.  
 
-- 1–3 month deltas  
-- Rolling means  
-
-**main.gold_city_anomaly_correlations**
-
-- Cross-city correlation values  
-
-**main.gold_city_anomaly_events**
-
-- Binary anomaly classification  
-
-**main.gold_ml_features**
-
-- anomaly values  
-- lag values  
-- rolling metrics  
-- classification flags  
-
-Used for ML training.
+**main.gold_ml_features** – final ML feature store.  
 
 ---
 
 ## Machine Learning Layer
 
-Baseline model:
+Baseline:
 
 - RandomForestClassifier  
 - Target: is_positive_temp_anomaly  
 - Time-based split  
-- Imbalanced realistic climatology
+- Imbalanced but realistic labels  
 
 Outputs:
-
 - models/baseline_rf.pkl  
 - models/baseline_rf_metrics.json  
 
@@ -196,15 +162,12 @@ Run:
 
     uv run streamlit run dashboards/streamlit/app.py
 
-Includes:
-
-- City selector  
-- Metric selector  
-- Monthly trends  
-- Climate comparison  
-- Anomaly visualization  
-
-Uses DuckDB as backend.
+Features:
+- city selector  
+- metric selector  
+- monthly trend plots  
+- anomaly visualization  
+- cross-city comparison  
 
 ---
 
@@ -214,37 +177,27 @@ Run everything:
 
     uv run climate-run-all
 
-Run with tests:
+With tests:
 
     uv run climate-run-all --with-tests
 
-This performs:
-
+Steps:
 1. DuckDB lock check  
-2. dbt models (all layers)  
+2. dbt build (bronze → silver → gold)  
 3. ML training  
 4. pytest (optional)  
-
-This is a **production-style orchestration pipeline**.
 
 ---
 
 ## Testing
 
-Run:
-
     uv run pytest
 
-Checks:
-
-- Gold schema correctness  
-- ML feature completeness  
+Validates:
+- Gold table schemas  
+- Feature completeness  
 - No NaN leakage  
-- Table integrity  
-
-Located in:
-
-    tests/
+- Integrity constraints  
 
 ---
 
@@ -282,26 +235,11 @@ Located in:
 
 ---
 
-## What This Project Demonstrates
-
-- Modern data stack usage  
-- End-to-end pipelines  
-- Feature engineering for climate  
-- Anomaly detection  
-- Cross-region climate analysis  
-- Model training & monitoring  
-- Dashboard delivery  
-- Orchestration and CI readiness  
-
-This is a **complete, production-minded data system** — far beyond a simple weather dashboard.
-
----
-
 ## Planned Enhancements
 
-- Transformer / LSTM temporal models  
+- Transformer/LSTM temporal models  
 - Extreme event classifiers  
 - Correlation heatmaps  
-- SST (sea surface temperature) integration  
+- Sea surface temperature integration  
 - Docker + cloud deployment  
-- Public dashboard hosting 
+- Public dashboard hosting  

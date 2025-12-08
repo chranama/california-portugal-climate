@@ -1,0 +1,82 @@
+version: "3.9"
+
+services:
+  # ==========================
+  # 1. Main pipeline runner (Prefect)
+  # ==========================
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: climate_app
+    working_dir: /app
+    command: ["climate-prefect-daily"]
+    environment:
+      CLIMATE_ENV: "docker"
+      # These are mostly informational now; Prefect builds absolute paths internally
+      CLIMATE_DATA_ROOT: "/app/data"
+      CLIMATE_LOG_ROOT: "/app/logs"
+      DBT_PROFILES_DIR: "/app/dbt"
+    volumes:
+      - ./data:/app/data
+      - ./logs:/app/logs
+      - ./src/config:/app/src/config
+      - ./dbt:/app/dbt
+    stdin_open: true
+    tty: true
+
+  # ==========================
+  # 2. dbt-only service (optional convenience)
+  # ==========================
+  dbt:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: climate_dbt
+    working_dir: /app/dbt
+    command: ["uv", "run", "dbt", "build", "--project-dir", ".", "--profiles-dir", "."]
+    environment:
+      CLIMATE_ENV: "docker"
+      CLIMATE_DATA_ROOT: "/app/data"
+      CLIMATE_LOG_ROOT: "/app/logs"
+      DBT_PROFILES_DIR: "/app/dbt"
+    volumes:
+      - ./data:/app/data
+      - ./logs:/app/logs
+      - ./dbt:/app/dbt
+    stdin_open: true
+    tty: true
+
+  # ==========================
+  # 3. Streamlit dashboard
+  # ==========================
+  streamlit:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: climate_streamlit
+    working_dir: /app
+    command:
+      [
+        "uv",
+        "run",
+        "streamlit",
+        "run",
+        "dashboards/streamlit/app.py",
+        "--server.address=0.0.0.0",
+        "--server.port=8501"
+      ]
+    environment:
+      CLIMATE_ENV: "docker"
+      CLIMATE_DATA_ROOT: "/app/data"
+      CLIMATE_LOG_ROOT: "/app/logs"
+      DBT_PROFILES_DIR: "/app/dbt"
+    volumes:
+      - ./data:/app/data
+      - ./logs:/app/logs
+      - ./dashboards:/app/dashboards
+      - ./dbt:/app/dbt
+    ports:
+      - "8501:8501"
+    stdin_open: true
+    tty: true
