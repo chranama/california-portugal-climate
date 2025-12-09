@@ -13,7 +13,6 @@ services:
     command: ["climate-prefect-daily"]
     environment:
       CLIMATE_ENV: "docker"
-      # These are mostly informational now; Prefect builds absolute paths internally
       CLIMATE_DATA_ROOT: "/app/data"
       CLIMATE_LOG_ROOT: "/app/logs"
       DBT_PROFILES_DIR: "/app/dbt"
@@ -26,7 +25,7 @@ services:
     tty: true
 
   # ==========================
-  # 2. dbt-only service (optional convenience)
+  # 2. dbt-only service (manual runs)
   # ==========================
   dbt:
     build:
@@ -48,7 +47,47 @@ services:
     tty: true
 
   # ==========================
-  # 3. Streamlit dashboard
+  # 3. dbt docs service (lineage + docs UI)
+  # ==========================
+  dbt_docs:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: climate_dbt_docs
+    working_dir: /app/dbt
+    # `dbt docs serve` will generate manifest/catalog if needed
+    command:
+      [
+        "uv",
+        "run",
+        "dbt",
+        "docs",
+        "serve",
+        "--project-dir",
+        ".",
+        "--profiles-dir",
+        ".",
+        "--port",
+        "8080",
+        "--host",
+        "0.0.0.0"
+      ]
+    environment:
+      CLIMATE_ENV: "docker"
+      CLIMATE_DATA_ROOT: "/app/data"
+      CLIMATE_LOG_ROOT: "/app/logs"
+      DBT_PROFILES_DIR: "/app/dbt"
+    volumes:
+      - ./data:/app/data
+      - ./logs:/app/logs
+      - ./dbt:/app/dbt
+    ports:
+      - "8080:8080"
+    stdin_open: true
+    tty: true
+
+  # ==========================
+  # 4. Streamlit dashboard
   # ==========================
   streamlit:
     build:

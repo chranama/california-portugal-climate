@@ -1,83 +1,246 @@
 from __future__ import annotations
 
 from dataclasses import dataclass
-from datetime import datetime
+from datetime import datetime, date, timezone
 from pathlib import Path
-from typing import Optional, Tuple
+from typing import Optional
 
 import duckdb
-import os
 
+
+# ==========================
+# Paths
+# ==========================
+
+# This file lives at: src/climate_pipeline/observability/run_logger.py
+# __file__.parents: [observability, climate_pipeline, src, <project_root>, ...]
+PROJECT_ROOT = Path(__file__).resolve().parents[3]
+WAREHOUSE_PATH = PROJECT_ROOT / "data" / "warehouse" / "climate.duckdb"
+
+
+# ==========================
+# Data classes
+# ==========================
 
 @dataclass
 class PipelineRunRecord:
+    """
+    Single pipeline run record that will be inserted into pipeline_run_log.
+    Mirrors what the dbt view main.pipeline_runs expects.
+    """
     flow_name: str
-    run_mode: str          # e.g. "daily" or "backfill"
-    status: str            # e.g. "success"
+    run_mode: str
+    status: str
     started_at: datetime
     finished_at: datetime
-    rows_bronze: Optional[int] = None
-    rows_gold_ml: Optional[int] = None
+    rows_bronze: int
+    rows_gold_ml: int
+    rows_bronze_delta: int
+    rows_gold_ml_delta: int
+    bronze_max_date: Optional[date]
+    gold_ml_max_date: Optional[date]
+    freshness_status: str
 
 
-def _get_duckdb_path() -> Path:
+@dataclass
+class PipelineRunStats:
     """
-    Resolve the DuckDB path from DUCKDB_PATH env var (if set),
-    otherwise fall back to the default project-relative path.
+    Computed statistics for the *current* run, before we write the record.
     """
-    env_path = os.getenv("DUCKDB_PATH")
-    if env_path:
-        return Path(env_path).resolve()
-    return Path("data/warehouse/climate.duckdb").resolve()
+    rows_bronze: int
+    rows_gold_ml: int
+    rows_bronze_delta: int
+    rows_gold_ml_delta: int
+    bronze_max_date: Optional[date]
+    gold_ml_max_date: Optional[date]
+    freshness_status: str
 
 
-def _ensure_pipeline_runs_table(conn: duckdb.DuckDBPyConnection) -> None:
+# ==========================
+# Helpers
+# ==========================
+
+def _get_warehouse_path(warehouse_path: Optional[Path] = None) -> Path:
     """
-    Create the pipeline_runs table if it does not already exist.
+    Resolve the DuckDB file path, with a sensible default inside data/warehouse.
+    """
+    if warehouse_path is not None:
+        return warehouse_path
+    return WAREHOUSE_PATH
+
+
+def _ensure_schema(conn: duckdb.DuckDBPyConnection) -> None:
+    """
+    Ensure the pipeline_run_log table exists.
+
+    IMPORTANT:
+    - This function assumes `conn` is already open.
+    - It DOES NOT open or close the connection.
     """
     conn.execute(
         """
-        CREATE TABLE IF NOT EXISTS pipeline_runs (
-            flow_name VARCHAR,
-            run_mode VARCHAR,
-            status VARCHAR,
+        CREATE TABLE IF NOT EXISTS pipeline_run_log (
+            id BIGINT,
+            flow_name TEXT,
+            run_mode TEXT,
+            status TEXT,
             started_at TIMESTAMP,
             finished_at TIMESTAMP,
             rows_bronze BIGINT,
-            rows_gold_ml BIGINT
+            rows_gold_ml BIGINT,
+            rows_bronze_delta BIGINT,
+            rows_gold_ml_delta BIGINT,
+            bronze_max_date DATE,
+            gold_ml_max_date DATE,
+            freshness_status TEXT
         )
         """
     )
 
 
-def log_pipeline_run(record: PipelineRunRecord) -> None:
+def _compute_next_id(conn: duckdb.DuckDBPyConnection) -> int:
     """
-    Append a record to the pipeline_runs table in DuckDB.
+    Compute the next ID for pipeline_run_log in a simple, concurrency-safe way
+    (enough for local and single-process usage).
+    """
+    row = conn.execute("SELECT COALESCE(MAX(id) + 1, 1) FROM pipeline_run_log").fetchone()
+    return int(row[0])
 
-    If the table does not exist, it will be created.
+
+# ==========================
+# Public API
+# ==========================
+
+def compute_run_stats(warehouse_path: Optional[Path] = None) -> PipelineRunStats:
     """
-    db_path = _get_duckdb_path()
+    Open a fresh DuckDB connection, compute the current run statistics, then close it.
+
+    This function MUST NOT reuse a closed connection and is safe to call from Prefect.
+    """
+    db_path = _get_warehouse_path(warehouse_path)
     db_path.parent.mkdir(parents=True, exist_ok=True)
 
-    # Use a context manager so the connection is guaranteed to be open
-    # during the INSERT and closed afterwards.
-    with duckdb.connect(str(db_path)) as conn:
-        _ensure_pipeline_runs_table(conn)
+    conn = duckdb.connect(str(db_path))
+    try:
+        _ensure_schema(conn)
+
+        # --- Current row counts ---
+        rows_bronze = conn.execute(
+            'SELECT COUNT(*) FROM "main"."bronze_daily_weather"'
+        ).fetchone()[0]
+
+        rows_gold_ml = conn.execute(
+            'SELECT COUNT(*) FROM "main"."gold_ml_features"'
+        ).fetchone()[0]
+
+        # --- Max dates for freshness ---
+
+        # bronze: real daily date column
+        bronze_max_date = conn.execute(
+            'SELECT MAX(date) FROM "main"."bronze_daily_weather"'
+        ).fetchone()[0]
+
+        # gold_ml: monthly features → derive a date from (year, month)
+        latest_month_row = conn.execute(
+            """
+            SELECT year, month
+            FROM "main"."gold_ml_features"
+            ORDER BY year DESC, month DESC
+            LIMIT 1
+            """
+        ).fetchone()
+
+        if latest_month_row is not None:
+            latest_year, latest_month = latest_month_row
+            gold_ml_max_date = date(int(latest_year), int(latest_month), 1)
+        else:
+            gold_ml_max_date = None
+
+        # --- Previous successful run (for deltas) ---
+        last_success = conn.execute(
+            """
+            SELECT
+                rows_bronze,
+                rows_gold_ml
+            FROM pipeline_run_log
+            WHERE status = 'success'
+            ORDER BY started_at DESC
+            LIMIT 1
+            """
+        ).fetchone()
+
+        if last_success is None:
+            rows_bronze_delta = rows_bronze
+            rows_gold_ml_delta = rows_gold_ml
+        else:
+            prev_rows_bronze, prev_rows_gold_ml = last_success
+            rows_bronze_delta = rows_bronze - int(prev_rows_bronze)
+            rows_gold_ml_delta = rows_gold_ml - int(prev_rows_gold_ml)
+
+        # --- Freshness status (based on bronze_daily_weather) ---
+        freshness_status = "unknown"
+        if bronze_max_date is not None:
+            today = datetime.now(timezone.utc).date()
+            lag_days = (today - bronze_max_date).days
+            if lag_days <= 1:
+                freshness_status = "fresh"
+            elif lag_days <= 7:
+                freshness_status = "stale"
+            else:
+                freshness_status = "very_stale"
+
+        return PipelineRunStats(
+            rows_bronze=int(rows_bronze),
+            rows_gold_ml=int(rows_gold_ml),
+            rows_bronze_delta=int(rows_bronze_delta),
+            rows_gold_ml_delta=int(rows_gold_ml_delta),
+            bronze_max_date=bronze_max_date,
+            gold_ml_max_date=gold_ml_max_date,
+            freshness_status=freshness_status,
+        )
+    finally:
+        conn.close()
+
+
+def log_pipeline_run(
+    record: PipelineRunRecord,
+    warehouse_path: Optional[Path] = None,
+) -> None:
+    """
+    Insert a PipelineRunRecord into pipeline_run_log.
+
+    If anything goes wrong here, callers SHOULD catch exceptions so that
+    logging failures don't break the main pipeline.
+    """
+    db_path = _get_warehouse_path(warehouse_path)
+    db_path.parent.mkdir(parents=True, exist_ok=True)
+
+    conn = duckdb.connect(str(db_path))
+    try:
+        _ensure_schema(conn)
+        next_id = _compute_next_id(conn)
 
         conn.execute(
             """
-            INSERT INTO pipeline_runs (
+            INSERT INTO pipeline_run_log (
+                id,
                 flow_name,
                 run_mode,
                 status,
                 started_at,
                 finished_at,
                 rows_bronze,
-                rows_gold_ml
+                rows_gold_ml,
+                rows_bronze_delta,
+                rows_gold_ml_delta,
+                bronze_max_date,
+                gold_ml_max_date,
+                freshness_status
             )
-            VALUES (?, ?, ?, ?, ?, ?, ?)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
             """,
             [
+                next_id,
                 record.flow_name,
                 record.run_mode,
                 record.status,
@@ -85,37 +248,12 @@ def log_pipeline_run(record: PipelineRunRecord) -> None:
                 record.finished_at,
                 record.rows_bronze,
                 record.rows_gold_ml,
+                record.rows_bronze_delta,
+                record.rows_gold_ml_delta,
+                record.bronze_max_date,
+                record.gold_ml_max_date,
+                record.freshness_status,
             ],
-        )
-
-
-def compute_row_counts() -> Tuple[Optional[int], Optional[int]]:
-    """
-    Best-effort computation of key table row counts.
-
-    Returns (rows_bronze, rows_gold_ml).
-    If a table is missing, returns None for that entry.
-    """
-    db_path = _get_duckdb_path()
-    if not db_path.exists():
-        return None, None
-
-    rows_bronze: Optional[int] = None
-    rows_gold_ml: Optional[int] = None
-
-    with duckdb.connect(str(db_path)) as conn:
-        try:
-            rows_bronze = conn.execute(
-                "SELECT COUNT(*) FROM bronze_daily_weather"
-            ).fetchone()[0]
-        except duckdb.Error:
-            rows_bronze = None
-
-        try:
-            rows_gold_ml = conn.execute(
-                "SELECT COUNT(*) FROM gold_ml_features"
-            ).fetchone()[0]
-        except duckdb.Error:
-            rows_gold_ml = None
-
-    return rows_bronze, rows_gold_ml
+        ).close()
+    finally:
+        conn.close()

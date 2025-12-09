@@ -1,5 +1,6 @@
--- dbt model: main.pipeline_runs_model
--- Thin wrapper around the raw pipeline_runs table
+{{ config(
+    materialized = 'view'
+) }}
 
 select
     id,
@@ -9,5 +10,11 @@ select
     started_at,
     finished_at,
     rows_bronze,
-    rows_gold_ml
-from {{ source('main', 'pipeline_runs') }}
+    rows_gold_ml,
+    rows_bronze_delta,
+    rows_gold_ml_delta,
+    bronze_max_date,
+    gold_ml_max_date,
+    freshness_status
+from pipeline_run_log
+order by started_at desc

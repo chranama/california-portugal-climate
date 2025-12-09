@@ -12,7 +12,7 @@ from prefect import flow, task, get_run_logger
 from climate_pipeline.observability.run_logger import (
     PipelineRunRecord,
     log_pipeline_run,
-    compute_row_counts,
+    compute_run_stats,
 )
 
 # ==========================
@@ -207,19 +207,45 @@ def run_pytests() -> None:
 @task
 def log_run_to_duckdb(flow_name: str, run_mode: str, started_at: datetime, finished_at: datetime) -> None:
     """
-    Prefect task to record a pipeline run into DuckDB.
+    Prefect task to record a pipeline run into DuckDB, including:
+      - Row counts
+      - Row deltas vs previous success
+      - Freshness dates
+      - Freshness status
+
+    Logging is *best effort*: if DuckDB or the warehouse is unavailable,
+    this task logs an error but does not fail the entire flow.
     """
-    rows_bronze, rows_gold_ml = compute_row_counts()
+    logger = get_run_logger()
+
+    # 1) Compute stats (best effort)
+    try:
+        stats = compute_run_stats()
+    except Exception as exc:  # duckdb errors, file issues, etc.
+        logger.error("❌ Failed to compute run stats for logging: %s", exc)
+        return
+
+    # 2) Build record
     record = PipelineRunRecord(
         flow_name=flow_name,
         run_mode=run_mode,
-        status="success",  # can extend to "failed" with more logic later
+        status="success",  # later we can propagate Prefect failure status
         started_at=started_at,
         finished_at=finished_at,
-        rows_bronze=rows_bronze,
-        rows_gold_ml=rows_gold_ml,
+        rows_bronze=stats.rows_bronze,
+        rows_gold_ml=stats.rows_gold_ml,
+        rows_bronze_delta=stats.rows_bronze_delta,
+        rows_gold_ml_delta=stats.rows_gold_ml_delta,
+        bronze_max_date=stats.bronze_max_date,
+        gold_ml_max_date=stats.gold_ml_max_date,
+        freshness_status=stats.freshness_status,
     )
-    log_pipeline_run(record)
+
+    # 3) Write record (also best effort)
+    try:
+        log_pipeline_run(record)
+    except Exception as exc:
+        logger.error("❌ Failed to log pipeline run to DuckDB: %s", exc)
 
 
 # ==========================
@@ -268,7 +294,7 @@ def daily_climate_flow(
 
     finished_at = datetime.now(timezone.utc)
 
-    # 6) Log run metadata into DuckDB
+    # 6) Log run metadata into DuckDB (best effort)
     log_run_to_duckdb(
         flow_name="daily-climate-pipeline",
         run_mode="daily",
@@ -332,7 +358,7 @@ def backfill_climate_flow(
 
     finished_at = datetime.now(timezone.utc)
 
-    # 6) Log run metadata into DuckDB
+    # 6) Log run metadata into DuckDB (best effort)
     log_run_to_duckdb(
         flow_name="backfill-climate-pipeline",
         run_mode="backfill",

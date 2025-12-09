@@ -1,9 +1,9 @@
 {
-  "roc_auc": 0.6018532137078982,
+  "roc_auc": 0.6141620547750816,
   "n_test": 549,
   "class_distribution_test": {
-    "0": 523,
-    "1": 26
+    "0": 522,
+    "1": 27
   },
   "n_train": 1647,
   "feature_columns": [
