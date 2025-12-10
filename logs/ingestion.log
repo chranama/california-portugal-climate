@@ -1306,3 +1306,17 @@
 2025-12-09 22:12:30,394 [INFO] fetch_daily_weather - Recent mode: requesting daily history for city_id=4 name=Porto year=2025 (2025-01-01 → 2025-12-08)
 2025-12-09 22:12:30,395 [INFO] climate_pipeline.utils.open_meteo_client - Fetching daily history lat=41.1496 lon=-8.6110 2025-01-01 → 2025-12-08 (attempt 1)
 2025-12-09 22:12:31,048 [INFO] fetch_daily_weather - Recent mode: wrote /app/data/raw/open_meteo_daily/porto/2025.json
+2025-12-10 12:29:35,550 [INFO] fetch_daily_weather - Loaded 4 cities from dim_city.csv
+2025-12-10 12:29:35,550 [INFO] fetch_daily_weather - Recent mode: fetching year-to-date data for current year 2025 (2025-01-01 → 2025-12-09)
+2025-12-10 12:29:35,551 [INFO] fetch_daily_weather - Recent mode: requesting daily history for city_id=1 name=Los Angeles year=2025 (2025-01-01 → 2025-12-09)
+2025-12-10 12:29:35,551 [INFO] climate_pipeline.utils.open_meteo_client - Fetching daily history lat=34.0522 lon=-118.2437 2025-01-01 → 2025-12-09 (attempt 1)
+2025-12-10 12:29:36,403 [INFO] fetch_daily_weather - Recent mode: wrote /Users/chranama/portfolio/california-portugal-climate/data/raw/open_meteo_daily/los_angeles/2025.json
+2025-12-10 12:29:36,908 [INFO] fetch_daily_weather - Recent mode: requesting daily history for city_id=2 name=San Francisco year=2025 (2025-01-01 → 2025-12-09)
+2025-12-10 12:29:36,909 [INFO] climate_pipeline.utils.open_meteo_client - Fetching daily history lat=37.7749 lon=-122.4194 2025-01-01 → 2025-12-09 (attempt 1)
+2025-12-10 12:29:37,613 [INFO] fetch_daily_weather - Recent mode: wrote /Users/chranama/portfolio/california-portugal-climate/data/raw/open_meteo_daily/san_francisco/2025.json
+2025-12-10 12:29:38,116 [INFO] fetch_daily_weather - Recent mode: requesting daily history for city_id=3 name=Lisbon year=2025 (2025-01-01 → 2025-12-09)
+2025-12-10 12:29:38,117 [INFO] climate_pipeline.utils.open_meteo_client - Fetching daily history lat=38.7167 lon=-9.1333 2025-01-01 → 2025-12-09 (attempt 1)
+2025-12-10 12:29:38,845 [INFO] fetch_daily_weather - Recent mode: wrote /Users/chranama/portfolio/california-portugal-climate/data/raw/open_meteo_daily/lisbon/2025.json
+2025-12-10 12:29:39,349 [INFO] fetch_daily_weather - Recent mode: requesting daily history for city_id=4 name=Porto year=2025 (2025-01-01 → 2025-12-09)
+2025-12-10 12:29:39,350 [INFO] climate_pipeline.utils.open_meteo_client - Fetching daily history lat=41.1496 lon=-8.6110 2025-01-01 → 2025-12-09 (attempt 1)
+2025-12-10 12:29:40,184 [INFO] fetch_daily_weather - Recent mode: wrote /Users/chranama/portfolio/california-portugal-climate/data/raw/open_meteo_daily/porto/2025.json

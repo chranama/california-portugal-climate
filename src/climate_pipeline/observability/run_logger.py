@@ -41,6 +41,46 @@ class PipelineRunRecord:
     gold_ml_max_date: Optional[date]
     freshness_status: str
 
+@dataclass
+class MLMetricRecord:
+    """
+    Single ML training/eval run metrics.
+
+    This is meant to be logged once per training run, and optionally
+    linked back to a pipeline_run_log row via pipeline_run_id.
+    """
+    # Link back to pipeline run (optional, can be null)
+    pipeline_run_id: Optional[int]
+
+    # High-level context
+    flow_name: str             # e.g. "daily-climate-pipeline"
+    run_mode: str              # e.g. "daily", "backfill"
+    model_name: str            # e.g. "baseline_random_forest"
+    model_version: str         # e.g. "v1" or a git SHA
+
+    # Dataset sizes
+    train_size: int
+    test_size: int
+
+    # Class distribution / label stats (for anomaly = 1)
+    positive_class_ratio: float   # fraction of positives in test set (0–1)
+
+    # Overall performance
+    accuracy: float
+    roc_auc: float
+
+    # Per-class metrics (0 = normal, 1 = anomaly)
+    precision_0: float
+    recall_0: float
+    f1_0: float
+
+    precision_1: float
+    recall_1: float
+    f1_1: float
+
+    # When metrics were computed (UTC)
+    created_at: datetime
+
 
 @dataclass
 class PipelineRunStats:
@@ -71,12 +111,15 @@ def _get_warehouse_path(warehouse_path: Optional[Path] = None) -> Path:
 
 def _ensure_schema(conn: duckdb.DuckDBPyConnection) -> None:
     """
-    Ensure the pipeline_run_log table exists.
+    Ensure the observability tables exist.
 
     IMPORTANT:
     - This function assumes `conn` is already open.
     - It DOES NOT open or close the connection.
     """
+    # ---------------------------------
+    # 1) Pipeline run log (already used)
+    # ---------------------------------
     conn.execute(
         """
         CREATE TABLE IF NOT EXISTS pipeline_run_log (
@@ -93,6 +136,40 @@ def _ensure_schema(conn: duckdb.DuckDBPyConnection) -> None:
             bronze_max_date DATE,
             gold_ml_max_date DATE,
             freshness_status TEXT
+        )
+        """
+    )
+
+    # ---------------------------------
+    # 2) ML metrics table (NEW)
+    # ---------------------------------
+    conn.execute(
+        """
+        CREATE TABLE IF NOT EXISTS pipeline_ml_metrics (
+            id BIGINT,
+            pipeline_run_id BIGINT,     -- optional FK to pipeline_run_log.id
+
+            flow_name TEXT,
+            run_mode TEXT,
+            model_name TEXT,
+            model_version TEXT,
+
+            train_size BIGINT,
+            test_size BIGINT,
+            positive_class_ratio DOUBLE,
+
+            accuracy DOUBLE,
+            roc_auc DOUBLE,
+
+            precision_0 DOUBLE,
+            recall_0 DOUBLE,
+            f1_0 DOUBLE,
+
+            precision_1 DOUBLE,
+            recall_1 DOUBLE,
+            f1_1 DOUBLE,
+
+            created_at TIMESTAMP
         )
         """
     )
@@ -255,5 +332,69 @@ def log_pipeline_run(
                 record.freshness_status,
             ],
         ).close()
+    finally:
+        conn.close()
+
+def log_ml_metrics(record: MLMetricRecord, warehouse_path: Optional[Path] = None) -> None:
+    """
+    Insert a single MLMetricRecord into pipeline_ml_metrics.
+    """
+    db_path = _get_warehouse_path(warehouse_path)
+    db_path.parent.mkdir(parents=True, exist_ok=True)
+
+    conn = duckdb.connect(str(db_path))
+    try:
+        _ensure_schema(conn)
+
+        # Simple id generation: max(id) + 1, or 1 if table empty
+        next_id = conn.execute(
+            "SELECT COALESCE(MAX(id), 0) + 1 FROM pipeline_ml_metrics"
+        ).fetchone()[0]
+
+        conn.execute(
+            """
+            INSERT INTO pipeline_ml_metrics (
+                id,
+                pipeline_run_id,
+                flow_name,
+                run_mode,
+                model_name,
+                model_version,
+                train_size,
+                test_size,
+                positive_class_ratio,
+                accuracy,
+                roc_auc,
+                precision_0,
+                recall_0,
+                f1_0,
+                precision_1,
+                recall_1,
+                f1_1,
+                created_at
+            )
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+            """,
+            [
+                int(next_id),
+                record.pipeline_run_id,
+                record.flow_name,
+                record.run_mode,
+                record.model_name,
+                record.model_version,
+                int(record.train_size),
+                int(record.test_size),
+                float(record.positive_class_ratio),
+                float(record.accuracy),
+                float(record.roc_auc),
+                float(record.precision_0),
+                float(record.recall_0),
+                float(record.f1_0),
+                float(record.precision_1),
+                float(record.recall_1),
+                float(record.f1_1),
+                record.created_at,
+            ],
+        )
     finally:
         conn.close()

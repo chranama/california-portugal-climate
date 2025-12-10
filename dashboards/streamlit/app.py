@@ -13,7 +13,8 @@ st.set_page_config(
 )
 
 st.title("🌍 California vs Portugal — Climate & Pipeline Observability")
-st.caption("Data source: Open-Meteo | Warehouse: DuckDB + dbt | Orchestration: Prefect")
+st.caption("Data source: Open-Meteo | Stack: DuckDB + dbt + Streamlit + ML")
+
 
 # -----------------------------------
 # Database connection
@@ -24,14 +25,16 @@ DB_PATH = "data/warehouse/climate.duckdb"
 
 @st.cache_resource
 def get_connection():
-    # read_only because dashboard should never mutate the DB
+    # read_only keeps things safe from accidental writes
     return duckdb.connect(DB_PATH, read_only=True)
 
 
-# -------- Climate data loaders --------
+# -----------------------------------
+# Data loaders
+# -----------------------------------
 
 @st.cache_data
-def load_climate_monthly():
+def load_climate_data() -> pd.DataFrame:
     con = get_connection()
     query = """
         SELECT
@@ -54,111 +57,152 @@ def load_climate_monthly():
     """
     return con.execute(query).df()
 
-
-# -------- Observability loaders --------
-
-@st.cache_data
-def load_pipeline_runs(limit: int = 200):
-    con = get_connection()
-    query = f"""
-        SELECT
-            id,
-            flow_name,
-            run_mode,
-            status,
-            started_at,
-            finished_at,
-            rows_bronze,
-            rows_gold_ml,
-            rows_bronze_delta,
-            rows_gold_ml_delta,
-            bronze_max_date,
-            gold_ml_max_date,
-            freshness_status
-        FROM pipeline_runs
-        ORDER BY started_at DESC
-        LIMIT {limit}
-    """
-    return con.execute(query).df()
-
+# -----------------------------------
+# Helper to load arbitrary DuckDB tables
+# -----------------------------------
 
 @st.cache_data
-def load_pipeline_daily_summary():
+def load_table(table_name: str):
+    """Load any DuckDB table into a pandas DataFrame."""
     con = get_connection()
-    query = """
-        SELECT
-            run_date,
-            flow_name,
-            run_mode,
-            runs_total,
-            runs_success,
-            runs_failed,
-            rows_bronze_max,
-            rows_gold_ml_max,
-            rows_bronze_delta_max,
-            rows_gold_ml_delta_max
-        FROM pipeline_run_daily_summary
-        ORDER BY run_date
-    """
-    return con.execute(query).df()
+    try:
+        return con.execute(f"SELECT * FROM {table_name}").df()
+    except Exception as e:
+        st.warning(f"Could not load table '{table_name}': {e}")
+        return pd.DataFrame()
 
 
 # -----------------------------------
-# Tabs: Climate vs Observability
+# Observability loaders
 # -----------------------------------
 
-tab_climate, tab_obs = st.tabs(
-    ["🌤 Climate Trends", "🛰 Pipeline Observability"]
+def load_pipeline_run_summary() -> pd.DataFrame:
+    """Load daily pipeline run summary from DuckDB for the UI."""
+    con = get_connection()
+    try:
+        return con.execute(
+            """
+            SELECT
+                run_date,
+                flow_name,
+                run_mode,
+
+                -- Names expected by Streamlit UI
+                runs_success AS success_count,
+                runs_failed  AS failure_count,
+                runs_total   AS n_runs,
+
+                -- Convenience metric used in the UI
+                CASE
+                    WHEN runs_total > 0
+                        THEN runs_success * 1.0 / runs_total
+                    ELSE NULL
+                END AS success_rate,
+
+                -- Volume / delta columns
+                rows_bronze_max,
+                rows_gold_ml_max,
+                rows_bronze_delta_max,
+                rows_gold_ml_delta_max
+            FROM pipeline_run_daily_summary
+            ORDER BY run_date DESC, run_mode
+            """
+        ).df()
+    except Exception as e:
+        st.warning(f"Could not load pipeline_run_daily_summary: {e}")
+        return pd.DataFrame()
+
+
+def load_pipeline_ml_summary() -> pd.DataFrame:
+    """Load daily ML metrics summary from DuckDB."""
+    con = get_connection()
+    try:
+        return con.execute(
+            """
+            SELECT
+                run_date,
+                run_mode,
+                n_runs,
+                last_run_at,
+                last_n_train,
+                avg_accuracy,
+                avg_roc_auc
+            FROM pipeline_ml_daily_summary
+            ORDER BY run_date DESC, run_mode
+            """
+        ).df()
+    except Exception as e:
+        st.warning(f"Could not load pipeline_ml_daily_summary: {e}")
+        return pd.DataFrame()
+
+
+# -----------------------------------
+# Load main climate data
+# -----------------------------------
+
+climate_df = load_climate_data()
+
+if climate_df.empty:
+    st.error("❌ The climate table is empty. Make sure dbt has run successfully.")
+    st.stop()
+
+
+# -----------------------------------
+# Sidebar controls (for climate view)
+# -----------------------------------
+
+st.sidebar.header("📊 Climate controls")
+
+metric_map = {
+    "Average Mean Temperature (°C)": "avg_tmean_c",
+    "Average Max Temperature (°C)": "avg_tmax_c",
+    "Average Min Temperature (°C)": "avg_tmin_c",
+    "Total Precipitation (mm)": "total_precip_mm",
+    "Average Max Wind Speed (m/s)": "avg_wind_max_ms",
+    "Average Dew Point (°C)": "avg_dewpoint_c",
+    "Shortwave Radiation": "avg_sw_radiation",
+    "Heat Day Count": "heat_day_count",
+    "Tropical Night Count": "tropical_night_count",
+    "Heavy Precipitation Days": "heavy_precip_day_count",
+    "Summer Day Count": "summer_day_count",
+}
+
+selected_metric_label = st.sidebar.selectbox(
+    "Select a climate metric",
+    list(metric_map.keys()),
+    index=0,
 )
 
-# ===================================
-# 🌤 Climate Trends tab
-# ===================================
-with tab_climate:
-    df_climate = load_climate_monthly()
+selected_metric = metric_map[selected_metric_label]
 
-    if df_climate.empty:
-        st.error("❌ The climate table is empty. Make sure dbt has run successfully.")
-        st.stop()
+cities = st.sidebar.multiselect(
+    "Select cities",
+    options=sorted(climate_df["city_name"].unique()),
+    default=sorted(climate_df["city_name"].unique()),
+)
 
-    st.subheader("📊 Climate Trends")
+# Filter climate dataframe
+climate_filtered = climate_df[climate_df["city_name"].isin(cities)]
 
-    st.sidebar.header("📊 Controls (Climate)")
 
-    metric_map = {
-        "Average Mean Temperature (°C)": "avg_tmean_c",
-        "Average Max Temperature (°C)": "avg_tmax_c",
-        "Average Min Temperature (°C)": "avg_tmin_c",
-        "Total Precipitation (mm)": "total_precip_mm",
-        "Average Max Wind Speed (m/s)": "avg_wind_max_ms",
-        "Average Dew Point (°C)": "avg_dewpoint_c",
-        "Shortwave Radiation": "avg_sw_radiation",
-        "Heat Day Count": "heat_day_count",
-        "Tropical Night Count": "tropical_night_count",
-        "Heavy Precipitation Days": "heavy_precip_day_count",
-        "Summer Day Count": "summer_day_count",
-    }
+# -----------------------------------
+# Main layout: Tabs
+# -----------------------------------
 
-    selected_metric_label = st.sidebar.selectbox(
-        "Select a metric",
-        list(metric_map.keys()),
-        index=0,
-        key="climate_metric_select",
-    )
+climate_tab, observability_tab = st.tabs(
+    ["🌡️ Climate trends", "🧪 Pipeline & ML observability"]
+)
 
-    selected_metric = metric_map[selected_metric_label]
 
-    cities = st.sidebar.multiselect(
-        "Select cities",
-        options=sorted(df_climate["city_name"].unique()),
-        default=sorted(df_climate["city_name"].unique()),
-        key="climate_city_multiselect",
-    )
+# -----------------------------------
+# Tab 1: Climate trends
+# -----------------------------------
 
-    df_filtered = df_climate[df_climate["city_name"].isin(cities)]
+with climate_tab:
+    st.subheader("🌡️ Monthly climate trends")
 
     fig = px.line(
-        df_filtered,
+        climate_filtered,
         x="date",
         y=selected_metric,
         color="city_name",
@@ -179,7 +223,7 @@ with tab_climate:
     st.subheader("📈 Summary statistics")
 
     summary = (
-        df_filtered
+        climate_filtered
         .groupby("city_name")[selected_metric]
         .agg(["mean", "std", "min", "max"])
         .round(2)
@@ -189,94 +233,191 @@ with tab_climate:
     st.dataframe(summary, use_container_width=True)
 
     with st.expander("🔎 View underlying climate data"):
-        st.dataframe(df_filtered.sort_values(["city_name", "date"]))
+        st.dataframe(
+            climate_filtered.sort_values(["city_name", "date"]),
+            use_container_width=True,
+        )
 
-# ===================================
-# 🛰 Pipeline Observability tab
-# ===================================
-with tab_obs:
-    st.subheader("🛰 Pipeline Health & Run History")
 
-    df_runs = load_pipeline_runs(limit=200)
-    df_daily = load_pipeline_daily_summary()
+# -----------------------------------
+# Tab 2: Pipeline & ML observability
+# -----------------------------------
 
-    if df_runs.empty:
+with observability_tab:
+    st.subheader("🧪 Pipeline run & ML model health")
+
+    run_df = load_pipeline_run_summary()
+    ml_df = load_pipeline_ml_summary()
+
+    if run_df.empty and ml_df.empty:
         st.info(
-            "No pipeline runs logged yet. "
-            "Trigger `uv run climate-prefect-daily` to populate pipeline_run_log."
+            "No observability data found yet. "
+            "Run the Prefect daily flow and ML training to populate the tables."
         )
     else:
-        # --- Topline metrics ---
-        col1, col2, col3, col4 = st.columns(4)
+        col_runs, col_ml = st.columns(2)
 
-        last_run = df_runs.iloc[0]
-        last_status = last_run["status"]
-        last_rows_bronze = int(last_run["rows_bronze"])
-        last_rows_gold_ml = int(last_run["rows_gold_ml"])
-        freshness = last_run.get("freshness_status", "unknown")
+        # ----------------------------
+        # Left: pipeline run summary
+        # ----------------------------
+        with col_runs:
+            st.markdown("### 🧱 Pipeline runs (daily)")
 
-        with col1:
-            st.metric("Last run status", last_status)
-        with col2:
-            st.metric("Bronze rows (last run)", f"{last_rows_bronze:,}")
-        with col3:
-            st.metric("Gold ML rows (last run)", f"{last_rows_gold_ml:,}")
-        with col4:
-            st.metric("Data freshness", freshness)
+            if run_df.empty:
+                st.warning("No rows in `pipeline_run_daily_summary` yet.")
+            else:
+                # Basic derived metrics
+                run_df = run_df.copy()
+                run_df["total_runs"] = (
+                    run_df["success_count"] + run_df["failure_count"]
+                )
+                run_df["success_rate"] = (
+                    run_df["success_count"] / run_df["total_runs"].replace(0, pd.NA)
+                )
 
-        st.markdown("---")
+                # Success rate chart
+                fig_sr = px.line(
+                    run_df,
+                    x="run_date",
+                    y="success_rate",
+                    color="run_mode",
+                    markers=True,
+                    title="Success rate by day & run_mode",
+                )
+                fig_sr.update_layout(
+                    xaxis_title="Run date",
+                    yaxis_title="Success rate",
+                    template="plotly_white",
+                    legend_title="Run mode",
+                    height=350,
+                )
+                st.plotly_chart(fig_sr, use_container_width=True)
 
-        # --- Daily run chart ---
-        if not df_daily.empty:
-            st.markdown("### 📆 Daily run outcomes")
+                # Volume chart
+                fig_vol = px.bar(
+                    run_df,
+                    x="run_date",
+                    y="total_runs",
+                    color="run_mode",
+                    title="Number of runs per day",
+                )
+                fig_vol.update_layout(
+                    xaxis_title="Run date",
+                    yaxis_title="Total runs",
+                    template="plotly_white",
+                    legend_title="Run mode",
+                    height=300,
+                )
+                st.plotly_chart(fig_vol, use_container_width=True)
 
-            fig_runs = px.bar(
-                df_daily,
-                x="run_date",
-                y=["runs_success", "runs_failed"],
-                title="Daily pipeline run counts",
-                labels={"value": "Runs", "run_date": "Date", "variable": "Status"},
-            )
-            fig_runs.update_layout(
-                barmode="stack",
-                template="plotly_white",
-                height=400,
-            )
-            st.plotly_chart(fig_runs, use_container_width=True)
+                with st.expander("📋 Daily pipeline summary table"):
+                    st.dataframe(
+                        run_df.sort_values(["run_date", "run_mode", "flow_name"]),
+                        use_container_width=True,
+                    )
 
-        # --- Row growth over time (from daily summary) ---
-        if not df_daily.empty:
-            st.markdown("### 📦 Warehouse row growth (max per day)")
+        # ----------------------------
+        # Right: ML metrics summary
+        # ----------------------------
+        with col_ml:
+            st.subheader("😃 ML metrics (daily)")
 
-            fig_rows = px.line(
-                df_daily,
-                x="run_date",
-                y=["rows_bronze_max", "rows_gold_ml_max"],
-                title="Rows in bronze / gold_ml over time (daily max)",
-                labels={"value": "Row count", "run_date": "Date", "variable": "Table"},
-            )
-            fig_rows.update_layout(
-                template="plotly_white",
-                height=400,
-            )
-            st.plotly_chart(fig_rows, use_container_width=True)
+            ml_df = load_table("pipeline_ml_daily_summary")
 
-        st.markdown("### 🧾 Recent runs")
+            if ml_df.empty:
+                st.info(
+                    "No ML metrics found yet. Run the ML training step "
+                    "(e.g. `uv run climate-train-baseline`) to populate the table."
+                )
+            else:
+                # Make sure we have the new minority-class columns
+                expected_cols = {
+                    "run_date",
+                    "run_mode",
+                    "avg_accuracy",
+                    "avg_roc_auc",
+                    "avg_precision_pos",
+                    "avg_recall_pos",
+                    "avg_f1_pos",
+                }
+                missing = expected_cols - set(ml_df.columns)
+                if missing:
+                    st.warning(
+                        f"ML summary table is missing expected columns: {sorted(missing)}. "
+                        "Did you run `dbt build --select observability` after updating the models?"
+                    )
+                else:
+                    # Top-level summary for the most recent day
+                    latest = (
+                        ml_df.sort_values("run_date")
+                        .groupby("run_mode")
+                        .tail(1)
+                        .sort_values("run_date", ascending=False)
+                    )
 
-        # A compact table for the last N runs
-        cols = [
-            "id",
-            "started_at",
-            "finished_at",
-            "flow_name",
-            "run_mode",
-            "status",
-            "rows_bronze",
-            "rows_gold_ml",
-            "rows_bronze_delta",
-            "rows_gold_ml_delta",
-            "bronze_max_date",
-            "gold_ml_max_date",
-            "freshness_status",
-        ]
-        st.dataframe(df_runs[cols], use_container_width=True, hide_index=True)
+                    st.markdown("#### Latest daily ML metrics (per run mode)")
+                    metric_cols = st.columns(min(3, len(latest)))
+
+                    for col, (_, row) in zip(metric_cols, latest.iterrows()):
+                        with col:
+                            st.metric(
+                                label=f"{row['run_mode']} – ROC-AUC",
+                                value=f"{row['avg_roc_auc']:.3f}",
+                            )
+                            st.metric(
+                                label=f"{row['run_mode']} – F1 (event=1)",
+                                value=f"{row['avg_f1_pos']:.3f}",
+                            )
+
+                    # Time-series plots
+                    col_left, col_right = st.columns(2)
+
+                    with col_left:
+                        st.markdown("##### Average ROC-AUC by day & run_mode")
+                        fig_roc = px.line(
+                            ml_df,
+                            x="run_date",
+                            y="avg_roc_auc",
+                            color="run_mode",
+                            markers=True,
+                            labels={
+                                "run_date": "Run date",
+                                "avg_roc_auc": "Average ROC-AUC",
+                                "run_mode": "Run mode",
+                            },
+                        )
+                        fig_roc.update_layout(height=350)
+                        st.plotly_chart(fig_roc, use_container_width=True)
+
+                    with col_right:
+                        st.markdown("##### Average accuracy by day & run_mode")
+                        fig_acc = px.line(
+                            ml_df,
+                            x="run_date",
+                            y="avg_accuracy",
+                            color="run_mode",
+                            markers=True,
+                            labels={
+                                "run_date": "Run date",
+                                "avg_accuracy": "Average accuracy",
+                                "run_mode": "Run mode",
+                            },
+                        )
+                        fig_acc.update_layout(height=350)
+                        st.plotly_chart(fig_acc, use_container_width=True)
+
+                    st.markdown("##### Minority-class F1 (event=1) by day & run_mode")
+                    fig_f1 = px.line(
+                        ml_df,
+                        x="run_date",
+                        y="avg_f1_pos",
+                        color="run_mode",
+                        markers=True,
+                        labels={
+                            "run_date": "Run date",
+                            "avg_f1_pos": "Average F1 (class 1 / event)",
+                            "run_mode": "Run mode",
+                        },
+                    )
+                    fig_f1.update_layout(height=350)
+                    st.plotly_chart(fig_f1, use_container_width=True)
