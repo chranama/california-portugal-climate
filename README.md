@@ -1,4 +1,3 @@
-```markdown
 # California–Portugal Climate Pipeline  
 ### A Full-Stack Climate Data Engineering, Analytics & Machine Learning System
 
@@ -9,7 +8,7 @@ This project implements an end-to-end climate data platform comparing four coast
 - Lisbon (PT)  
 - Porto (PT)
 
-Using daily historical weather data from **1980–present**, the system ingests, transforms, models, and analyzes long-term climate patterns and anomaly events. It produces:
+Using daily historical weather data from 1980–present, the system ingests, transforms, models, and analyzes long-term climate patterns and anomaly events. It produces:
 
 - A production-ready DuckDB warehouse  
 - A multi-layer dbt pipeline  
@@ -22,86 +21,85 @@ Using daily historical weather data from **1980–present**, the system ingests,
 
 ---
 
+## Architecture Overview (Mermaid Diagram)
 
-## Architecture Overview (Mermaid)
-
-```mermaid
 flowchart TD
-    A[Open‑Meteo API] --> B[Landing Layer<br>raw JSON]
+    A[Open-Meteo API] --> B[Landing Layer<br>raw JSON]
     B --> C[Clean Layer<br>validated daily tables]
-    C --> D[Climate Layer<br>climatology + anomaly scoring]
+    C --> D[Anomaly Layer<br>climatology + anomaly scoring]
     D --> E[ML Feature Layer<br>lagged monthly features]
     E --> F[ML Models<br>Random Forest baseline]
     E --> G[Streamlit Dashboard]
+
     subgraph Orchestration
         H[Prefect Flows<br>daily + backfill]
     end
+
     H --> B
     H --> C
     H --> D
     H --> E
     H --> F
-```
 
 ---
 
-## Pipeline Layers (Descriptive Naming)
+## Pipeline Layers (New Naming Framework)
 
-### 1. Raw Layer (formerly Bronze)
-Contains **structured but unmodified** Open-Meteo daily weather and geocoding metadata.
+### 1. Landing Layer (formerly Bronze)
+Structured Open-Meteo responses stored as raw-in/normalized-out weather tables.
 
----
-
-### 2. Cleaned Layer (formerly Silver)
-Validated, normalized, and feature-enriched daily + monthly weather data.
-
-Adds:  
-- extreme heat flags  
-- tropical night flags  
-- heavy precipitation detection  
-- seasonal features  
-- schema enforcement  
+Contents:
+- daily weather fields  
+- geocoding metadata  
+- ingestion metadata  
 
 ---
 
-### 3. Analytics Layer (formerly Gold)
-High-level, domain-focused climate analytics:
+### 2. Clean Layer (formerly Silver)
+Validated, enriched daily + monthly weather summaries. Adds:
+
+- extreme temperature flags  
+- tropical night detection  
+- heavy precipitation flags  
+- seasonal encodings  
+- data quality normalization  
+
+---
+
+### 3. Anomaly Layer (formerly Gold)
+High-level domain climate analytics:
 
 - climatology baselines  
-- anomaly scoring  
+- standardized anomaly scoring (z-scores)  
+- anomaly event detection  
 - temporal lags  
-- inter-city correlations  
-- anomaly event labels  
+- cross-city anomaly correlations  
 
 ---
 
 ### 4. ML Feature Store
-Final feature matrix for supervised anomaly detection:
+Final engineered feature matrix for supervised anomaly prediction:
 
-- engineered temperature deltas  
-- multi-month lags  
-- seasonal context  
-- anomaly flags  
-- target labels  
+Includes:
+- rolling-window statistics  
+- multiple lag deltas  
+- teleconnection-style lag summary  
+- seasonal encodings  
+- target label: is_event_next_month  
 
 ---
 
 ## Machine Learning Layer
 
-Baseline anomaly model:
-
+Model:
 - RandomForestClassifier  
-- Target: `is_positive_temp_anomaly`  
-- Time-aware splitting  
-- Metrics logged into DuckDB via observability module
+- Predicts next-month strong anomaly events
 
 Artifacts:
-
-- `models/baseline_rf.pkl`  
-- `models/baseline_rf_metrics.json`
+- models/baseline_rf.pkl  
+- models/baseline_rf_metrics.json  
 
 Run training:
-
 uv run climate-train-baseline
 
 ---
@@ -109,35 +107,29 @@ uv run climate-train-baseline
 ## Streamlit Dashboard
 
 Location:
-
 dashboards/streamlit/app.py
 
 Run:
-
 uv run streamlit run dashboards/streamlit/app.py
 
-Provides:
-
-- City comparisons  
-- Monthly climatology trends  
+Features:
+- Climate trend exploration  
 - Anomaly visualization  
-- ML model monitoring  
-- Pipeline run history & freshness checks  
+- ML performance  
+- Pipeline health metrics  
+- Freshness indicators  
 
 ---
 
 ## Orchestration (Prefect)
 
 Daily pipeline:
-
 uv run python -m climate_pipeline.orchestration.prefect_flow daily
 
-Backfill pipeline:
+Backfill:
+uv run python -m climate_pipeline.orchestration.prefect_flow backfill --start-date YYYY-MM-DD --end-date YYYY-MM-DD
 
-uv run python -m climate_pipeline.orchestration.prefect_flow backfill --start-date ... --end-date ...
-
-Steps:
-
+Pipeline steps:
 1. Fetch daily weather  
 2. dbt build (all layers)  
 3. Optional dbt tests  
@@ -151,12 +143,12 @@ Steps:
 
 uv run pytest
 
-Tests include:
-
-- Data quality  
-- Schema validation  
-- ML correctness  
-- Edge-case handling  
+Includes:
+- schema validation  
+- anomaly layer logic tests  
+- ML feature integrity tests  
+- observability table tests  
+- utilities + path resolution tests  
 
 ---
 
@@ -187,9 +179,9 @@ uv run streamlit run dashboards/streamlit/app.py
 ## Planned Enhancements
 
 - Teleconnection indices (ENSO, NAO, PDO, AMO)  
-- SST + reanalysis integrations  
-- Transformer/LSTM anomaly forecasting  
-- Short-term (3-day) temperature forecasting  
+- Sea-surface-temperature integration  
+- Reanalysis integration (ERA5, NOAA)  
+- Short-term forecasting (3-day max/min)  
+- Transformer/LSTM anomaly models  
 - Expanded observability dashboards  
-- Docker deployment + cloud hosting  
-```
+- Docker + cloud deployment  
