@@ -35,6 +35,11 @@ climate-prefect-backfill = "climate_pipeline.orchestration.prefect_flow:backfill
 climate-dbt-build = "climate_pipeline.dbt_cli:build"
 climate-dbt-docs = "climate_pipeline.dbt_cli:docs"
 
+# Health checks / UX
+climate-check-ingestion = "climate_pipeline.cli.health:check_ingestion_main"
+climate-check-ml = "climate_pipeline.cli.health:check_ml_main"
+climate-dashboard = "climate_pipeline.cli.health:run_streamlit_dashboard_main"
+
 [tool.uv]
 package = true
 

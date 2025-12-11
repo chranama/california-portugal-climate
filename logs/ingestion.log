@@ -1320,3 +1320,41 @@
 2025-12-10 12:29:39,349 [INFO] fetch_daily_weather - Recent mode: requesting daily history for city_id=4 name=Porto year=2025 (2025-01-01 → 2025-12-09)
 2025-12-10 12:29:39,350 [INFO] climate_pipeline.utils.open_meteo_client - Fetching daily history lat=41.1496 lon=-8.6110 2025-01-01 → 2025-12-09 (attempt 1)
 2025-12-10 12:29:40,184 [INFO] fetch_daily_weather - Recent mode: wrote /Users/chranama/portfolio/california-portugal-climate/data/raw/open_meteo_daily/porto/2025.json
+2025-12-10 17:20:57,870 [INFO] fetch_daily_weather - Loaded 4 cities from dim_city.csv
+2025-12-10 17:20:57,871 [INFO] fetch_daily_weather - Recent mode: fetching year-to-date data for current year 2025 (2025-01-01 → 2025-12-09)
+2025-12-10 17:20:57,871 [INFO] fetch_daily_weather - Fetching daily history (attempt 1/3) for city_id=1 name=Los Angeles (2025-01-01 → 2025-12-09)
+2025-12-10 17:20:57,871 [INFO] climate_pipeline.utils.open_meteo_client - Fetching daily history lat=34.0522 lon=-118.2437 2025-01-01 → 2025-12-09 (attempt 1)
+2025-12-10 17:20:59,654 [INFO] fetch_daily_weather - Validated daily response for Los Angeles: 343 records (2025-01-01 → 2025-12-09)
+2025-12-10 17:20:59,660 [INFO] fetch_daily_weather - Recent mode: wrote data/raw/open_meteo_daily/los_angeles/2025.json (343 daily records) for city_id=1 name=Los Angeles year=2025
+2025-12-10 17:21:00,165 [INFO] fetch_daily_weather - Fetching daily history (attempt 1/3) for city_id=2 name=San Francisco (2025-01-01 → 2025-12-09)
+2025-12-10 17:21:00,166 [INFO] climate_pipeline.utils.open_meteo_client - Fetching daily history lat=37.7749 lon=-122.4194 2025-01-01 → 2025-12-09 (attempt 1)
+2025-12-10 17:21:00,831 [INFO] fetch_daily_weather - Validated daily response for San Francisco: 343 records (2025-01-01 → 2025-12-09)
+2025-12-10 17:21:00,837 [INFO] fetch_daily_weather - Recent mode: wrote data/raw/open_meteo_daily/san_francisco/2025.json (343 daily records) for city_id=2 name=San Francisco year=2025
+2025-12-10 17:21:01,343 [INFO] fetch_daily_weather - Fetching daily history (attempt 1/3) for city_id=3 name=Lisbon (2025-01-01 → 2025-12-09)
+2025-12-10 17:21:01,343 [INFO] climate_pipeline.utils.open_meteo_client - Fetching daily history lat=38.7167 lon=-9.1333 2025-01-01 → 2025-12-09 (attempt 1)
+2025-12-10 17:21:06,980 [INFO] fetch_daily_weather - Validated daily response for Lisbon: 343 records (2025-01-01 → 2025-12-09)
+2025-12-10 17:21:06,985 [INFO] fetch_daily_weather - Recent mode: wrote data/raw/open_meteo_daily/lisbon/2025.json (343 daily records) for city_id=3 name=Lisbon year=2025
+2025-12-10 17:21:07,490 [INFO] fetch_daily_weather - Fetching daily history (attempt 1/3) for city_id=4 name=Porto (2025-01-01 → 2025-12-09)
+2025-12-10 17:21:07,491 [INFO] climate_pipeline.utils.open_meteo_client - Fetching daily history lat=41.1496 lon=-8.6110 2025-01-01 → 2025-12-09 (attempt 1)
+2025-12-10 17:21:08,080 [INFO] fetch_daily_weather - Validated daily response for Porto: 343 records (2025-01-01 → 2025-12-09)
+2025-12-10 17:21:08,086 [INFO] fetch_daily_weather - Recent mode: wrote data/raw/open_meteo_daily/porto/2025.json (343 daily records) for city_id=4 name=Porto year=2025
+2025-12-10 17:21:08,590 [INFO] fetch_daily_weather - Ingestion summary: mode=recent total_cities=4 total_requests=4 successes=4 failures=0 failed_cities=[]
+2025-12-10 17:26:15,025 [INFO] fetch_daily_weather - Loaded 4 cities from dim_city.csv
+2025-12-10 17:26:15,026 [INFO] fetch_daily_weather - Recent mode: fetching year-to-date data for current year 2025 (2025-01-01 → 2025-12-09)
+2025-12-10 17:26:15,026 [INFO] fetch_daily_weather - Fetching daily history (attempt 1/3) for city_id=1 name=Los Angeles (2025-01-01 → 2025-12-09)
+2025-12-10 17:26:15,026 [INFO] climate_pipeline.utils.open_meteo_client - Fetching daily history lat=34.0522 lon=-118.2437 2025-01-01 → 2025-12-09 (attempt 1)
+2025-12-10 17:26:15,585 [INFO] fetch_daily_weather - Validated daily response for Los Angeles: 343 records (2025-01-01 → 2025-12-09)
+2025-12-10 17:26:15,589 [INFO] fetch_daily_weather - Recent mode: wrote /Users/chranama/portfolio/california-portugal-climate/data/raw/open_meteo_daily/los_angeles/2025.json (343 daily records) for city_id=1 name=Los Angeles year=2025
+2025-12-10 17:26:16,091 [INFO] fetch_daily_weather - Fetching daily history (attempt 1/3) for city_id=2 name=San Francisco (2025-01-01 → 2025-12-09)
+2025-12-10 17:26:16,092 [INFO] climate_pipeline.utils.open_meteo_client - Fetching daily history lat=37.7749 lon=-122.4194 2025-01-01 → 2025-12-09 (attempt 1)
+2025-12-10 17:26:16,693 [INFO] fetch_daily_weather - Validated daily response for San Francisco: 343 records (2025-01-01 → 2025-12-09)
+2025-12-10 17:26:16,697 [INFO] fetch_daily_weather - Recent mode: wrote /Users/chranama/portfolio/california-portugal-climate/data/raw/open_meteo_daily/san_francisco/2025.json (343 daily records) for city_id=2 name=San Francisco year=2025
+2025-12-10 17:26:17,199 [INFO] fetch_daily_weather - Fetching daily history (attempt 1/3) for city_id=3 name=Lisbon (2025-01-01 → 2025-12-09)
+2025-12-10 17:26:17,200 [INFO] climate_pipeline.utils.open_meteo_client - Fetching daily history lat=38.7167 lon=-9.1333 2025-01-01 → 2025-12-09 (attempt 1)
+2025-12-10 17:26:17,772 [INFO] fetch_daily_weather - Validated daily response for Lisbon: 343 records (2025-01-01 → 2025-12-09)
+2025-12-10 17:26:17,776 [INFO] fetch_daily_weather - Recent mode: wrote /Users/chranama/portfolio/california-portugal-climate/data/raw/open_meteo_daily/lisbon/2025.json (343 daily records) for city_id=3 name=Lisbon year=2025
+2025-12-10 17:26:18,279 [INFO] fetch_daily_weather - Fetching daily history (attempt 1/3) for city_id=4 name=Porto (2025-01-01 → 2025-12-09)
+2025-12-10 17:26:18,280 [INFO] climate_pipeline.utils.open_meteo_client - Fetching daily history lat=41.1496 lon=-8.6110 2025-01-01 → 2025-12-09 (attempt 1)
+2025-12-10 17:26:18,862 [INFO] fetch_daily_weather - Validated daily response for Porto: 343 records (2025-01-01 → 2025-12-09)
+2025-12-10 17:26:18,866 [INFO] fetch_daily_weather - Recent mode: wrote /Users/chranama/portfolio/california-portugal-climate/data/raw/open_meteo_daily/porto/2025.json (343 daily records) for city_id=4 name=Porto year=2025
+2025-12-10 17:26:19,367 [INFO] fetch_daily_weather - Ingestion summary: mode=recent total_cities=4 total_requests=4 successes=4 failures=0 failed_cities=[]

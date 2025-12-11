@@ -8,7 +8,7 @@ WITH anomalies AS (
         year,
         month,
         anomaly_tmean_c
-    FROM {{ ref('gold_city_month_anomalies') }}
+    FROM {{ ref('anomaly_city_month') }}
 
 ),
 

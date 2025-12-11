@@ -4,9 +4,9 @@ import os
 from pathlib import Path
 
 
-# This file lives at: <project_root>/src/climate_pipeline/get_paths.py
-# So project root is two levels up from here.
-PROJECT_ROOT = Path(__file__).resolve().parents[2]
+# This file lives at: <project_root>/src/climate_pipeline/utils/get_paths.py
+# So project root is three levels up from here.
+PROJECT_ROOT = Path(__file__).resolve().parents[3]
 
 
 def _resolve_under_project(path_str: str) -> Path:

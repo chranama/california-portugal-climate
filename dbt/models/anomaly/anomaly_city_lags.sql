@@ -7,7 +7,7 @@ WITH base AS (
         year,
         month,
         anomaly_tmean_c AS temperature_anomaly
-    FROM {{ ref('gold_city_month_anomalies') }}
+    FROM {{ ref('anomaly_city_month') }}
 ),
 
 pairs AS (

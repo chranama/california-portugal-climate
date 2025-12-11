@@ -29,7 +29,7 @@ models:
         description: "Std deviation of mean temperature during baseline"
 
 
-  - name: gold_city_month_anomalies
+  - name: anomaly_city_month
     description: >
       Final Gold table of monthly climate anomalies for each city.
       Includes anomaly values, z-scores, and anomaly flags.
@@ -78,10 +78,10 @@ models:
       - name: is_strong_negative_temp_anomaly
         description: "True if z-score ≤ -2"
 
-  - name: gold_city_anomaly_correlations
+  - name: anomaly_city_correlations
     description: >
       Pairwise correlation of monthly mean temperature anomalies between
-      all city combinations. Built from gold_city_month_anomalies by joining
+      all city combinations. Built from anomaly_city_month by joining
       cities on year/month and calculating Pearson correlation.
 
     columns:
@@ -126,7 +126,7 @@ models:
                 min_value: -1
                 max_value: 1
 
-  - name: gold_city_anomaly_lags
+  - name: anomaly_city_lags
     description: >
       Correlation of temperature anomalies between each city pair at multiple lag offsets
       (from -6 to +6 months) to measure temporal dependence between regions.
@@ -154,7 +154,7 @@ models:
         tests:
           - not_null
 
-  - name: gold_city_anomaly_events
+  - name: anomaly_city_events
     description: >
       Monthly anomaly events flagged using z-score thresholds.
       Events include hot, cold, and extreme classifications.
@@ -182,7 +182,7 @@ models:
       - name: is_extreme_event
         tests: [not_null]
 
-  - name: gold_ml_features
+  - name: ml_features
     description: >
       Machine learning ready dataset containing engineered climate features,
       rolling statistics, momentum, teleconnection signals, and next-month

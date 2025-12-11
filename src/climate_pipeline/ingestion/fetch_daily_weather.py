@@ -5,7 +5,8 @@ import csv
 from dataclasses import dataclass
 from datetime import date, datetime, timedelta
 from pathlib import Path
-from typing import Any, Dict, List, Tuple
+from typing import Any, Dict, List, Tuple, Optional
+import sys
 import time
 
 import yaml
@@ -22,6 +23,16 @@ class City:
     latitude: float
     longitude: float
     timezone: str
+
+
+@dataclass
+class IngestionSummary:
+    mode: str
+    total_cities: int
+    total_requests: int
+    successes: int
+    failures: int
+    failed_cities: List[str]
 
 
 def setup_logging(log_path: str) -> None:
@@ -141,6 +152,142 @@ def validate_args(args: argparse.Namespace) -> None:
 
 
 # ============================
+# Validation & retry helpers
+# ============================
+
+def validate_daily_response(
+    data: Dict[str, Any],
+    daily_vars: List[str],
+    logger: logging.Logger,
+    city_name: str,
+    start_date: date,
+    end_date: date,
+) -> int:
+    """
+    Validate that the Open-Meteo daily response has the expected structure.
+
+    Returns:
+        Number of daily records (len of time array).
+
+    Raises:
+        ValueError if validation fails.
+    """
+    if "daily" not in data or not isinstance(data["daily"], dict):
+        raise ValueError("Missing 'daily' key in response")
+
+    daily = data["daily"]
+    if "time" not in daily:
+        raise ValueError("Missing 'daily.time' in response")
+
+    times = daily["time"]
+    if not isinstance(times, list) or len(times) == 0:
+        raise ValueError("'daily.time' is empty or not a list")
+
+    n = len(times)
+
+    # Ensure all requested vars are present and aligned
+    for var in daily_vars:
+        if var not in daily:
+            raise ValueError(f"Missing 'daily.{var}' in response")
+        series = daily[var]
+        if not isinstance(series, list) or len(series) != n:
+            raise ValueError(
+                f"'daily.{var}' length mismatch: expected {n}, got {len(series)}"
+            )
+
+    # Optional sanity log
+    logger.info(
+        "Validated daily response for %s: %d records (%s → %s)",
+        city_name,
+        n,
+        start_date,
+        end_date,
+    )
+    return n
+
+
+def fetch_daily_with_retries(
+    client: OpenMeteoClient,
+    city: City,
+    start_date: date,
+    end_date: date,
+    daily_vars: List[str],
+    logger: logging.Logger,
+    max_retries: int = 3,
+    base_delay: float = 0.5,
+) -> Tuple[Optional[Dict[str, Any]], int]:
+    """
+    Fetch daily history with retries and validation.
+
+    Returns:
+        (data, record_count)
+        If all retries fail or validation fails, returns (None, 0).
+    """
+    attempt = 1
+    while attempt <= max_retries:
+        try:
+            logger.info(
+                "Fetching daily history (attempt %d/%d) for city_id=%s name=%s (%s → %s)",
+                attempt,
+                max_retries,
+                city.city_id,
+                city.city_name,
+                start_date,
+                end_date,
+            )
+
+            data = client.fetch_daily_history(
+                latitude=city.latitude,
+                longitude=city.longitude,
+                start_date=start_date.isoformat(),
+                end_date=end_date.isoformat(),
+                daily_variables=daily_vars,
+                timezone=city.timezone or "auto",
+            )
+
+            # Validate structure and get record count
+            n_records = validate_daily_response(
+                data=data,
+                daily_vars=daily_vars,
+                logger=logger,
+                city_name=city.city_name,
+                start_date=start_date,
+                end_date=end_date,
+            )
+
+            return data, n_records
+
+        except Exception as exc:
+            logger.warning(
+                "Error fetching daily history for %s (%s → %s), attempt %d/%d: %s",
+                city.city_name,
+                start_date,
+                end_date,
+                attempt,
+                max_retries,
+                exc,
+            )
+            if attempt == max_retries:
+                logger.error(
+                    "Giving up on city %s for window %s → %s after %d attempts.",
+                    city.city_name,
+                    start_date,
+                    end_date,
+                    max_retries,
+                )
+                return None, 0
+
+            # Exponential backoff
+            sleep_s = base_delay * (2 ** (attempt - 1))
+            logger.info("Sleeping %.2f seconds before retry...", sleep_s)
+            time.sleep(sleep_s)
+            attempt += 1
+
+    # Should not reach here
+    return None, 0
+
+
+# ============================
 # Core ingestion modes
 # ============================
 
@@ -150,7 +297,9 @@ def run_backfill(
     start_date: date,
     end_date: date,
     logger: logging.Logger,
-) -> None:
+    max_retries: int,
+    base_delay: float,
+) -> IngestionSummary:
     raw_weather_dir = Path(settings["data"]["raw_weather_dir"])
     raw_weather_dir.mkdir(parents=True, exist_ok=True)
 
@@ -163,6 +312,11 @@ def run_backfill(
 
     years = year_range(start_date, end_date)
     logger.info("Backfill mode: fetching daily data for years: %s", years)
+
+    total_requests = 0
+    successes = 0
+    failures = 0
+    failed_cities: set[str] = set()
 
     for city in cities:
         city_slug = slugify_city_name(city.city_name)
@@ -190,37 +344,56 @@ def run_backfill(
                 )
                 continue
 
-            logger.info(
-                "Requesting daily history for %s year=%s (%s → %s)",
-                city.city_name,
-                year,
-                year_start,
-                year_end,
+            total_requests += 1
+
+            data, n_records = fetch_daily_with_retries(
+                client=client,
+                city=city,
+                start_date=year_start,
+                end_date=year_end,
+                daily_vars=daily_vars,
+                logger=logger,
+                max_retries=max_retries,
+                base_delay=base_delay,
             )
 
-            data = client.fetch_daily_history(
-                latitude=city.latitude,
-                longitude=city.longitude,
-                start_date=year_start.isoformat(),
-                end_date=year_end.isoformat(),
-                daily_variables=daily_vars,
-                timezone=city.timezone or "auto",
-            )
+            if data is None:
+                failures += 1
+                failed_cities.add(city.city_name)
+                continue
 
             with open(out_path, "w", encoding="utf-8") as f:
                 json.dump(data, f, ensure_ascii=False, indent=2)
 
-            logger.info("Wrote %s", out_path)
+            logger.info(
+                "Wrote %s (%d daily records) for city=%s year=%s",
+                out_path,
+                n_records,
+                city.city_name,
+                year,
+            )
 
-            # Be nice to the API: small pause between requests
+            # Small pause between requests
             time.sleep(0.5)
+            successes += 1
+
+    return IngestionSummary(
+        mode="backfill",
+        total_cities=len(cities),
+        total_requests=total_requests,
+        successes=successes,
+        failures=failures,
+        failed_cities=sorted(failed_cities),
+    )
 
 
 def run_recent(
     settings: Dict[str, Any],
     cities: List[City],
     logger: logging.Logger,
-) -> None:
+    max_retries: int,
+    base_delay: float,
+) -> IngestionSummary:
     """
     Incremental/recent mode.
 
@@ -247,8 +420,7 @@ def run_recent(
     today = date.today()
     current_year = today.year
 
-    # Decide whether to include today or stop at yesterday.
-    # Using yesterday is often saner for a "completed-day" view:
+    # Using yesterday for a "completed-day" view:
     end_date = today - timedelta(days=1)
     year_start = date(current_year, 1, 1)
 
@@ -259,7 +431,14 @@ def run_recent(
             end_date,
             year_start,
         )
-        return
+        return IngestionSummary(
+            mode="recent",
+            total_cities=len(cities),
+            total_requests=0,
+            successes=0,
+            failures=0,
+            failed_cities=[],
+        )
 
     logger.info(
         "Recent mode: fetching year-to-date data for current year %s (%s → %s)",
@@ -268,6 +447,11 @@ def run_recent(
         end_date,
     )
 
+    total_requests = 0
+    successes = 0
+    failures = 0
+    failed_cities: set[str] = set()
+
     for city in cities:
         city_slug = slugify_city_name(city.city_name)
         city_dir = raw_weather_dir / city_slug
@@ -275,31 +459,48 @@ def run_recent(
 
         out_path = city_dir / f"{current_year}.json"
 
-        logger.info(
-            "Recent mode: requesting daily history for city_id=%s name=%s year=%s (%s → %s)",
-            city.city_id,
-            city.city_name,
-            current_year,
-            year_start,
-            end_date,
+        total_requests += 1
+
+        data, n_records = fetch_daily_with_retries(
+            client=client,
+            city=city,
+            start_date=year_start,
+            end_date=end_date,
+            daily_vars=daily_vars,
+            logger=logger,
+            max_retries=max_retries,
+            base_delay=base_delay,
         )
 
-        data = client.fetch_daily_history(
-            latitude=city.latitude,
-            longitude=city.longitude,
-            start_date=year_start.isoformat(),
-            end_date=end_date.isoformat(),
-            daily_variables=daily_vars,
-            timezone=city.timezone or "auto",
-        )
+        if data is None:
+            failures += 1
+            failed_cities.add(city.city_name)
+            continue
 
         with open(out_path, "w", encoding="utf-8") as f:
             json.dump(data, f, ensure_ascii=False, indent=2)
 
-        logger.info("Recent mode: wrote %s", out_path)
+        logger.info(
+            "Recent mode: wrote %s (%d daily records) for city_id=%s name=%s year=%s",
+            out_path,
+            n_records,
+            city.city_id,
+            city.city_name,
+            current_year,
+        )
 
-        # Be nice to the API: small pause between requests
+        # Small pause between cities
         time.sleep(0.5)
+        successes += 1
+
+    return IngestionSummary(
+        mode="recent",
+        total_cities=len(cities),
+        total_requests=total_requests,
+        successes=successes,
+        failures=failures,
+        failed_cities=sorted(failed_cities),
+    )
 
 
 def main() -> None:
@@ -315,11 +516,26 @@ def main() -> None:
     setup_logging(log_path)
     logger = logging.getLogger("fetch_daily_weather")
 
+    # Retry configuration (with sane defaults)
+    open_meteo_settings = settings.get("open_meteo", {})
+    max_retries = int(open_meteo_settings.get("max_retries", 3))
+    retry_base_delay = float(open_meteo_settings.get("retry_base_delay", 0.5))
+
     # Load cities
     dim_city_path = Path("dbt/seeds/dim_city.csv")
     if not dim_city_path.exists():
         logger.error("dim_city.csv not found at %s. Run geocode-cities first.", dim_city_path)
-        return
+        # No cities means hard failure
+        summary = IngestionSummary(
+            mode=args.mode,
+            total_cities=0,
+            total_requests=0,
+            successes=0,
+            failures=0,
+            failed_cities=[],
+        )
+        print(json.dumps(summary.__dict__, default=str))
+        sys.exit(1)
 
     cities = load_cities_from_dim_city(str(dim_city_path))
     logger.info("Loaded %d cities from dim_city.csv", len(cities))
@@ -340,12 +556,49 @@ def main() -> None:
                 settings["time_window"]["end_date"], "%Y-%m-%d"
             ).date()
 
-        run_backfill(settings=settings, cities=cities, start_date=start_date, end_date=end_date, logger=logger)
+        summary = run_backfill(
+            settings=settings,
+            cities=cities,
+            start_date=start_date,
+            end_date=end_date,
+            logger=logger,
+            max_retries=max_retries,
+            base_delay=retry_base_delay,
+        )
 
     elif args.mode == "recent":
-        run_recent(settings=settings, cities=cities, logger=logger)
+        summary = run_recent(
+            settings=settings,
+            cities=cities,
+            logger=logger,
+            max_retries=max_retries,
+            base_delay=retry_base_delay,
+        )
     else:
         raise SystemExit(f"Unknown mode: {args.mode}")
+
+    # Log and print structured summary
+    logger.info(
+        "Ingestion summary: mode=%s total_cities=%d total_requests=%d successes=%d failures=%d failed_cities=%s",
+        summary.mode,
+        summary.total_cities,
+        summary.total_requests,
+        summary.successes,
+        summary.failures,
+        summary.failed_cities,
+    )
+
+    # Print JSON summary to stdout for Prefect or other callers to parse if desired
+    print(json.dumps(summary.__dict__, default=str))
+
+    # Exit code: non-zero only if *all* requests failed or no successful requests
+    if summary.total_requests == 0 or summary.successes == 0:
+        logger.error(
+            "Ingestion completed with no successful requests (total_requests=%d, successes=%d).",
+            summary.total_requests,
+            summary.successes,
+        )
+        sys.exit(1)
 
 
 if __name__ == "__main__":

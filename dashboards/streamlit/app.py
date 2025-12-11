@@ -2,6 +2,7 @@ import streamlit as st
 import duckdb
 import pandas as pd
 import plotly.express as px
+from climate_pipeline.utils.get_paths import get_duckdb_path
 
 # -----------------------------------
 # App config
@@ -20,7 +21,7 @@ st.caption("Data source: Open-Meteo | Stack: DuckDB + dbt + Streamlit + ML")
 # Database connection
 # -----------------------------------
 
-DB_PATH = "data/warehouse/climate.duckdb"
+DB_PATH = str(get_duckdb_path())
 
 
 @st.cache_resource
@@ -52,7 +53,7 @@ def load_climate_data() -> pd.DataFrame:
             tropical_night_count,
             heavy_precip_day_count,
             summer_day_count
-        FROM silver_monthly_climate
+        FROM clean_monthly_climate
         ORDER BY date
     """
     return con.execute(query).df()

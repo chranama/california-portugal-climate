@@ -14,18 +14,22 @@ from climate_pipeline.observability.run_logger import (
     log_pipeline_run,
     compute_run_stats,
 )
-
+from climate_pipeline.utils.get_paths import (
+    PROJECT_ROOT,
+    get_data_root,
+    get_log_root,
+    get_duckdb_path,
+)
 # ==========================
 # Paths
 # ==========================
 
 # This file lives at: src/climate_pipeline/orchestration/prefect_flow.py
 # __file__.parents: [orchestration, climate_pipeline, src, <project_root>, ...]
-PROJECT_ROOT = Path(__file__).resolve().parents[3]
+DATA_DIR = get_data_root()
+LOGS_DIR = get_log_root()
+WAREHOUSE_PATH = get_duckdb_path()
 DBT_DIR = PROJECT_ROOT / "dbt"
-DATA_DIR = PROJECT_ROOT / "data"
-LOGS_DIR = PROJECT_ROOT / "logs"
-WAREHOUSE_PATH = DATA_DIR / "warehouse" / "climate.duckdb"
 
 
 # ==========================
@@ -75,7 +79,11 @@ def _run_command(
 ) -> None:
     """
     Helper to run a subprocess command with logging and a controlled environment.
-    Raises on non-zero exit so Prefect can mark the task as failed.
+
+    - Uses the project root (or provided cwd) as working directory.
+    - Injects CLIMATE_DATA_ROOT / CLIMATE_LOG_ROOT / DUCKDB_PATH / DBT_PROFILES_DIR.
+    - Captures stdout/stderr and logs them through Prefect's logger.
+    - Raises on non-zero exit so Prefect can mark the task as failed.
     """
     logger = get_run_logger()
     cwd_path = cwd if cwd is not None else PROJECT_ROOT
@@ -95,9 +103,21 @@ def _run_command(
             cwd=cwd_str,
             env=env,
             check=True,
+            text=True,
+            capture_output=True,
         )
+        if result.stdout:
+            logger.info("STDOUT:\n%s", result.stdout.rstrip())
+        if result.stderr:
+            logger.info("STDERR:\n%s", result.stderr.rstrip())
+
         logger.info("✅ Command succeeded with return code %s", result.returncode)
     except subprocess.CalledProcessError as exc:
+        if exc.stdout:
+            logger.error("STDOUT (on error):\n%s", exc.stdout.rstrip())
+        if exc.stderr:
+            logger.error("STDERR (on error):\n%s", exc.stderr.rstrip())
+
         logger.error("❌ Command failed with return code %s", exc.returncode)
         logger.error("Failed command: %s", " ".join(command))
         raise
@@ -112,6 +132,12 @@ def ingest_recent() -> None:
     """
     Incremental / daily ingestion:
     Uses fetch-daily-weather --mode recent to refresh year-to-date data.
+
+    The underlying script:
+      - Retries internally with exponential backoff per city.
+      - Validates response structure (daily.time + all daily variables).
+      - Emits a JSON summary to stdout and exits non-zero only if
+        all requests fail or no successful requests are made.
     """
     _run_command(
         ["uv", "run", "fetch-daily-weather", "--mode", "recent"],
@@ -180,6 +206,12 @@ def run_dbt_tests() -> None:
 def run_ml_training() -> None:
     """
     Train or refresh the baseline anomaly model.
+
+    The training script:
+      - Reads gold_ml_features from DuckDB (DUCKDB_PATH).
+      - Trains the RandomForest baseline.
+      - Writes model + metrics artifacts under ./models.
+      - Logs ML metrics into DuckDB (pipeline_ml_metrics) for observability.
     """
     _run_command(
         ["uv", "run", "climate-train-baseline"],
@@ -205,7 +237,12 @@ def run_pytests() -> None:
 # ==========================
 
 @task
-def log_run_to_duckdb(flow_name: str, run_mode: str, started_at: datetime, finished_at: datetime) -> None:
+def log_run_to_duckdb(
+    flow_name: str,
+    run_mode: str,
+    started_at: datetime,
+    finished_at: datetime,
+) -> None:
     """
     Prefect task to record a pipeline run into DuckDB, including:
       - Row counts
@@ -218,9 +255,9 @@ def log_run_to_duckdb(flow_name: str, run_mode: str, started_at: datetime, finis
     """
     logger = get_run_logger()
 
-    # 1) Compute stats (best effort)
+    # 1) Compute stats (best effort), using the same warehouse path as the rest
     try:
-        stats = compute_run_stats()
+        stats = compute_run_stats(WAREHOUSE_PATH)
     except Exception as exc:  # duckdb errors, file issues, etc.
         logger.error("❌ Failed to compute run stats for logging: %s", exc)
         return
@@ -264,7 +301,7 @@ def daily_climate_flow(
       1. Incremental ingestion (recent mode)
       2. dbt build (incremental bronze + downstream models)
       3. Optional dbt tests
-      4. ML training
+      4. ML training (logs ML metrics to DuckDB)
       5. Optional pytest
       6. Log run metadata to DuckDB
     """

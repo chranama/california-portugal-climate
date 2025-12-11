@@ -8,7 +8,7 @@ WITH base AS (
         month,
         anomaly_tmean_c AS temperature_anomaly,
         zscore_tmean    AS z_score
-    FROM {{ ref('gold_city_month_anomalies') }}
+    FROM {{ ref('anomaly_city_month') }}
 )
 
 SELECT

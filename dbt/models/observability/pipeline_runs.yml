@@ -21,6 +21,6 @@ models:
       - name: finished_at
         description: "UTC timestamp when the flow finished"
       - name: rows_bronze
-        description: "Row count in bronze_daily_weather during this run"
+        description: "Row count in landing_daily_weather during this run"
       - name: rows_gold_ml
-        description: "Row count in gold_ml_features during this run"
+        description: "Row count in ml_features during this run"
