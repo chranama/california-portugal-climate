@@ -43,6 +43,8 @@ from climate_pipeline.observability.run_logger import (
     log_ml_metrics,
 )
 
+from climate_pipeline.utils.get_paths import get_duckdb_path
+
 # ---------------------------------------------------------------------------
 # Configuration
 # ---------------------------------------------------------------------------
@@ -233,7 +235,7 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument(
         "--db-path",
         type=Path,
-        default=Path("data/warehouse/climate.duckdb"),
+        default=get_duckdb_path(),
         help="Path to the DuckDB warehouse file.",
     )
     parser.add_argument(

@@ -5,6 +5,7 @@ from datetime import datetime, date, timezone
 from pathlib import Path
 from typing import Optional
 
+import os
 import duckdb
 
 
@@ -15,7 +16,7 @@ import duckdb
 # This file lives at: src/climate_pipeline/observability/run_logger.py
 # __file__.parents: [observability, climate_pipeline, src, <project_root>, ...]
 PROJECT_ROOT = Path(__file__).resolve().parents[3]
-WAREHOUSE_PATH = PROJECT_ROOT / "data" / "warehouse" / "climate.duckdb"
+DEFAULT_WAREHOUSE_PATH = PROJECT_ROOT / "data" / "warehouse" / "climate.duckdb"
 
 
 # ==========================
@@ -40,6 +41,7 @@ class PipelineRunRecord:
     bronze_max_date: Optional[date]
     gold_ml_max_date: Optional[date]
     freshness_status: str
+
 
 @dataclass
 class MLMetricRecord:
@@ -67,7 +69,7 @@ class MLMetricRecord:
 
     # Overall performance
     accuracy: float
-    roc_auc: float
+    roc_auc: Optional[float]      # can be None if not computable
 
     # Per-class metrics (0 = normal, 1 = anomaly)
     precision_0: float
@@ -102,11 +104,20 @@ class PipelineRunStats:
 
 def _get_warehouse_path(warehouse_path: Optional[Path] = None) -> Path:
     """
-    Resolve the DuckDB file path, with a sensible default inside data/warehouse.
+    Resolve the DuckDB file path, with the following precedence:
+
+      1. Explicit warehouse_path argument (if provided)
+      2. DUCKDB_PATH environment variable (if set)
+      3. Default under data/warehouse/climate.duckdb
     """
     if warehouse_path is not None:
         return warehouse_path
-    return WAREHOUSE_PATH
+
+    env_path = os.environ.get("DUCKDB_PATH")
+    if env_path:
+        return Path(env_path)
+
+    return DEFAULT_WAREHOUSE_PATH
 
 
 def _ensure_schema(conn: duckdb.DuckDBPyConnection) -> None:
@@ -116,6 +127,7 @@ def _ensure_schema(conn: duckdb.DuckDBPyConnection) -> None:
     IMPORTANT:
     - This function assumes `conn` is already open.
     - It DOES NOT open or close the connection.
+    - It must NOT change connection state beyond creating tables.
     """
     # ---------------------------------
     # 1) Pipeline run log (already used)
@@ -141,7 +153,7 @@ def _ensure_schema(conn: duckdb.DuckDBPyConnection) -> None:
     )
 
     # ---------------------------------
-    # 2) ML metrics table (NEW)
+    # 2) ML metrics table
     # ---------------------------------
     conn.execute(
         """
@@ -175,12 +187,14 @@ def _ensure_schema(conn: duckdb.DuckDBPyConnection) -> None:
     )
 
 
-def _compute_next_id(conn: duckdb.DuckDBPyConnection) -> int:
+def _compute_next_id(conn: duckdb.DuckDBPyConnection, table_name: str) -> int:
     """
-    Compute the next ID for pipeline_run_log in a simple, concurrency-safe way
+    Compute the next ID for a table in a simple, concurrency-safe way
     (enough for local and single-process usage).
     """
-    row = conn.execute("SELECT COALESCE(MAX(id) + 1, 1) FROM pipeline_run_log").fetchone()
+    row = conn.execute(
+        f"SELECT COALESCE(MAX(id) + 1, 1) FROM {table_name}"
+    ).fetchone()
     return int(row[0])
 
 
@@ -295,7 +309,7 @@ def log_pipeline_run(
     conn = duckdb.connect(str(db_path))
     try:
         _ensure_schema(conn)
-        next_id = _compute_next_id(conn)
+        next_id = _compute_next_id(conn, "pipeline_run_log")
 
         conn.execute(
             """
@@ -331,11 +345,15 @@ def log_pipeline_run(
                 record.gold_ml_max_date,
                 record.freshness_status,
             ],
-        ).close()
+        )
     finally:
         conn.close()
 
-def log_ml_metrics(record: MLMetricRecord, warehouse_path: Optional[Path] = None) -> None:
+
+def log_ml_metrics(
+    record: MLMetricRecord,
+    warehouse_path: Optional[Path] = None,
+) -> None:
     """
     Insert a single MLMetricRecord into pipeline_ml_metrics.
     """
@@ -346,10 +364,7 @@ def log_ml_metrics(record: MLMetricRecord, warehouse_path: Optional[Path] = None
     try:
         _ensure_schema(conn)
 
-        # Simple id generation: max(id) + 1, or 1 if table empty
-        next_id = conn.execute(
-            "SELECT COALESCE(MAX(id), 0) + 1 FROM pipeline_ml_metrics"
-        ).fetchone()[0]
+        next_id = _compute_next_id(conn, "pipeline_ml_metrics")
 
         conn.execute(
             """
@@ -386,7 +401,7 @@ def log_ml_metrics(record: MLMetricRecord, warehouse_path: Optional[Path] = None
                 int(record.test_size),
                 float(record.positive_class_ratio),
                 float(record.accuracy),
-                float(record.roc_auc),
+                float(record.roc_auc) if record.roc_auc is not None else None,
                 float(record.precision_0),
                 float(record.recall_0),
                 float(record.f1_0),
