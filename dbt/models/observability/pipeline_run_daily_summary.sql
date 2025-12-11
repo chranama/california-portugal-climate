@@ -8,6 +8,7 @@ with base as (
         flow_name,
         run_mode,
         status,
+        started_at,
         rows_bronze,
         rows_gold_ml,
         rows_bronze_delta,
@@ -20,11 +21,18 @@ agg as (
         run_date,
         flow_name,
         run_mode,
-        count(*) as runs_total,
+
+        -- overall run counts
+        count(*) as n_runs,
         sum(case when status = 'success' then 1 else 0 end) as runs_success,
         sum(case when status <> 'success' then 1 else 0 end) as runs_failed,
-        max(rows_bronze) as rows_bronze_max,
-        max(rows_gold_ml) as rows_gold_ml_max,
+
+        -- last run timestamp for the day/mode
+        max(started_at) as last_run_at,
+
+        -- row metrics
+        max(rows_bronze)       as rows_bronze_max,
+        max(rows_gold_ml)      as rows_gold_ml_max,
         max(rows_bronze_delta) as rows_bronze_delta_max,
         max(rows_gold_ml_delta) as rows_gold_ml_delta_max
     from base
@@ -38,9 +46,10 @@ select
     run_date,
     flow_name,
     run_mode,
-    runs_total,
+    n_runs,
     runs_success,
     runs_failed,
+    last_run_at,
     rows_bronze_max,
     rows_gold_ml_max,
     rows_bronze_delta_max,

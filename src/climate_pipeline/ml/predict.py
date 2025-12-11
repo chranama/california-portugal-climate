@@ -1,7 +1,7 @@
 """
 Inference script for the baseline RandomForest anomaly model.
 
-Reads features from DuckDB (gold_ml_features), loads the trained model,
+Reads features from DuckDB (ml_features), loads the trained model,
 and writes predictions back to DuckDB and to a CSV file.
 
 Usage (from project root):
@@ -12,9 +12,9 @@ or with custom options:
 
   uv run climate-predict-baseline \
     --db-path data/warehouse/climate.duckdb \
-    --table-name gold_ml_features \
+    --table-name ml_features \
     --model-path models/baseline_rf.pkl \
-    --output-table gold_ml_predictions \
+    --output-table ml_predictions \
     --output-csv data/mart/predictions/baseline_rf_predictions.csv
 """
 
@@ -99,7 +99,7 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument(
         "--table-name",
         type=str,
-        default="gold_ml_features",
+        default="ml_features",
         help="Name of the table containing ML features.",
     )
     parser.add_argument(
@@ -111,7 +111,7 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument(
         "--output-table",
         type=str,
-        default="gold_ml_predictions",
+        default="ml_predictions",
         help="Name of the DuckDB table to create/replace with predictions.",
     )
     parser.add_argument(
@@ -141,8 +141,10 @@ def main() -> None:
         raise ValueError(f"Table {args.table_name} is empty; nothing to score.")
 
     # Keep identifier columns for output if present
-    id_cols = [c for c in ["city_id", "city_name", "country_code", "year", "month"]
-               if c in df.columns]
+    id_cols = [
+        c for c in ["city_id", "city_name", "country_code", "year", "month"]
+        if c in df.columns
+    ]
 
     df_clean = load_features(df)
     print(f"Rows before cleaning: {len(df)}, after dropping NaN features: {len(df_clean)}")

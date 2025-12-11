@@ -44,8 +44,19 @@ def _classify_freshness(max_date: Optional[date]) -> str:
         <= 1 day   -> "fresh"
         <= 7 days  -> "stale"
         > 7 days   -> "very_stale"
+
+    Handles both datetime.date and pandas.Timestamp inputs.
     """
     if max_date is None:
+        return "unknown"
+
+    # If this came from pandas, it may be a Timestamp
+    try:
+        # pandas.Timestamp has .date(); datetime.date also works with this pattern
+        if hasattr(max_date, "date"):
+            max_date = max_date.date()
+    except Exception:
+        # If anything weird happens, fall back to "unknown"
         return "unknown"
 
     today = datetime.now(timezone.utc).date()
@@ -65,7 +76,7 @@ def _classify_freshness(max_date: Optional[date]) -> str:
 
 def _load_ingestion_summary(db_path: Path) -> pd.DataFrame:
     """
-    Build a per-city ingestion summary from bronze_daily_weather.
+    Build a per-city ingestion summary from landing_daily_weather.
 
     Columns:
       - city_id
@@ -81,7 +92,7 @@ def _load_ingestion_summary(db_path: Path) -> pd.DataFrame:
 
     con = duckdb.connect(str(db_path), read_only=True)
     try:
-        # Join seed dim_city (from dbt) with bronze_daily_weather
+        # Join seed dim_city (from dbt) with landing_daily_weather
         df = con.execute(
             """
             SELECT
@@ -91,7 +102,7 @@ def _load_ingestion_summary(db_path: Path) -> pd.DataFrame:
                 MIN(b.date)            AS first_date,
                 MAX(b.date)            AS last_date,
                 COUNT(*)               AS n_days
-            FROM "main"."bronze_daily_weather" b
+            FROM "main"."landing_daily_weather" b
             LEFT JOIN "main"."dim_city" c USING (city_id)
             GROUP BY b.city_id, c.city_name, c.country_code
             ORDER BY b.city_id
@@ -122,7 +133,7 @@ def check_ingestion_main() -> None:
     import argparse
 
     parser = argparse.ArgumentParser(
-        description="Check ingestion health from bronze_daily_weather in DuckDB."
+        description="Check ingestion health from landing_daily_weather in DuckDB."
     )
     parser.add_argument(
         "--db-path",
@@ -143,7 +154,7 @@ def check_ingestion_main() -> None:
         raise SystemExit(3)
 
     if df.empty:
-        print("⚠️  bronze_daily_weather is empty. Run the pipeline first.")
+        print("⚠️  landing_daily_weather is empty. Run the pipeline first.")
         raise SystemExit(3)
 
     print("\nPer-city ingestion summary:\n")

@@ -95,7 +95,7 @@ next_month AS (
         END AS is_event_next_month
     FROM deltas a
     LEFT JOIN deltas b
-      ON a.city_id = b.city_id
+      ON a.city_id   = b.city_id
      AND b.time_index = a.time_index + 1
     LEFT JOIN connections c
       ON a.city_id = c.city_id
@@ -131,4 +131,18 @@ SELECT
 
     is_event_next_month
 FROM final
-WHERE roll_mean_6 IS NOT NULL
+WHERE
+    -- ensure target present
+    is_event_next_month IS NOT NULL
+    -- ensure all features used in training are non-null
+    AND anomaly_tmean_c   IS NOT NULL
+    AND roll_mean_3       IS NOT NULL
+    AND roll_mean_6       IS NOT NULL
+    AND roll_std_3        IS NOT NULL
+    AND roll_std_6        IS NOT NULL
+    AND delta_1m          IS NOT NULL
+    AND delta_3m          IS NOT NULL
+    AND max_lagged_corr   IS NOT NULL
+    AND lead_lag_months   IS NOT NULL
+    AND sin_month         IS NOT NULL
+    AND cos_month         IS NOT NULL

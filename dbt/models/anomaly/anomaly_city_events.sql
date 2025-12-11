@@ -19,7 +19,15 @@ SELECT
     temperature_anomaly,
     z_score,
 
+    -- Event flavors
     CASE WHEN z_score >=  2 THEN TRUE ELSE FALSE END AS is_hot_event,
     CASE WHEN z_score <= -2 THEN TRUE ELSE FALSE END AS is_cold_event,
-    CASE WHEN ABS(z_score) >= 3 THEN TRUE ELSE FALSE END AS is_extreme_event
+    CASE WHEN ABS(z_score) >= 3 THEN TRUE ELSE FALSE END AS is_extreme_event,
+
+    -- Canonical event flag used by tests & downstream code
+    -- Here: any strong anomaly (|z| >= 2) counts as an "event".
+    CASE
+        WHEN ABS(z_score) >= 2 THEN 1
+        ELSE 0
+    END AS is_event_next_month
 FROM base

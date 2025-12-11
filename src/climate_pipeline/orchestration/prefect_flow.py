@@ -20,6 +20,7 @@ from climate_pipeline.utils.get_paths import (
     get_log_root,
     get_duckdb_path,
 )
+
 # ==========================
 # Paths
 # ==========================
@@ -176,13 +177,14 @@ def ingest_backfill(start_date: Optional[str] = None, end_date: Optional[str] = 
 @task(retries=2, retry_delay_seconds=60)
 def run_dbt_build() -> None:
     """
-    Run dbt models (bronze → silver → gold).
+    Run dbt models for the full medallion pipeline:
+      landing → clean → anomaly → ml.
     Uses the dbt project in the ./dbt directory.
     """
     _run_command(
         ["uv", "run", "dbt", "build", "--project-dir", ".", "--profiles-dir", "."],
         cwd=DBT_DIR,
-        description="Running dbt build (incremental bronze + silver + gold models)",
+        description="Running dbt build (landing/clean/anomaly/ml layer models)",
     )
 
 
@@ -208,7 +210,7 @@ def run_ml_training() -> None:
     Train or refresh the baseline anomaly model.
 
     The training script:
-      - Reads gold_ml_features from DuckDB (DUCKDB_PATH).
+      - Reads ml_features from DuckDB (DUCKDB_PATH).
       - Trains the RandomForest baseline.
       - Writes model + metrics artifacts under ./models.
       - Logs ML metrics into DuckDB (pipeline_ml_metrics) for observability.
@@ -299,7 +301,7 @@ def daily_climate_flow(
 
     Steps:
       1. Incremental ingestion (recent mode)
-      2. dbt build (incremental bronze + downstream models)
+      2. dbt build (landing + clean + anomaly + ml layers)
       3. Optional dbt tests
       4. ML training (logs ML metrics to DuckDB)
       5. Optional pytest
@@ -359,7 +361,7 @@ def backfill_climate_flow(
 
     Steps:
       1. Backfill ingestion
-      2. dbt build
+      2. dbt build (landing + clean + anomaly + ml layers)
       3. Optional dbt tests
       4. ML training
       5. Optional pytest
