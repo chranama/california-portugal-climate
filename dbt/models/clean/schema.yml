@@ -1,7 +1,7 @@
 version: 2
 
 models:
-  - name: silver_daily_weather_features
+  - name: clean_daily_weather_features
     description: >
       Cleaned daily weather table with standardized units
       and derived features for modeling.
@@ -44,7 +44,7 @@ models:
                 max_value: 500
 
 
-  - name: silver_monthly_climate
+  - name: clean_monthly_climate
     description: >
       Monthly aggregation of daily weather by city.
       Each row is one city–month–year combination.

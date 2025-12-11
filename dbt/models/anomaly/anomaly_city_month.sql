@@ -14,7 +14,7 @@ WITH monthly AS (
         avg_tmax_c,
         avg_tmin_c,
         total_precip_mm
-    FROM {{ ref('silver_monthly_climate') }}
+    FROM {{ ref('clean_monthly_climate') }}
 
 ),
 

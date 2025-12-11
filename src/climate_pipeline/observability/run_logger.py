@@ -217,25 +217,25 @@ def compute_run_stats(warehouse_path: Optional[Path] = None) -> PipelineRunStats
 
         # --- Current row counts ---
         rows_bronze = conn.execute(
-            'SELECT COUNT(*) FROM "main"."bronze_daily_weather"'
+            'SELECT COUNT(*) FROM "main"."landing_daily_weather"'
         ).fetchone()[0]
 
         rows_gold_ml = conn.execute(
-            'SELECT COUNT(*) FROM "main"."gold_ml_features"'
+            'SELECT COUNT(*) FROM "main"."ml_features"'
         ).fetchone()[0]
 
         # --- Max dates for freshness ---
 
         # bronze: real daily date column
         bronze_max_date = conn.execute(
-            'SELECT MAX(date) FROM "main"."bronze_daily_weather"'
+            'SELECT MAX(date) FROM "main"."landing_daily_weather"'
         ).fetchone()[0]
 
         # gold_ml: monthly features → derive a date from (year, month)
         latest_month_row = conn.execute(
             """
             SELECT year, month
-            FROM "main"."gold_ml_features"
+            FROM "main"."ml_features"
             ORDER BY year DESC, month DESC
             LIMIT 1
             """
@@ -268,7 +268,7 @@ def compute_run_stats(warehouse_path: Optional[Path] = None) -> PipelineRunStats
             rows_bronze_delta = rows_bronze - int(prev_rows_bronze)
             rows_gold_ml_delta = rows_gold_ml - int(prev_rows_gold_ml)
 
-        # --- Freshness status (based on bronze_daily_weather) ---
+        # --- Freshness status (based on landing_daily_weather) ---
         freshness_status = "unknown"
         if bronze_max_date is not None:
             today = datetime.now(timezone.utc).date()

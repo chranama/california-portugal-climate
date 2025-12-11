@@ -13,7 +13,7 @@ You can override defaults, e.g.:
 
   uv run python -m climate_pipeline.ml.train \
     --db-path data/warehouse/climate.duckdb \
-    --table-name gold_ml_features \
+    --table-name ml_features \
     --model-path models/baseline_rf.pkl \
     --metrics-path models/baseline_rf_metrics.json \
     --train-fraction 0.75
@@ -230,7 +230,7 @@ def evaluate_model(
 
 def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser(
-        description="Train a baseline RandomForest model on gold_ml_features."
+        description="Train a baseline RandomForest model on ml_features."
     )
     parser.add_argument(
         "--db-path",
@@ -241,7 +241,7 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument(
         "--table-name",
         type=str,
-        default="gold_ml_features",
+        default="ml_features",
         help="Name of the table containing ML features.",
     )
     parser.add_argument(

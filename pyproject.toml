@@ -35,10 +35,6 @@ climate-prefect-backfill = "climate_pipeline.orchestration.prefect_flow:backfill
 climate-dbt-build = "climate_pipeline.dbt_cli:build"
 climate-dbt-docs = "climate_pipeline.dbt_cli:docs"
 
-# Prefect orchestration entrypoints
-climate-prefect-daily = "climate_pipeline.orchestration.prefect_flow:daily_climate_flow"
-climate-prefect-backfill = "climate_pipeline.orchestration.prefect_flow:backfill_climate_flow"
-
 # Health checks / UX
 climate-check-ingestion = "climate_pipeline.cli.health:check_ingestion_main"
 climate-check-ml = "climate_pipeline.cli.health:check_ml_main"

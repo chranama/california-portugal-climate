@@ -1,7 +1,7 @@
 version: 2
 
 models:
-  - name: bronze_daily_weather
+  - name: landing_daily_weather
     description: >
       Raw daily weather observations flattened from the Open-Meteo JSON API.
       Each row represents one city on one day.

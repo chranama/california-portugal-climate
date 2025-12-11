@@ -4,7 +4,7 @@
 
 WITH base AS (
     SELECT *
-    FROM {{ ref('bronze_daily_weather') }}
+    FROM {{ ref('landing_daily_weather') }}
 ),
 
 cleaned AS (

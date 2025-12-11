@@ -4,7 +4,7 @@
 
 WITH base AS (
     SELECT *
-    FROM {{ ref('silver_daily_weather_features') }}
+    FROM {{ ref('clean_daily_weather_features') }}
 ),
 
 aggregated AS (

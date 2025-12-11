@@ -12,7 +12,7 @@ WITH base AS (
         is_negative_temp_anomaly,
         is_strong_positive_temp_anomaly,
         is_strong_negative_temp_anomaly
-    FROM {{ ref('gold_city_month_anomalies') }}
+    FROM {{ ref('anomaly_city_month') }}
 ),
 
 -- 1. Create ordered time index
@@ -78,7 +78,7 @@ connections AS (
         city_id,
         MAX(ABS(anomaly_correlation)) AS max_lagged_corr,
         ARG_MAX(lag_months, ABS(anomaly_correlation)) AS lead_lag_months
-    FROM {{ ref('gold_city_anomaly_lags') }}
+    FROM {{ ref('anomaly_city_lags') }}
     GROUP BY city_id
 ),
 

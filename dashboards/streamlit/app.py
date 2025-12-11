@@ -53,7 +53,7 @@ def load_climate_data() -> pd.DataFrame:
             tropical_night_count,
             heavy_precip_day_count,
             summer_day_count
-        FROM silver_monthly_climate
+        FROM clean_monthly_climate
         ORDER BY date
     """
     return con.execute(query).df()

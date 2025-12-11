@@ -18,7 +18,7 @@ SELECT
     -- Standard deviations for standardized anomalies (z-scores)
     STDDEV(avg_tmean_c)        AS climatology_tmean_std_c,
     STDDEV(total_precip_mm)    AS climatology_total_precip_std_mm
-FROM {{ ref('silver_monthly_climate') }}
+FROM {{ ref('clean_monthly_climate') }}
 WHERE year BETWEEN 1981 AND 2010
 GROUP BY
     city_id,

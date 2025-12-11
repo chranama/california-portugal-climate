@@ -1,0 +1,113 @@
+name: climate-pipeline-ci
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+
+permissions:
+  contents: read
+
+env:
+  # Keep these consistent with your local settings
+  CLIMATE_ENV: ci
+  CLIMATE_DATA_ROOT: data
+  CLIMATE_LOG_ROOT: logs
+  DUCKDB_PATH: data/warehouse/climate.duckdb
+  DBT_PROFILES_DIR: dbt
+
+jobs:
+  tests:
+    name: Unit tests & lint
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install uv
+        run: |
+          curl -LsSf https://astral.sh/uv/install.sh | sh
+          echo "$HOME/.local/bin" >> $GITHUB_PATH
+
+      - name: Cache uv virtualenv
+        uses: actions/cache@v4
+        with:
+          path: .venv
+          key: uv-venv-${{ runner.os }}-${{ hashFiles('pyproject.toml') }}
+          restore-keys: |
+            uv-venv-${{ runner.os }}-
+
+      - name: Sync dependencies (including dev)
+        run: |
+          uv sync --dev
+
+      - name: Run pytest
+        run: |
+          uv run pytest
+
+      # Optional: uncomment if you have ruff / flake8 configured in pyproject.toml
+      # - name: Lint with ruff
+      #   run: |
+      #     uv run ruff check .
+
+  dbt_and_ml:
+    name: dbt build & ML training
+    runs-on: ubuntu-latest
+    needs: tests
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install uv
+        run: |
+          curl -LsSf https://astral.sh/uv/install.sh | sh
+          echo "$HOME/.local/bin" >> $GITHUB_PATH
+
+      - name: Cache uv virtualenv
+        uses: actions/cache@v4
+        with:
+          path: .venv
+          key: uv-venv-${{ runner.os }}-${{ hashFiles('pyproject.toml') }}
+          restore-keys: |
+            uv-venv-${{ runner.os }}-
+
+      - name: Sync dependencies
+        run: |
+          uv sync
+
+      # If your dbt project needs DuckDB file pre-created, dbt itself will create it
+      # based on your profile. We just ensure env vars line up.
+      - name: Run dbt build (full project)
+        working-directory: dbt
+        env:
+          CLIMATE_ENV: ci
+          CLIMATE_DATA_ROOT: ${{ env.CLIMATE_DATA_ROOT }}
+          CLIMATE_LOG_ROOT: ${{ env.CLIMATE_LOG_ROOT }}
+          DUCKDB_PATH: ${{ env.DUCKDB_PATH }}
+          DBT_PROFILES_DIR: ${{ env.DBT_PROFILES_DIR }}
+        run: |
+          uv run dbt build --project-dir . --profiles-dir .
+
+      # Optionally, you can narrow this to observability models only:
+      #   uv run dbt build --project-dir . --profiles-dir . --select observability
+
+      - name: Train baseline anomaly model
+        env:
+          CLIMATE_ENV: ci
+          CLIMATE_DATA_ROOT: ${{ env.CLIMATE_DATA_ROOT }}
+          CLIMATE_LOG_ROOT: ${{ env.CLIMATE_LOG_ROOT }}
+          DUCKDB_PATH: ${{ env.DUCKDB_PATH }}
+        run: |
+          uv run climate-train-baseline
