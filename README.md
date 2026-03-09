@@ -21,6 +21,38 @@ Using daily historical weather data from 1980–present, the system ingests, tra
 
 ---
 
+## What This Proves For Hiring
+
+For AI backend/platform and ML platform roles, this project demonstrates:
+- End-to-end data and ML pipeline engineering beyond notebook-only workflows
+- Reproducible orchestration across ingestion, transforms, feature generation, and model training
+- Reliability discipline with automated tests, health-oriented pipeline structure, and persisted metrics
+
+---
+
+## 5-Minute Reviewer Path
+
+1. Run quickstart:
+   - `uv sync`
+   - `uv run climate-train-baseline`
+2. Inspect model output:
+   - `models/baseline_rf_metrics.json`
+3. Inspect reliability tests:
+   - `tests/test_anomaly_layer.py`
+   - `tests/test_ml_features.py`
+4. Read architecture and orchestration sections below.
+
+---
+
+## Evidence Artifacts / Outputs
+
+- Baseline model artifact: `models/baseline_rf.pkl`
+- Baseline metrics: `models/baseline_rf_metrics.json`
+- Prediction sample: `data/mart/predictions/baseline_rf_predictions.csv`
+- Test suite: `tests/` (anomaly logic, ML features, observability, utilities)
+
+---
+
 ## Architecture Overview (Mermaid Diagram)
 
 flowchart TD
