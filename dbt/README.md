@@ -1,15 +1,32 @@
-Welcome to your new dbt project!
+# dbt Layer (Climate Pipeline)
 
-### Using the starter project
+This directory contains the warehouse transformation layer for the California-Portugal climate project.
 
-Try running the following commands:
-- dbt run
-- dbt test
+## Models
 
+- `landing/`: raw Open-Meteo normalization
+- `clean/`: validated and enriched daily/monthly climate tables
+- `anomaly/`: climatology baselines, anomaly scores, lag features, event labels
+- `ml/`: ML feature table (`ml_features`)
+- `observability/`: pipeline and ML run summary views
 
-### Resources:
-- Learn more about dbt [in the docs](https://docs.getdbt.com/docs/introduction)
-- Check out [Discourse](https://discourse.getdbt.com/) for commonly asked questions and answers
-- Join the [chat](https://community.getdbt.com/) on Slack for live discussions and support
-- Find [dbt events](https://events.getdbt.com) near you
-- Check out [the blog](https://blog.getdbt.com/) for the latest news on dbt's development and best practices
+## Run from repo root
+
+```bash
+uv sync
+uv run climate-dbt-build
+```
+
+Equivalent explicit dbt commands:
+
+```bash
+cd dbt
+uv run dbt run
+uv run dbt test
+```
+
+## Why this matters for reviewer flow
+
+- `climate-train-baseline` expects `ml_features` to exist.
+- `ml_features` is produced by this dbt layer.
+- If dbt models are not built first, baseline training will fail on clean setups.

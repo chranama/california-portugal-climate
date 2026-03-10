@@ -34,6 +34,7 @@ For AI backend/platform and ML platform roles, this project demonstrates:
 
 1. Run quickstart:
    - `uv sync`
+   - `uv run climate-dbt-build`
    - `uv run climate-train-baseline`
 2. Inspect model output:
    - `models/baseline_rf_metrics.json`
@@ -65,6 +66,7 @@ For AI backend/platform and ML platform roles, this project demonstrates:
 
 ## Architecture Overview (Mermaid Diagram)
 
+```mermaid
 flowchart TD
     A[Open-Meteo API] --> B[Landing Layer<br>raw JSON]
     B --> C[Clean Layer<br>validated daily tables]
@@ -82,6 +84,7 @@ flowchart TD
     H --> D
     H --> E
     H --> F
+```
 
 ---
 
@@ -142,7 +145,9 @@ Artifacts:
 - models/baseline_rf_metrics.json  
 
 Run training:
+```bash
 uv run climate-train-baseline
+```
 
 ---
 
@@ -166,10 +171,14 @@ Features:
 ## Orchestration (Prefect)
 
 Daily pipeline:
+```bash
 uv run python -m climate_pipeline.orchestration.prefect_flow daily
+```
 
 Backfill:
+```bash
 uv run python -m climate_pipeline.orchestration.prefect_flow backfill --start-date YYYY-MM-DD --end-date YYYY-MM-DD
+```
 
 Pipeline steps:
 1. Fetch daily weather  
@@ -183,7 +192,9 @@ Pipeline steps:
 
 ## Testing
 
+```bash
 uv run pytest
+```
 
 Includes:
 - schema validation  
@@ -212,9 +223,12 @@ california-portugal-climate/
 
 ## Quick Start
 
-uv sync  
-uv run climate-train-baseline  
-uv run streamlit run dashboards/streamlit/app.py  
+```bash
+uv sync
+uv run climate-dbt-build
+uv run climate-train-baseline
+uv run streamlit run dashboards/streamlit/app.py
+```
 
 ---
 
