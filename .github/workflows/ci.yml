@@ -101,8 +101,11 @@ jobs:
 
           root = Path("${{ github.workspace }}") / "data" / "raw" / "open_meteo_daily"
           cities = ["los_angeles", "san_francisco", "lisbon", "porto"]
-          years = list(range(2018, 2025))
+          years = list(range(1980, 2025))
 
+          if root.exists():
+            import shutil
+            shutil.rmtree(root)
           root.mkdir(parents=True, exist_ok=True)
 
           for city_idx, city in enumerate(cities):
