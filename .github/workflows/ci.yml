@@ -111,3 +111,21 @@ jobs:
           DUCKDB_PATH: ${{ env.DUCKDB_PATH }}
         run: |
           uv run climate-train-baseline
+  proof_validate:
+    name: proof-validate
+    runs-on: ubuntu-latest
+    needs:
+      - tests
+      - dbt_and_ml
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Validate canonical proof manifest
+        run: |
+          python proof/validate_evidence_manifest.py

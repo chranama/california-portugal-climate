@@ -1,0 +1,44 @@
+{
+  "proof_id": "climate-canonical",
+  "run_id": "baseline_latest",
+  "generated_at": "2026-03-10T17:37:12.568799+00:00",
+  "repo_commit": "7b63721",
+  "status": "pass",
+  "claims": [
+    {
+      "claim_text": "Baseline model training outputs are persisted with reproducible metrics.",
+      "verification_command": "python proof/generate_canonical_manifest.py",
+      "artifact_paths": [
+        "models/baseline_rf_metrics.json",
+        "models/baseline_rf.pkl"
+      ],
+      "expected_signal": "baseline model artifact and metrics JSON both exist."
+    },
+    {
+      "claim_text": "Prediction outputs are available for reviewer inspection.",
+      "verification_command": "python proof/generate_canonical_manifest.py",
+      "artifact_paths": [
+        "data/mart/predictions/baseline_rf_predictions.csv"
+      ],
+      "expected_signal": "prediction sample CSV exists and is non-empty."
+    },
+    {
+      "claim_text": "Key reliability tests are represented in canonical proof bundle.",
+      "verification_command": "python proof/validate_evidence_manifest.py",
+      "artifact_paths": [
+        "tests/test_anomaly_layer.py",
+        "tests/test_ml_features.py",
+        "proof/test_summary.latest.json"
+      ],
+      "expected_signal": "required test files exist and test summary artifact is present."
+    }
+  ],
+  "diagnostics": {
+    "pipeline_mode": "dbt_build_plus_baseline_training",
+    "orchestration_entrypoint": "src/climate_pipeline/orchestration/prefect_flow.py",
+    "notes": [
+      "Canonical proof points emphasize latest baseline model and test evidence.",
+      "Use proof/validate_evidence_manifest.py for strict artifact checks."
+    ]
+  }
+}

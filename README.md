@@ -53,6 +53,16 @@ For AI backend/platform and ML platform roles, this project demonstrates:
 
 ---
 
+## Canonical Proof Bundle (Latest)
+
+- Contract: `proof/evidence_contract.schema.json`
+- Manifest: `proof/evidence_manifest.latest.json`
+- Proof points: `proof/proof_points.latest.md`
+- Validation command:
+  - `python proof/validate_evidence_manifest.py`
+
+---
+
 ## Architecture Overview (Mermaid Diagram)
 
 flowchart TD

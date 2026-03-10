@@ -1,0 +1,9 @@
+{
+  "source": "ci.yml",
+  "tests_job": "tests",
+  "required_test_files": [
+    "tests/test_anomaly_layer.py",
+    "tests/test_ml_features.py"
+  ],
+  "status": "pass_if_ci_tests_job_passes"
+}
