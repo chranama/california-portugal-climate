@@ -1,21 +1,6 @@
 # tests/test_landing_layer.py
 
-import duckdb
 import pandas as pd
-import pytest
-from pathlib import Path
-
-from climate_pipeline.utils.get_paths import get_duckdb_path
-
-
-@pytest.fixture
-def con():
-    """Open a read-only DuckDB connection for tests."""
-    db_path = get_duckdb_path()
-    assert db_path.exists(), f"DuckDB file not found at {db_path}"
-    con = duckdb.connect(str(db_path), read_only=True)
-    yield con
-    con.close()
 
 
 def test_landing_table_exists(con):
