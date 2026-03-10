@@ -87,6 +87,17 @@ jobs:
         run: |
           uv sync
 
+      - name: Install dbt packages
+        working-directory: dbt
+        env:
+          CLIMATE_ENV: ci
+          CLIMATE_DATA_ROOT: ${{ env.CLIMATE_DATA_ROOT }}
+          CLIMATE_LOG_ROOT: ${{ env.CLIMATE_LOG_ROOT }}
+          DUCKDB_PATH: ${{ env.DUCKDB_PATH }}
+          DBT_PROFILES_DIR: ${{ env.DBT_PROFILES_DIR }}
+        run: |
+          uv run dbt deps --project-dir . --profiles-dir .
+
       # If your dbt project needs DuckDB file pre-created, dbt itself will create it
       # based on your profile. We just ensure env vars line up.
       - name: Run dbt build (full project)
