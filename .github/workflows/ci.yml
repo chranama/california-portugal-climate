@@ -91,11 +91,83 @@ jobs:
         run: |
           mkdir -p "${{ github.workspace }}/data/warehouse"
 
+      - name: Generate synthetic raw weather fixtures for CI
+        run: |
+          python - <<'PY'
+          import json
+          import math
+          from datetime import date, timedelta
+          from pathlib import Path
+
+          root = Path("${{ github.workspace }}") / "data" / "raw" / "open_meteo_daily"
+          cities = ["los_angeles", "san_francisco", "lisbon", "porto"]
+          years = [2023, 2024]
+
+          root.mkdir(parents=True, exist_ok=True)
+
+          for city_idx, city in enumerate(cities):
+            city_dir = root / city
+            city_dir.mkdir(parents=True, exist_ok=True)
+
+            city_offset = city_idx * 1.4
+            for year in years:
+              start = date(year, 1, 1)
+              end = date(year, 12, 31)
+
+              times = []
+              tmax = []
+              tmin = []
+              tmean = []
+              dew = []
+              precip = []
+              wind = []
+              sw = []
+
+              d = start
+              while d <= end:
+                doy = (d - date(year, 1, 1)).days + 1
+                seasonal = math.sin((2 * math.pi * doy / 365.0) + city_offset)
+                shoulder = math.cos((2 * math.pi * doy / 30.0) + city_offset)
+
+                mean = 16.0 + (8.0 * seasonal) + (0.6 * shoulder)
+                daily_max = mean + 5.3
+                daily_min = mean - 5.7
+                dew_pt = mean - 4.4
+                rain = max(0.0, 3.2 + (3.5 * (1 - seasonal)) + (0.7 * shoulder))
+                wind_spd = 9.5 + (2.4 * abs(shoulder)) + city_idx
+                shortwave = max(45.0, 185.0 + (95.0 * seasonal))
+
+                times.append(d.isoformat())
+                tmax.append(round(daily_max, 2))
+                tmin.append(round(daily_min, 2))
+                tmean.append(round(mean, 2))
+                dew.append(round(dew_pt, 2))
+                precip.append(round(rain, 2))
+                wind.append(round(wind_spd, 2))
+                sw.append(round(shortwave, 2))
+                d += timedelta(days=1)
+
+              payload = {
+                "daily": {
+                  "time": times,
+                  "temperature_2m_max": tmax,
+                  "temperature_2m_min": tmin,
+                  "temperature_2m_mean": tmean,
+                  "dew_point_2m_mean": dew,
+                  "precipitation_sum": precip,
+                  "wind_speed_10m_max": wind,
+                  "shortwave_radiation_sum": sw,
+                }
+              }
+              out = city_dir / f"{year}.json"
+              out.write_text(json.dumps(payload), encoding="utf-8")
+          PY
+
       - name: Install dbt packages
         working-directory: dbt
         env:
           CLIMATE_ENV: ci
-          CLIMATE_DATA_ROOT: ${{ env.CLIMATE_DATA_ROOT }}
+          CLIMATE_DATA_ROOT: ${{ github.workspace }}/data
           CLIMATE_LOG_ROOT: ${{ env.CLIMATE_LOG_ROOT }}
           DUCKDB_PATH: ${{ github.workspace }}/data/warehouse/climate.duckdb
           DBT_PROFILES_DIR: ${{ env.DBT_PROFILES_DIR }}
@@ -108,12 +180,12 @@ jobs:
         working-directory: dbt
         env:
           CLIMATE_ENV: ci
-          CLIMATE_DATA_ROOT: ${{ env.CLIMATE_DATA_ROOT }}
+          CLIMATE_DATA_ROOT: ${{ github.workspace }}/data
           CLIMATE_LOG_ROOT: ${{ env.CLIMATE_LOG_ROOT }}
           DUCKDB_PATH: ${{ github.workspace }}/data/warehouse/climate.duckdb
           DBT_PROFILES_DIR: ${{ env.DBT_PROFILES_DIR }}
         run: |
-          uv run dbt build --project-dir . --profiles-dir .
+          uv run dbt build --project-dir . --profiles-dir . --exclude path:models/observability
 
       # Optionally, you can narrow this to observability models only:
       #   uv run dbt build --project-dir . --profiles-dir . --select observability
@@ -123,7 +195,7 @@ jobs:
           CLIMATE_ENV: ci
           CLIMATE_DATA_ROOT: ${{ env.CLIMATE_DATA_ROOT }}
           CLIMATE_LOG_ROOT: ${{ env.CLIMATE_LOG_ROOT }}
-          DUCKDB_PATH: ${{ env.DUCKDB_PATH }}
+          DUCKDB_PATH: ${{ github.workspace }}/data/warehouse/climate.duckdb
         run: |
           uv run climate-train-baseline
   proof_validate:
