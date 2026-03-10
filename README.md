@@ -30,25 +30,6 @@ For AI backend/platform and ML platform roles, this project demonstrates:
 
 ---
 
-## Visual Proof
-
-![California-Portugal Climate Pipeline: end-to-end architecture from ingestion through observability](media/pipeline-architecture.png)
-
-Claim: climate ML reliability requires integrated ingest, transforms, model training, and observability layers.  
-Evidence sources: `src/climate_pipeline/orchestration/pipeline.py`, `dbt/README.md`
-
-![California-Portugal Climate Pipeline: baseline metrics panel with class imbalance context](media/baseline-metrics-panel.png)
-
-Claim: baseline quality must be interpreted with ROC-AUC and minority class behavior, not accuracy alone.  
-Evidence source: `models/baseline_rf_metrics.json`
-
-![California-Portugal Climate Pipeline: reliability test coverage and canonical CI summary](media/reliability-tests-panel.png)
-
-Claim: reliable outputs require test-backed evidence for anomaly logic and feature integrity.  
-Evidence sources: `proof/test_summary.latest.json`, `tests/test_anomaly_layer.py`, `tests/test_ml_features.py`
-
----
-
 ## 5-Minute Reviewer Path
 
 1. Run quickstart:
