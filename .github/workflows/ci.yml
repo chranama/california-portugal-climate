@@ -101,7 +101,7 @@ jobs:
 
           root = Path("${{ github.workspace }}") / "data" / "raw" / "open_meteo_daily"
           cities = ["los_angeles", "san_francisco", "lisbon", "porto"]
-          years = [2023, 2024]
+          years = list(range(2018, 2025))
 
           root.mkdir(parents=True, exist_ok=True)
 
@@ -128,8 +128,11 @@ jobs:
                 doy = (d - date(year, 1, 1)).days + 1
                 seasonal = math.sin((2 * math.pi * doy / 365.0) + city_offset)
                 shoulder = math.cos((2 * math.pi * doy / 30.0) + city_offset)
+                year_idx = year - years[0]
+                interannual = 0.55 * math.sin((2 * math.pi * (year_idx + 1) / 9.0) + (city_offset * 0.35))
+                monthly_shift = 0.35 * math.sin((2 * math.pi * d.month / 12.0) + (year_idx * 0.42) + city_offset)
 
-                mean = 16.0 + (8.0 * seasonal) + (0.6 * shoulder)
+                mean = 16.0 + (8.0 * seasonal) + (0.6 * shoulder) + interannual + monthly_shift
                 daily_max = mean + 5.3
                 daily_min = mean - 5.7
                 dew_pt = mean - 4.4
