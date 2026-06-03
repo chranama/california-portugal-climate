@@ -2,6 +2,7 @@
 from __future__ import annotations
 
 import json
+import hashlib
 import sys
 from pathlib import Path
 
@@ -15,6 +16,14 @@ REQUIRED_CLAIM = ["claim_text", "verification_command", "artifact_paths", "expec
 def fail(msg: str) -> None:
     print(f"ERROR: {msg}")
     sys.exit(1)
+
+
+def sha256_file(path: Path) -> str:
+    h = hashlib.sha256()
+    with path.open("rb") as f:
+        for chunk in iter(lambda: f.read(1024 * 1024), b""):
+            h.update(chunk)
+    return h.hexdigest()
 
 
 def main() -> None:
@@ -37,18 +46,37 @@ def main() -> None:
         for key in REQUIRED_CLAIM:
             if key not in claim:
                 fail(f"claim[{idx}] missing key: {key}")
-        for raw in claim["artifact_paths"]:
+
+        artifact_paths = claim["artifact_paths"]
+        artifact_hashes = claim.get("artifact_sha256", {})
+        if artifact_hashes and not isinstance(artifact_hashes, dict):
+            fail(f"claim[{idx}] artifact_sha256 must be an object")
+        unexpected_hashes = set(artifact_hashes) - set(artifact_paths)
+        if unexpected_hashes:
+            fail(f"claim[{idx}] hashes reference non-artifact paths: {sorted(unexpected_hashes)}")
+
+        for raw in artifact_paths:
             p = ROOT / raw
             if not p.exists():
                 fail(f"claim[{idx}] missing artifact path: {raw}")
             if p.is_file() and p.stat().st_size == 0:
                 fail(f"claim[{idx}] artifact is empty: {raw}")
+            expected_hash = artifact_hashes.get(raw)
+            if expected_hash and p.is_file():
+                actual_hash = sha256_file(p)
+                if actual_hash != expected_hash:
+                    fail(
+                        f"claim[{idx}] SHA-256 mismatch for {raw}: "
+                        f"expected {expected_hash}, got {actual_hash}"
+                    )
 
     diagnostics = data.get("diagnostics", {})
     if not diagnostics.get("orchestration_entrypoint"):
         fail("diagnostics.orchestration_entrypoint is required")
+    if not diagnostics.get("test_commands"):
+        fail("diagnostics.test_commands is required")
 
-    print("OK: manifest schema-lite checks and artifact presence validated")
+    print("OK: manifest checks, artifact presence, and artifact hashes validated")
 
 
 if __name__ == "__main__":

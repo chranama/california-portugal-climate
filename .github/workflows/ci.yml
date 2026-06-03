@@ -17,8 +17,8 @@ env:
   DBT_PROFILES_DIR: dbt
 
 jobs:
-  tests:
-    name: Unit tests & lint
+  fast_tests:
+    name: Fast tests
     runs-on: ubuntu-latest
 
     steps:
@@ -47,19 +47,19 @@ jobs:
         run: |
           uv sync --dev
 
-      - name: Run pytest
+      - name: Run fast pytest subset
         run: |
-          uv run pytest
+          uv run python -m pytest -m "not integration"
 
       # Optional: uncomment if you have ruff / flake8 configured in pyproject.toml
       # - name: Lint with ruff
       #   run: |
       #     uv run ruff check .
 
-  dbt_and_ml:
-    name: dbt build & ML training
+  integration:
+    name: Warehouse integration
     runs-on: ubuntu-latest
-    needs: tests
+    needs: fast_tests
 
     steps:
       - name: Checkout repository
@@ -83,9 +83,9 @@ jobs:
           restore-keys: |
             uv-venv-${{ runner.os }}-
 
-      - name: Sync dependencies
+      - name: Sync dependencies (including dev)
         run: |
-          uv sync
+          uv sync --dev
 
       - name: Ensure warehouse directory exists
         run: |
@@ -180,9 +180,17 @@ jobs:
         run: |
           uv run dbt deps --project-dir . --profiles-dir .
 
-      # If your dbt project needs DuckDB file pre-created, dbt itself will create it
-      # based on your profile. We just ensure env vars line up.
-      - name: Run dbt build (full project)
+      - name: Initialize observability base tables
+        env:
+          CLIMATE_ENV: ci
+          CLIMATE_DATA_ROOT: ${{ github.workspace }}/data
+          CLIMATE_LOG_ROOT: ${{ env.CLIMATE_LOG_ROOT }}
+          DUCKDB_PATH: ${{ github.workspace }}/data/warehouse/climate.duckdb
+          DBT_PROFILES_DIR: ${{ env.DBT_PROFILES_DIR }}
+        run: |
+          uv run climate-init-observability
+
+      - name: Run dbt build
         working-directory: dbt
         env:
           CLIMATE_ENV: ci
@@ -191,10 +199,7 @@ jobs:
           DUCKDB_PATH: ${{ github.workspace }}/data/warehouse/climate.duckdb
           DBT_PROFILES_DIR: ${{ env.DBT_PROFILES_DIR }}
         run: |
-          uv run dbt build --project-dir . --profiles-dir . --exclude path:models/observability
-
-      # Optionally, you can narrow this to observability models only:
-      #   uv run dbt build --project-dir . --profiles-dir . --select observability
+          uv run dbt build --project-dir . --profiles-dir .
 
       - name: Train baseline anomaly model
         env:
@@ -204,12 +209,42 @@ jobs:
           DUCKDB_PATH: ${{ github.workspace }}/data/warehouse/climate.duckdb
         run: |
           uv run climate-train-baseline
+
+      - name: Run baseline prediction
+        env:
+          CLIMATE_ENV: ci
+          CLIMATE_DATA_ROOT: ${{ env.CLIMATE_DATA_ROOT }}
+          CLIMATE_LOG_ROOT: ${{ env.CLIMATE_LOG_ROOT }}
+          DUCKDB_PATH: ${{ github.workspace }}/data/warehouse/climate.duckdb
+        run: |
+          uv run climate-predict-baseline
+
+      - name: Rebuild observability models after ML logging
+        working-directory: dbt
+        env:
+          CLIMATE_ENV: ci
+          CLIMATE_DATA_ROOT: ${{ github.workspace }}/data
+          CLIMATE_LOG_ROOT: ${{ env.CLIMATE_LOG_ROOT }}
+          DUCKDB_PATH: ${{ github.workspace }}/data/warehouse/climate.duckdb
+          DBT_PROFILES_DIR: ${{ env.DBT_PROFILES_DIR }}
+        run: |
+          uv run dbt build --project-dir . --profiles-dir . --select observability
+
+      - name: Run integration pytest subset
+        env:
+          CLIMATE_ENV: ci
+          CLIMATE_DATA_ROOT: ${{ github.workspace }}/data
+          CLIMATE_LOG_ROOT: ${{ env.CLIMATE_LOG_ROOT }}
+          DUCKDB_PATH: ${{ github.workspace }}/data/warehouse/climate.duckdb
+          DBT_PROFILES_DIR: ${{ env.DBT_PROFILES_DIR }}
+        run: |
+          uv run python -m pytest -m integration
   proof_validate:
     name: proof-validate
     runs-on: ubuntu-latest
     needs:
-      - tests
-      - dbt_and_ml
+      - fast_tests
+      - integration
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
@@ -219,6 +254,6 @@ jobs:
         with:
           python-version: "3.11"
 
-      - name: Validate canonical proof manifest
+      - name: Validate evidence manifest
         run: |
           python proof/validate_evidence_manifest.py

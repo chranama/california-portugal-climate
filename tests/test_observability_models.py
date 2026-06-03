@@ -1,6 +1,9 @@
 # tests/test_observability_models.py
 
 import pandas as pd
+import pytest
+
+pytestmark = pytest.mark.integration
 
 
 def _table_or_view_exists(con, name: str) -> bool:

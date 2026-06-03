@@ -9,6 +9,8 @@ import pytest
 
 from climate_pipeline.ml.train import main as train_main
 
+pytestmark = pytest.mark.integration
+
 
 def _table_exists(con: duckdb.DuckDBPyConnection, name: str) -> bool:
     """
@@ -20,7 +22,7 @@ def _table_exists(con: duckdb.DuckDBPyConnection, name: str) -> bool:
     return name in names
 
 
-def test_climate_train_baseline_logs_metrics(warehouse_path):
+def test_climate_train_baseline_logs_metrics(warehouse_path, tmp_path):
     """
     Smoke test:
 
@@ -56,6 +58,10 @@ def test_climate_train_baseline_logs_metrics(warehouse_path):
             str(db_path),
             "--table-name",
             "ml_features",
+            "--model-path",
+            str(tmp_path / "baseline_rf.pkl"),
+            "--metrics-path",
+            str(tmp_path / "baseline_rf_metrics.json"),
         ]
         train_main()
     finally:
@@ -81,3 +87,5 @@ def test_climate_train_baseline_logs_metrics(warehouse_path):
         "Expected at least one row in pipeline_ml_metrics after training, "
         f"but found {n_rows}."
     )
+    assert (tmp_path / "baseline_rf.pkl").exists()
+    assert (tmp_path / "baseline_rf_metrics.json").exists()

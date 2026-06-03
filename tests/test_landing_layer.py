@@ -1,6 +1,9 @@
 # tests/test_landing_layer.py
 
 import pandas as pd
+import pytest
+
+pytestmark = pytest.mark.integration
 
 
 def test_landing_table_exists(con):

@@ -1,8 +1,8 @@
 {
   "proof_id": "climate-canonical",
   "run_id": "baseline_latest",
-  "generated_at": "2026-03-10T17:37:12.568799+00:00",
-  "repo_commit": "7b63721",
+  "generated_at": "2026-06-03T22:33:20.991277+00:00",
+  "repo_commit": "f2a9f9a",
   "status": "pass",
   "claims": [
     {
@@ -12,33 +12,49 @@
         "models/baseline_rf_metrics.json",
         "models/baseline_rf.pkl"
       ],
-      "expected_signal": "baseline model artifact and metrics JSON both exist."
+      "expected_signal": "baseline model artifact and metrics JSON both exist.",
+      "artifact_sha256": {
+        "models/baseline_rf_metrics.json": "f85e9b7b21564c9611a3f8ade95d36c9cd2bf2b971884b8a82842111dc932d24",
+        "models/baseline_rf.pkl": "f73d96165a53960cf12c241640619f6e0d60cd7b05ef9b8ac2aa7a302b16af77"
+      }
     },
     {
-      "claim_text": "Prediction outputs are available for reviewer inspection.",
+      "claim_text": "Prediction outputs are available for concrete inspection.",
       "verification_command": "python proof/generate_canonical_manifest.py",
       "artifact_paths": [
         "data/mart/predictions/baseline_rf_predictions.csv"
       ],
-      "expected_signal": "prediction sample CSV exists and is non-empty."
+      "expected_signal": "prediction sample CSV exists and is non-empty.",
+      "artifact_sha256": {
+        "data/mart/predictions/baseline_rf_predictions.csv": "843c5fce95801404a695d39cb034bd94360db96dde4d54723e1c60ffc48d84a6"
+      }
     },
     {
-      "claim_text": "Key reliability tests are represented in canonical proof bundle.",
+      "claim_text": "Key reliability tests are represented in the saved artifact set.",
       "verification_command": "python proof/validate_evidence_manifest.py",
       "artifact_paths": [
         "tests/test_anomaly_layer.py",
         "tests/test_ml_features.py",
         "proof/test_summary.latest.json"
       ],
-      "expected_signal": "required test files exist and test summary artifact is present."
+      "expected_signal": "required test files exist and test summary artifact is present.",
+      "artifact_sha256": {
+        "tests/test_anomaly_layer.py": "29e04453e4ced89935bbafe9e91eb669ab91355b3435cb6f7aaca98832b5f7b6",
+        "tests/test_ml_features.py": "64469a564d5f2b0e66e971eb4483b52f01e41406fb5d2c49f9ffd9ea70a5e7f3",
+        "proof/test_summary.latest.json": "94f58688deb95ce33754d7a1b38d89e75552efab2c46e6bc0133ae4200ca1cc8"
+      }
     }
   ],
   "diagnostics": {
     "pipeline_mode": "dbt_build_plus_baseline_training",
     "orchestration_entrypoint": "src/climate_pipeline/orchestration/prefect_flow.py",
+    "test_commands": [
+      "uv run python -m pytest -m \"not integration\"",
+      "uv run python -m pytest -m integration"
+    ],
     "notes": [
-      "Canonical proof points emphasize latest baseline model and test evidence.",
-      "Use proof/validate_evidence_manifest.py for strict artifact checks."
+      "Saved evidence artifacts emphasize latest baseline model and test evidence.",
+      "Use proof/validate_evidence_manifest.py for artifact reference checks."
     ]
   }
 }

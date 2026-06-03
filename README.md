@@ -1,243 +1,158 @@
-# California–Portugal Climate Pipeline  
-### A Full-Stack Climate Data Engineering, Analytics & Machine Learning System
+# California-Portugal Climate Pipeline
 
-This project implements an end-to-end climate data platform comparing four coastal Mediterranean-like cities:
+California-Portugal Climate Pipeline is a local data and machine learning
+workflow for comparing historical weather patterns across Los Angeles, San
+Francisco, Lisbon, and Porto. It ingests Open-Meteo weather data, transforms it
+through dbt models in DuckDB, builds anomaly features, trains a baseline model,
+and exposes results through saved artifacts and a Streamlit dashboard.
 
-- Los Angeles (US)  
-- San Francisco (US)  
-- Lisbon (PT)  
-- Porto (PT)
+The repository is intended for local data engineering and ML workflow review. It
+is not a production deployment, a climate forecasting service, or a complete
+climate science benchmark.
 
-Using daily historical weather data from 1980–present, the system ingests, transforms, models, and analyzes long-term climate patterns and anomaly events. It produces:
+## Workflow
 
-- A production-ready DuckDB warehouse  
-- A multi-layer dbt pipeline  
-- An ML-ready feature store  
-- A baseline RandomForest anomaly model  
-- A Streamlit analytics dashboard  
-- Prefect orchestration (daily + backfill workflows)  
-- Automated data quality tests  
-- Full observability logging (pipeline + ML metrics)
-
----
-
-## What This Proves For Hiring
-
-For AI backend/platform and ML platform roles, this project demonstrates:
-- End-to-end data and ML pipeline engineering beyond notebook-only workflows
-- Reproducible orchestration across ingestion, transforms, feature generation, and model training
-- Reliability discipline with automated tests, health-oriented pipeline structure, and persisted metrics
-
----
-
-## 5-Minute Reviewer Path
-
-1. Run quickstart:
-   - `uv sync`
-   - `uv run climate-dbt-build`
-   - `uv run climate-train-baseline`
-2. Inspect model output:
-   - `models/baseline_rf_metrics.json`
-3. Inspect reliability tests:
-   - `tests/test_anomaly_layer.py`
-   - `tests/test_ml_features.py`
-4. Read architecture and orchestration sections below.
-
----
-
-## Evidence Artifacts / Outputs
-
-- Baseline model artifact: `models/baseline_rf.pkl`
-- Baseline metrics: `models/baseline_rf_metrics.json`
-- Prediction sample: `data/mart/predictions/baseline_rf_predictions.csv`
-- Test suite: `tests/` (anomaly logic, ML features, observability, utilities)
-
----
-
-## Canonical Proof Bundle (Latest)
-
-- Contract: `proof/evidence_contract.schema.json`
-- Manifest: `proof/evidence_manifest.latest.json`
-- Proof points: `proof/proof_points.latest.md`
-- Validation command:
-  - `python proof/validate_evidence_manifest.py`
-
----
-
-## Architecture Overview (Mermaid Diagram)
-
-```mermaid
-flowchart TD
-    A[Open-Meteo API] --> B[Landing Layer<br>raw JSON]
-    B --> C[Clean Layer<br>validated daily tables]
-    C --> D[Anomaly Layer<br>climatology + anomaly scoring]
-    D --> E[ML Feature Layer<br>lagged monthly features]
-    E --> F[ML Models<br>Random Forest baseline]
-    E --> G[Streamlit Dashboard]
-
-    subgraph Orchestration
-        H[Prefect Flows<br>daily + backfill]
-    end
-
-    H --> B
-    H --> C
-    H --> D
-    H --> E
-    H --> F
+```text
+Open-Meteo API
+  -> raw weather files
+  -> DuckDB landing models
+  -> clean daily and monthly climate tables
+  -> anomaly and lag feature models
+  -> ML feature table
+  -> RandomForest anomaly baseline
+  -> saved metrics, predictions, observability tables, and dashboard views
 ```
 
----
+## Responsibilities
 
-## Pipeline Layers (New Naming Framework)
+- Fetch historical and recent daily weather data for the configured cities
+- Normalize raw API responses into DuckDB through dbt
+- Build clean, anomaly, ML feature, and observability warehouse layers
+- Train and evaluate a baseline RandomForest anomaly model
+- Persist model metrics, prediction samples, and run metadata
+- Provide Prefect flows for daily and backfill workflows
+- Expose a Streamlit dashboard for trends, anomalies, model metrics, and
+  pipeline health
+- Validate key tables, features, paths, and saved artifacts through tests
 
-### 1. Landing Layer (formerly Bronze)
-Structured Open-Meteo responses stored as raw-in/normalized-out weather tables.
+## Repository Layout
 
-Contents:
-- daily weather fields  
-- geocoding metadata  
-- ingestion metadata  
+```text
+src/climate_pipeline/   Python package for ingestion, ML, orchestration, health checks, and utilities
+dbt/                    DuckDB/dbt transformation project
+dashboards/streamlit/   Streamlit dashboard
+tests/                  Warehouse, ML, observability, and utility tests
+data/                   Local data roots and saved prediction sample
+models/                 Saved baseline model and metrics artifacts
+proof/                  Evidence manifest validation scripts and metadata
+docs/                   System documentation
+```
 
----
+## Quick Start
 
-### 2. Clean Layer (formerly Silver)
-Validated, enriched daily + monthly weather summaries. Adds:
+Install dependencies:
 
-- extreme temperature flags  
-- tropical night detection  
-- heavy precipitation flags  
-- seasonal encodings  
-- data quality normalization  
+```bash
+uv sync --dev
+```
 
----
+Build the warehouse models:
 
-### 3. Anomaly Layer (formerly Gold)
-High-level domain climate analytics:
+```bash
+uv run climate-dbt-build
+```
 
-- climatology baselines  
-- standardized anomaly scoring (z-scores)  
-- anomaly event detection  
-- temporal lags  
-- cross-city anomaly correlations  
+Train the baseline anomaly model:
 
----
-
-### 4. ML Feature Store
-Final engineered feature matrix for supervised anomaly prediction:
-
-Includes:
-- rolling-window statistics  
-- multiple lag deltas  
-- teleconnection-style lag summary  
-- seasonal encodings  
-- target label: is_event_next_month  
-
----
-
-## Machine Learning Layer
-
-Model:
-- RandomForestClassifier  
-- Predicts next-month strong anomaly events
-
-Artifacts:
-- models/baseline_rf.pkl  
-- models/baseline_rf_metrics.json  
-
-Run training:
 ```bash
 uv run climate-train-baseline
 ```
 
----
+Run the dashboard:
 
-## Streamlit Dashboard
-
-Location:
-dashboards/streamlit/app.py
-
-Run:
+```bash
 uv run streamlit run dashboards/streamlit/app.py
+```
 
-Features:
-- Climate trend exploration  
-- Anomaly visualization  
-- ML performance  
-- Pipeline health metrics  
-- Freshness indicators  
+Validate saved artifact references:
 
----
+```bash
+python proof/validate_evidence_manifest.py
+```
 
-## Orchestration (Prefect)
+## Testing
 
-Daily pipeline:
+Run tests with Python module invocation:
+
+```bash
+uv run python -m pytest -m "not integration"
+```
+
+Integration tests require a DuckDB database with the relevant dbt models built:
+
+```bash
+uv run python -m pytest -m integration
+```
+
+See [Testing](docs/testing.md) for the current test boundaries and warehouse
+requirements.
+
+## Main Commands
+
+Run recent ingestion:
+
+```bash
+uv run fetch-daily-weather --mode recent
+```
+
+Run historical ingestion:
+
+```bash
+uv run fetch-daily-weather --mode backfill
+```
+
+Run the daily Prefect flow:
+
 ```bash
 uv run python -m climate_pipeline.orchestration.prefect_flow daily
 ```
 
-Backfill:
-```bash
-uv run python -m climate_pipeline.orchestration.prefect_flow backfill --start-date YYYY-MM-DD --end-date YYYY-MM-DD
-```
-
-Pipeline steps:
-1. Fetch daily weather  
-2. dbt build (all layers)  
-3. Optional dbt tests  
-4. Train ML model  
-5. Optional pytest  
-6. Observability logging  
-
----
-
-## Testing
+Run a backfill Prefect flow:
 
 ```bash
-uv run pytest
+uv run python -m climate_pipeline.orchestration.prefect_flow backfill \
+  --start-date 1980-01-01 \
+  --end-date 2024-12-31
 ```
 
-Includes:
-- schema validation  
-- anomaly layer logic tests  
-- ML feature integrity tests  
-- observability table tests  
-- utilities + path resolution tests  
-
----
-
-## Project Structure (Simplified)
-
-california-portugal-climate/  
-    README.md  
-    pyproject.toml  
-    data/  
-        raw/  
-        warehouse/climate.duckdb  
-    dbt/  
-    src/climate_pipeline/  
-    dashboards/streamlit/  
-    tests/  
-    logs/  
-
----
-
-## Quick Start
+Run baseline prediction after training:
 
 ```bash
-uv sync
-uv run climate-dbt-build
-uv run climate-train-baseline
-uv run streamlit run dashboards/streamlit/app.py
+uv run climate-predict-baseline
 ```
 
----
+## Current Outputs
 
-## Planned Enhancements
+Saved outputs that are useful for inspection:
 
-- Teleconnection indices (ENSO, NAO, PDO, AMO)  
-- Sea-surface-temperature integration  
-- Reanalysis integration (ERA5, NOAA)  
-- Short-term forecasting (3-day max/min)  
-- Transformer/LSTM anomaly models  
-- Expanded observability dashboards  
-- Docker + cloud deployment  
+- `models/baseline_rf_metrics.json`
+- `models/baseline_rf.pkl`
+- `data/mart/predictions/baseline_rf_predictions.csv`
+- `proof/evidence_manifest.latest.json`
+- `proof/test_summary.latest.json`
+
+These artifacts show a bounded local pipeline state. They are not a substitute
+for rerunning the pipeline against fresh data.
+
+## Documentation
+
+- [Architecture](docs/architecture.md)
+- [Pipeline](docs/pipeline.md)
+- [Testing](docs/testing.md)
+- [Artifacts](docs/artifacts.md)
+- [Runbook](docs/runbook.md)
+- [Scope](docs/scope.md)
+
+## License
+
+Released under the MIT License.

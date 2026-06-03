@@ -1,6 +1,9 @@
 # tests/test_ml_features.py
 
 import pandas as pd
+import pytest
+
+pytestmark = pytest.mark.integration
 
 # Keep these in sync with src/climate_pipeline/ml/train.py
 TARGET_COL = "is_event_next_month"

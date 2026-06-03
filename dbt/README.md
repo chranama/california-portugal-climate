@@ -25,7 +25,7 @@ uv run dbt run
 uv run dbt test
 ```
 
-## Why this matters for reviewer flow
+## Dependency Notes
 
 - `climate-train-baseline` expects `ml_features` to exist.
 - `ml_features` is produced by this dbt layer.

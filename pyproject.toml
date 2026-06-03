@@ -1,7 +1,7 @@
 [project]
 name = "california-portugal-climate"
 version = "0.1.0"
-description = "Climate comparison pipeline between California and Portugal using Open-Meteo, DuckDB, dbt, and notebooks."
+description = "Climate comparison pipeline between California and Portugal using Open-Meteo, DuckDB, dbt, Streamlit, and baseline ML."
 readme = "README.md"
 requires-python = ">=3.9"
 
@@ -34,6 +34,7 @@ climate-prefect-daily = "climate_pipeline.orchestration.prefect_flow:daily_clima
 climate-prefect-backfill = "climate_pipeline.orchestration.prefect_flow:backfill_climate_flow"
 climate-dbt-build = "climate_pipeline.dbt_cli:build"
 climate-dbt-docs = "climate_pipeline.dbt_cli:docs"
+climate-init-observability = "climate_pipeline.observability.run_logger:ensure_observability_schema_main"
 
 # Health checks / UX
 climate-check-ingestion = "climate_pipeline.cli.health:check_ingestion_main"
@@ -49,4 +50,9 @@ local = { path = "src" }
 [dependency-groups]
 dev = [
     "pytest>=8.4.2",
+]
+
+[tool.pytest.ini_options]
+markers = [
+    "integration: requires a built DuckDB warehouse or writes runtime artifacts",
 ]

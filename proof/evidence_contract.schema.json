@@ -1,6 +1,6 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "title": "Portfolio Evidence Manifest",
+  "title": "Evidence Manifest",
   "type": "object",
   "required": ["proof_id", "run_id", "generated_at", "repo_commit", "status", "claims", "diagnostics"],
   "properties": {
@@ -19,7 +19,14 @@
           "claim_text": {"type": "string"},
           "verification_command": {"type": "string"},
           "artifact_paths": {"type": "array", "minItems": 1, "items": {"type": "string"}},
-          "expected_signal": {"type": "string"}
+          "expected_signal": {"type": "string"},
+          "artifact_sha256": {
+            "type": "object",
+            "additionalProperties": {
+              "type": "string",
+              "pattern": "^[a-f0-9]{64}$"
+            }
+          }
         },
         "additionalProperties": false
       }

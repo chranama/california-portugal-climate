@@ -1,6 +1,9 @@
 # tests/test_anomaly_layer.py
 
 import pandas as pd
+import pytest
+
+pytestmark = pytest.mark.integration
 
 
 def test_anomaly_tables_exist(con):

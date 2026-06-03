@@ -1,9 +1,12 @@
 {
   "source": "ci.yml",
-  "tests_job": "tests",
+  "fast_tests_job": "fast_tests",
+  "integration_tests_job": "integration",
+  "fast_test_command": "uv run python -m pytest -m \"not integration\"",
+  "integration_test_command": "uv run python -m pytest -m integration",
   "required_test_files": [
     "tests/test_anomaly_layer.py",
     "tests/test_ml_features.py"
   ],
-  "status": "pass_if_ci_tests_job_passes"
+  "status": "pass_if_ci_fast_tests_and_integration_jobs_pass"
 }

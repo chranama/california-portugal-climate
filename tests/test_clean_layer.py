@@ -1,6 +1,9 @@
 # tests/test_clean_layer.py
 
 import pandas as pd
+import pytest
+
+pytestmark = pytest.mark.integration
 
 
 def test_clean_tables_exist(con):

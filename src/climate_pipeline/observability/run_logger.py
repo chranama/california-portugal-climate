@@ -1,11 +1,12 @@
 from __future__ import annotations
 
+import argparse
+import os
 from dataclasses import dataclass
 from datetime import datetime, date, timezone
 from pathlib import Path
 from typing import Optional
 
-import os
 import duckdb
 
 
@@ -185,6 +186,38 @@ def _ensure_schema(conn: duckdb.DuckDBPyConnection) -> None:
         )
         """
     )
+
+
+def ensure_observability_schema(warehouse_path: Optional[Path] = None) -> Path:
+    """
+    Ensure base observability tables exist before dbt builds observability models.
+    """
+    db_path = _get_warehouse_path(warehouse_path)
+    db_path.parent.mkdir(parents=True, exist_ok=True)
+
+    conn = duckdb.connect(str(db_path))
+    try:
+        _ensure_schema(conn)
+    finally:
+        conn.close()
+
+    return db_path
+
+
+def ensure_observability_schema_main() -> None:
+    parser = argparse.ArgumentParser(
+        description="Create base DuckDB observability tables if they do not exist."
+    )
+    parser.add_argument(
+        "--warehouse-path",
+        type=Path,
+        default=None,
+        help="DuckDB warehouse path. Defaults to DUCKDB_PATH or data/warehouse/climate.duckdb.",
+    )
+    args = parser.parse_args()
+
+    db_path = ensure_observability_schema(args.warehouse_path)
+    print(f"Ensured observability tables in {db_path}")
 
 
 def _compute_next_id(conn: duckdb.DuckDBPyConnection, table_name: str) -> int:
