@@ -3,6 +3,10 @@
 The pipeline combines data ingestion, dbt transformations, baseline model
 training, prediction, observability logging, and dashboard inspection.
 
+Use the runbook for exact local command sequences. Use
+[Workflow Interface](interface.md) for config, input, output, and artifact
+contracts.
+
 ## Cities
 
 The configured comparison set is:
@@ -14,33 +18,25 @@ The configured comparison set is:
 
 City metadata is stored in `src/config/cities.yaml` and dbt seed data.
 
+## Concrete Flow Example
+
+For a configured city such as Porto, the ingestion step fetches Open-Meteo daily
+weather records and writes raw files under the local data root. dbt landing
+models normalize those records into DuckDB. Clean models create daily and
+monthly climate rows. Anomaly models compare monthly temperatures against local
+climatology and create lag features. The ML model uses those rows to predict
+whether the next month is a strong anomaly event. The saved prediction sample and
+dashboard views then expose the result for inspection.
+
 ## Ingestion
 
 Ingestion reads city configuration and fetches daily weather data from
 Open-Meteo.
 
-Recent mode:
-
-```bash
-uv run fetch-daily-weather --mode recent
-```
-
-Backfill mode:
-
-```bash
-uv run fetch-daily-weather --mode backfill
-```
-
 The ingestion script validates daily response structure, checks required fields,
 and retries requests before writing raw weather files.
 
 ## dbt Layers
-
-Build the dbt project from the repository root:
-
-```bash
-uv run climate-dbt-build
-```
 
 The dbt project contains:
 
@@ -55,47 +51,21 @@ The dbt project contains:
 The baseline model is a RandomForest classifier trained against the `ml_features`
 table.
 
-```bash
-uv run climate-train-baseline
-```
-
 Training writes:
 
 - `models/baseline_rf.pkl`
 - `models/baseline_rf_metrics.json`
 
-Prediction writes a sample output:
-
-```bash
-uv run climate-predict-baseline
-```
+Prediction writes a sample output under
+`data/mart/predictions/baseline_rf_predictions.csv`.
 
 ## Orchestration
 
-Daily flow:
-
-```bash
-uv run python -m climate_pipeline.orchestration.prefect_flow daily
-```
-
-Backfill flow:
-
-```bash
-uv run python -m climate_pipeline.orchestration.prefect_flow backfill \
-  --start-date 1980-01-01 \
-  --end-date 2024-12-31
-```
-
-Both flows run ingestion, dbt build, model training, and best-effort run logging.
+The daily and backfill flows run ingestion, dbt build, model training, and
+best-effort run logging.
 Optional flags can run dbt tests and pytest after the main workflow steps.
 
 ## Dashboard
-
-Run the Streamlit dashboard locally:
-
-```bash
-uv run streamlit run dashboards/streamlit/app.py
-```
 
 The dashboard reads the local warehouse and saved artifacts to show climate
 trends, anomaly behavior, model metrics, and pipeline health.

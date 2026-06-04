@@ -5,29 +5,16 @@ observability models, and path resolution.
 
 ## Setup
 
-```bash
-uv sync --dev
-```
+Use the runbook for local environment setup.
 
 ## Fast Tests
 
-Fast tests do not require a built DuckDB warehouse:
-
-```bash
-uv run python -m pytest -m "not integration"
-```
-
-Use Python module invocation rather than a local `pytest` console script. This
-avoids relying on a stale script if a virtual environment was moved between
-directories.
+Fast tests do not require a built DuckDB warehouse. Use the runbook for the
+local test command.
 
 ## Integration Tests
 
 Integration tests require a built warehouse and are marked with `integration`:
-
-```bash
-uv run python -m pytest -m integration
-```
 
 The CI integration job builds synthetic weather fixtures, initializes
 observability tables, runs dbt, trains the baseline model, writes predictions,
@@ -49,12 +36,6 @@ Current tests cover:
 
 Tests that query DuckDB require `data/warehouse/climate.duckdb`.
 
-Build the warehouse:
-
-```bash
-uv run climate-dbt-build
-```
-
 The observability tests require base observability tables and dbt observability
 models:
 
@@ -64,19 +45,8 @@ models:
 - `pipeline_run_daily_summary`
 - `pipeline_ml_daily_summary`
 
-Initialize base tables when needed:
-
-```bash
-uv run climate-init-observability
-```
-
-If observability views are missing from an existing local warehouse, rebuild the
-observability layer:
-
-```bash
-cd dbt
-uv run dbt build --project-dir . --profiles-dir . --select observability
-```
+Use the runbook for warehouse build, observability initialization, and
+observability-layer rebuild commands.
 
 ## Test Isolation
 
@@ -85,8 +55,5 @@ paths. It should not update the curated artifacts under `models/`.
 
 ## Evidence Manifest
 
-Validate saved artifact references and SHA-256 hashes:
-
-```bash
-python proof/validate_evidence_manifest.py
-```
+Evidence manifest validation checks saved artifact references and SHA-256
+hashes. Use the runbook for the local validation command.

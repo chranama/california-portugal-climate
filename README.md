@@ -6,6 +6,11 @@ Francisco, Lisbon, and Porto. It ingests Open-Meteo weather data, transforms it
 through dbt models in DuckDB, builds anomaly features, trains a baseline model,
 and exposes results through saved artifacts and a Streamlit dashboard.
 
+Open-Meteo provides historical weather measurements for the configured cities.
+DuckDB and dbt turn those raw API responses into queryable climate tables. The
+machine learning step trains a local baseline anomaly classifier so the workflow
+can be inspected end to end; it is not a climate forecast.
+
 The repository is intended for local data engineering and ML workflow review. It
 is not a production deployment, a climate forecasting service, or a complete
 climate science benchmark.
@@ -48,88 +53,13 @@ proof/                  Evidence manifest validation scripts and metadata
 docs/                   System documentation
 ```
 
-## Quick Start
+## Run Locally
 
-Install dependencies:
+The local runbook provides the step-by-step guide for setup, ingestion, dbt
+builds, model training, prediction, dashboard startup, tests, artifact
+validation, and cleanup:
 
-```bash
-uv sync --dev
-```
-
-Build the warehouse models:
-
-```bash
-uv run climate-dbt-build
-```
-
-Train the baseline anomaly model:
-
-```bash
-uv run climate-train-baseline
-```
-
-Run the dashboard:
-
-```bash
-uv run streamlit run dashboards/streamlit/app.py
-```
-
-Validate saved artifact references:
-
-```bash
-python proof/validate_evidence_manifest.py
-```
-
-## Testing
-
-Run tests with Python module invocation:
-
-```bash
-uv run python -m pytest -m "not integration"
-```
-
-Integration tests require a DuckDB database with the relevant dbt models built:
-
-```bash
-uv run python -m pytest -m integration
-```
-
-See [Testing](docs/testing.md) for the current test boundaries and warehouse
-requirements.
-
-## Main Commands
-
-Run recent ingestion:
-
-```bash
-uv run fetch-daily-weather --mode recent
-```
-
-Run historical ingestion:
-
-```bash
-uv run fetch-daily-weather --mode backfill
-```
-
-Run the daily Prefect flow:
-
-```bash
-uv run python -m climate_pipeline.orchestration.prefect_flow daily
-```
-
-Run a backfill Prefect flow:
-
-```bash
-uv run python -m climate_pipeline.orchestration.prefect_flow backfill \
-  --start-date 1980-01-01 \
-  --end-date 2024-12-31
-```
-
-Run baseline prediction after training:
-
-```bash
-uv run climate-predict-baseline
-```
+- [Runbook](docs/runbook.md)
 
 ## Current Outputs
 
@@ -141,12 +71,14 @@ Saved outputs that are useful for inspection:
 - `proof/evidence_manifest.latest.json`
 - `proof/test_summary.latest.json`
 
-These artifacts show a bounded local pipeline state. They are not a substitute
+These artifacts show a bounded local pipeline state: model metrics, prediction
+samples, evidence metadata, and test summary metadata. They are not a substitute
 for rerunning the pipeline against fresh data.
 
 ## Documentation
 
 - [Architecture](docs/architecture.md)
+- [Workflow Interface](docs/interface.md)
 - [Pipeline](docs/pipeline.md)
 - [Testing](docs/testing.md)
 - [Artifacts](docs/artifacts.md)

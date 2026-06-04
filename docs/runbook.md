@@ -3,6 +3,9 @@
 This runbook covers local setup, pipeline execution, dashboard startup, artifact
 inspection, validation, and cleanup.
 
+For config, data, warehouse, model, and artifact contracts, see
+[Workflow Interface](interface.md).
+
 ## Setup
 
 ```bash
