@@ -27,7 +27,7 @@ WITH raw_json AS (
         daily.precipitation_sum       AS precip_list,
         daily.wind_speed_10m_max      AS wind_list,
         daily.shortwave_radiation_sum AS sw_list
-    FROM read_json_auto('{{ raw_weather_dir }}/*/*.json')
+    FROM read_json_auto('{{ raw_weather_dir }}/*/*.json', union_by_name = true)
 
 ),
 

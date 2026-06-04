@@ -1,7 +1,7 @@
 # Evidence Summary (Latest)
 
 ## Evidence 1: Baseline Model + Metrics
-- Claim: baseline anomaly model outputs are persisted and reviewable.
+- Claim: baseline anomaly model outputs are persisted and inspectable.
 - Command: `python proof/generate_canonical_manifest.py`
 - Artifacts:
   - `models/baseline_rf.pkl`
@@ -23,3 +23,10 @@
   - `tests/test_ml_features.py`
   - `proof/test_summary.latest.json`
 - Validation signal: required test files and test summary artifact exist.
+
+## Evidence 4: Local Verification State
+- Claim: latest local verification state is captured for inspection.
+- Command: `uv run climate-verify-local`
+- Artifacts:
+  - `proof/workflow_state.latest.json`
+- Validation signal: workflow-state artifact exists and records command outcomes, warehouse row counts, model metrics, prediction count, and observability summaries.

@@ -57,3 +57,7 @@ paths. It should not update the curated artifacts under `models/`.
 
 Evidence manifest validation checks saved artifact references and SHA-256
 hashes. Use the runbook for the local validation command.
+
+`uv run climate-verify-local` runs the fast and integration pytest subsets, writes
+`proof/test_summary.latest.json`, writes `proof/workflow_state.latest.json`, and
+refreshes the evidence manifest hashes.

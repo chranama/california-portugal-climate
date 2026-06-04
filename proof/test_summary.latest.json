@@ -1,12 +1,50 @@
 {
-  "source": "ci.yml",
-  "fast_tests_job": "fast_tests",
-  "integration_tests_job": "integration",
-  "fast_test_command": "uv run python -m pytest -m \"not integration\"",
-  "integration_test_command": "uv run python -m pytest -m integration",
+  "source": "climate-verify-local",
+  "generated_at": "2026-06-04T21:27:54.740465+00:00",
+  "status": "pass",
+  "test_commands": [
+    {
+      "name": "fast_tests",
+      "command": [
+        "uv",
+        "run",
+        "python",
+        "-m",
+        "pytest",
+        "-m",
+        "not integration"
+      ],
+      "status": "pass",
+      "return_code": 0,
+      "summary_line": "4 passed, 24 deselected in 1.02s",
+      "counts": {
+        "passed": 4,
+        "deselected": 24
+      }
+    },
+    {
+      "name": "integration_tests",
+      "command": [
+        "uv",
+        "run",
+        "python",
+        "-m",
+        "pytest",
+        "-m",
+        "integration"
+      ],
+      "status": "pass",
+      "return_code": 0,
+      "summary_line": "24 passed, 4 deselected in 1.65s",
+      "counts": {
+        "passed": 24,
+        "deselected": 4
+      }
+    }
+  ],
   "required_test_files": [
     "tests/test_anomaly_layer.py",
-    "tests/test_ml_features.py"
-  ],
-  "status": "pass_if_ci_fast_tests_and_integration_jobs_pass"
+    "tests/test_ml_features.py",
+    "tests/test_observability_models.py"
+  ]
 }

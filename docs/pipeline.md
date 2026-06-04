@@ -59,11 +59,19 @@ Training writes:
 Prediction writes a sample output under
 `data/mart/predictions/baseline_rf_predictions.csv`.
 
+Training also logs raw ML metrics into DuckDB. Rebuild the observability dbt
+models after training when dashboard summary tables should reflect the latest
+metric log.
+
 ## Orchestration
 
 The daily and backfill flows run ingestion, dbt build, model training, and
 best-effort run logging.
 Optional flags can run dbt tests and pytest after the main workflow steps.
+
+For local evidence refreshes, `uv run climate-verify-local` executes the
+manual verification workflow, logs a manual pipeline run, rebuilds observability
+models, runs tests, and refreshes proof artifacts.
 
 ## Dashboard
 

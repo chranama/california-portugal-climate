@@ -11,21 +11,32 @@ DuckDB and dbt turn those raw API responses into queryable climate tables. The
 machine learning step trains a local baseline anomaly classifier so the workflow
 can be inspected end to end; it is not a climate forecast.
 
-The repository is intended for local data engineering and ML workflow review. It
+The repository is intended for local data engineering and ML workflow inspection. It
 is not a production deployment, a climate forecasting service, or a complete
 climate science benchmark.
 
 ## Workflow
 
 ```text
-Open-Meteo API
-  -> raw weather files
-  -> DuckDB landing models
-  -> clean daily and monthly climate tables
-  -> anomaly and lag feature models
-  -> ML feature table
-  -> RandomForest anomaly baseline
-  -> saved metrics, predictions, observability tables, and dashboard views
+Local build path:
+  setup dependencies
+    -> ingest recent or backfilled Open-Meteo weather data
+    -> build DuckDB warehouse models with dbt
+    -> train the baseline RandomForest anomaly model
+    -> write model metrics and prediction samples
+    -> inspect saved artifacts or launch the dashboard
+
+Orchestration path:
+  daily or backfill Prefect flow
+    -> ingestion
+    -> dbt build
+    -> optional dbt and pytest checks
+    -> model training
+    -> observability logging
+
+Evidence path:
+  local verification state, saved model metrics, predictions, and test summary
+    -> proof manifest validation
 ```
 
 ## Responsibilities
@@ -61,6 +72,14 @@ validation, and cleanup:
 
 - [Runbook](docs/runbook.md)
 
+For a single local verification workflow that refreshes ingestion, the warehouse,
+model artifacts, predictions, observability summaries, tests, and proof
+metadata:
+
+```bash
+uv run climate-verify-local
+```
+
 ## Current Outputs
 
 Saved outputs that are useful for inspection:
@@ -68,12 +87,14 @@ Saved outputs that are useful for inspection:
 - `models/baseline_rf_metrics.json`
 - `models/baseline_rf.pkl`
 - `data/mart/predictions/baseline_rf_predictions.csv`
+- `proof/workflow_state.latest.json`
 - `proof/evidence_manifest.latest.json`
 - `proof/test_summary.latest.json`
 
-These artifacts show a bounded local pipeline state: model metrics, prediction
-samples, evidence metadata, and test summary metadata. They are not a substitute
-for rerunning the pipeline against fresh data.
+These artifacts show a bounded local pipeline state: workflow command outcomes,
+warehouse row counts, model metrics, prediction samples, evidence metadata, and
+test summary metadata. They are not a substitute for rerunning the pipeline
+against fresh data.
 
 ## Documentation
 

@@ -12,4 +12,4 @@ California-Portugal Climate Pipeline.
 - [Scope](scope.md): intended use, non-claims, and current limits
 
 Use the runbook for exact local command sequences. The other documents describe
-system boundaries, interfaces, interpretation, and reviewable outputs.
+system boundaries, interfaces, interpretation, and inspectable outputs.

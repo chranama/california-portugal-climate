@@ -1,8 +1,8 @@
 {
   "proof_id": "climate-canonical",
   "run_id": "baseline_latest",
-  "generated_at": "2026-06-03T22:33:20.991277+00:00",
-  "repo_commit": "f2a9f9a",
+  "generated_at": "2026-06-04T21:27:54.898143+00:00",
+  "repo_commit": "52e55c2",
   "status": "pass",
   "claims": [
     {
@@ -14,8 +14,8 @@
       ],
       "expected_signal": "baseline model artifact and metrics JSON both exist.",
       "artifact_sha256": {
-        "models/baseline_rf_metrics.json": "f85e9b7b21564c9611a3f8ade95d36c9cd2bf2b971884b8a82842111dc932d24",
-        "models/baseline_rf.pkl": "f73d96165a53960cf12c241640619f6e0d60cd7b05ef9b8ac2aa7a302b16af77"
+        "models/baseline_rf_metrics.json": "464b4b39f598289f80e34cde09b5396566e3e47eabc221bce5cfc7dbc6691a0d",
+        "models/baseline_rf.pkl": "9bbfbbc87de22e98e5f9312b4abb27e21fcdb06f26ab8262828726b286c6cf1e"
       }
     },
     {
@@ -26,7 +26,18 @@
       ],
       "expected_signal": "prediction sample CSV exists and is non-empty.",
       "artifact_sha256": {
-        "data/mart/predictions/baseline_rf_predictions.csv": "843c5fce95801404a695d39cb034bd94360db96dde4d54723e1c60ffc48d84a6"
+        "data/mart/predictions/baseline_rf_predictions.csv": "7cc24be80a3ced21bd8223eebcb4acb33c24370abab8eca7b98c81336a8d8fcc"
+      }
+    },
+    {
+      "claim_text": "The local verification workflow records command outcomes, warehouse state, model metrics, prediction counts, and observability summaries.",
+      "verification_command": "uv run climate-verify-local",
+      "artifact_paths": [
+        "proof/workflow_state.latest.json"
+      ],
+      "expected_signal": "workflow_state.latest.json exists and records the latest local verification state.",
+      "artifact_sha256": {
+        "proof/workflow_state.latest.json": "7102789cd6b875e49fe1e98a425b3f89b28d31f55b4a5bdfac2e792e783bdf5d"
       }
     },
     {
@@ -41,7 +52,7 @@
       "artifact_sha256": {
         "tests/test_anomaly_layer.py": "29e04453e4ced89935bbafe9e91eb669ab91355b3435cb6f7aaca98832b5f7b6",
         "tests/test_ml_features.py": "64469a564d5f2b0e66e971eb4483b52f01e41406fb5d2c49f9ffd9ea70a5e7f3",
-        "proof/test_summary.latest.json": "94f58688deb95ce33754d7a1b38d89e75552efab2c46e6bc0133ae4200ca1cc8"
+        "proof/test_summary.latest.json": "65db11e14fdb6a1497caede354a243baa8643bf867b6d116ad4c0048eaf2a060"
       }
     }
   ],
@@ -50,7 +61,8 @@
     "orchestration_entrypoint": "src/climate_pipeline/orchestration/prefect_flow.py",
     "test_commands": [
       "uv run python -m pytest -m \"not integration\"",
-      "uv run python -m pytest -m integration"
+      "uv run python -m pytest -m integration",
+      "uv run climate-verify-local"
     ],
     "notes": [
       "Saved evidence artifacts emphasize latest baseline model and test evidence.",

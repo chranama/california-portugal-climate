@@ -88,15 +88,13 @@ def load_pipeline_run_summary() -> pd.DataFrame:
                 flow_name,
                 run_mode,
 
-                -- Names expected by Streamlit UI
                 runs_success AS success_count,
                 runs_failed  AS failure_count,
-                runs_total   AS n_runs,
+                n_runs,
 
-                -- Convenience metric used in the UI
                 CASE
-                    WHEN runs_total > 0
-                        THEN runs_success * 1.0 / runs_total
+                    WHEN n_runs > 0
+                        THEN runs_success * 1.0 / n_runs
                     ELSE NULL
                 END AS success_rate,
 
@@ -219,7 +217,7 @@ with climate_tab:
         height=600,
     )
 
-    st.plotly_chart(fig, use_container_width=True)
+    st.plotly_chart(fig)
 
     st.subheader("📈 Summary statistics")
 
@@ -231,12 +229,12 @@ with climate_tab:
         .reset_index()
     )
 
-    st.dataframe(summary, use_container_width=True)
+    st.dataframe(summary, width="stretch")
 
     with st.expander("🔎 View underlying climate data"):
         st.dataframe(
             climate_filtered.sort_values(["city_name", "date"]),
-            use_container_width=True,
+            width="stretch",
         )
 
 
@@ -269,9 +267,7 @@ with observability_tab:
             else:
                 # Basic derived metrics
                 run_df = run_df.copy()
-                run_df["total_runs"] = (
-                    run_df["success_count"] + run_df["failure_count"]
-                )
+                run_df["total_runs"] = run_df["n_runs"]
                 run_df["success_rate"] = (
                     run_df["success_count"] / run_df["total_runs"].replace(0, pd.NA)
                 )
@@ -292,7 +288,7 @@ with observability_tab:
                     legend_title="Run mode",
                     height=350,
                 )
-                st.plotly_chart(fig_sr, use_container_width=True)
+                st.plotly_chart(fig_sr)
 
                 # Volume chart
                 fig_vol = px.bar(
@@ -309,12 +305,12 @@ with observability_tab:
                     legend_title="Run mode",
                     height=300,
                 )
-                st.plotly_chart(fig_vol, use_container_width=True)
+                st.plotly_chart(fig_vol)
 
                 with st.expander("📋 Daily pipeline summary table"):
                     st.dataframe(
                         run_df.sort_values(["run_date", "run_mode", "flow_name"]),
-                        use_container_width=True,
+                        width="stretch",
                     )
 
         # ----------------------------
@@ -388,7 +384,7 @@ with observability_tab:
                             },
                         )
                         fig_roc.update_layout(height=350)
-                        st.plotly_chart(fig_roc, use_container_width=True)
+                        st.plotly_chart(fig_roc)
 
                     with col_right:
                         st.markdown("##### Average accuracy by day & run_mode")
@@ -405,7 +401,7 @@ with observability_tab:
                             },
                         )
                         fig_acc.update_layout(height=350)
-                        st.plotly_chart(fig_acc, use_container_width=True)
+                        st.plotly_chart(fig_acc)
 
                     st.markdown("##### Minority-class F1 (event=1) by day & run_mode")
                     fig_f1 = px.line(
@@ -421,4 +417,4 @@ with observability_tab:
                         },
                     )
                     fig_f1.update_layout(height=350)
-                    st.plotly_chart(fig_f1, use_container_width=True)
+                    st.plotly_chart(fig_f1)

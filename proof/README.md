@@ -7,6 +7,7 @@ directory name remains `proof/` for compatibility with the existing scripts.
 - `evidence_contract.schema.json`
 - `evidence_manifest.latest.json`
 - `proof_points.latest.md`
+- `workflow_state.latest.json`
 - `test_summary.latest.json`
 - `generate_canonical_manifest.py`
 - `validate_evidence_manifest.py`
@@ -15,17 +16,7 @@ directory name remains `proof/` for compatibility with the existing scripts.
 
 ```bash
 uv sync --dev
-uv run climate-init-observability
-uv run climate-dbt-build
-uv run climate-train-baseline
-uv run climate-predict-baseline
-cd dbt
-uv run dbt build --project-dir . --profiles-dir . --select observability
-cd ..
-uv run python -m pytest -m "not integration"
-uv run python -m pytest -m integration
-python proof/generate_canonical_manifest.py
-python proof/validate_evidence_manifest.py
+uv run climate-verify-local
 ```
 
 ## Validate The Saved Manifest

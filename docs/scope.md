@@ -32,10 +32,12 @@ for comparing weather and anomaly patterns across four configured cities.
 
 - The configured location set is four cities.
 - The baseline model is a simple RandomForest classifier.
+- Current baseline metrics should be read as workflow evidence, not as evidence
+  of strong positive-event detection.
 - Saved artifacts represent a local run state and may change when commands are
   rerun.
 - Warehouse-dependent tests require the DuckDB file and expected dbt models.
 - Observability tests require observability views to exist in the local
   warehouse.
 - Runtime outputs and source files need a clear artifact policy if this repo is
-  used as a long-term public review surface.
+  used as a long-term public evidence surface.
